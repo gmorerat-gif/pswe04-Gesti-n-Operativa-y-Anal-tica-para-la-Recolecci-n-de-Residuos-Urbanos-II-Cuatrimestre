@@ -9,7 +9,7 @@
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | **Nombre del sistema**            | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos                                          |
 | **Grupo**                         | Grupo 2                                                                                                                      |
-| **Integrantes**                   | [Michael Jiménez Montero — Carné], [Nombre — Carné], [Nombre — Carné], [Nombre — Carné]                                      |
+| **Integrantes**                   | [Michael Jiménez Montero — Carné], [Gregory Morera Torres — Carné], [Nombre — Carné], [Nombre — Carné]                                      |
 | **URL del repositorio**           | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre |
 | **Docente**                       | [Nombre del docente]                                                                                                         |
 | **Cuatrimestre**                  | 2026 — 2                                                                                                                     |
@@ -23,7 +23,7 @@
 | Versión | Fecha        | Hito                | Cambios principales            | Autor(es)         |
 | ------- | ------------ | ------------------- | ------------------------------ | ----------------- |
 | 0.1     | [fecha]      | Propuesta (S03)     | Creación del documento inicial | [nombres]         |
-| 0.2     | [20/06/2026] | Avance 1 (S07)      | [descripción]                  | [Michael Jiménez] |
+| 0.2     | [20/06/2026] | Avance 1 (S07)      | [descripción]                  | [Michael Jiménez, Gregory Morera] |
 | 0.3     | [fecha]      | Avance 2 (S11)      | [descripción]                  | [nombres]         |
 | 1.0     | [fecha]      | Entrega final (S14) | Documento completo             | [nombres]         |
 
@@ -149,34 +149,42 @@ No administra infraestructura tecnológica institucional, redes, servidores o pl
 
 ## 3. Drivers arquitectónicos
 
-> **Instrucciones:** Los drivers son los factores que más van a moldear la arquitectura. No son todos los requerimientos — son los que, si los ignorás, el sistema falla o el diseño queda fundamentalmente equivocado. Clasificalos en las tres categorías siguientes. Para cada driver, indicá el stakeholder que lo origina (referencia a la sección 2) y el atributo de calidad que afecta.
+> Los drivers son los factores que más van a moldear la arquitectura. No son todos los requerimientos — son los que, si los ignorás, el sistema falla o el diseño queda fundamentalmente equivocado. Clasificalos en las tres categorías siguientes. Para cada driver, indicá el stakeholder que lo origina (referencia a la sección 2) y el atributo de calidad que afecta.
 
 ### 3.1 Requerimientos funcionales clave
 
 > Solo los que tienen impacto arquitectónico directo — los que obligan a tomar decisiones de estructura, no de implementación.
 
-| ID    | Requerimiento | Stakeholder      | Por qué es un driver         |
-| ----- | ------------- | ---------------- | ---------------------------- |
-| RF-01 | [Descripción] | [Ref. sección 2] | [Impacto en la arquitectura] |
-| RF-02 |               |                  |                              |
+| ID    | Requerimiento                                                                    | Stakeholder                                        | Por qué es un driver                                                                                  |
+|-------|-----------------------------------------------------------------------------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| RF-01 | Monitorear en tiempo real la ejecución de rutas y la ubicación de las unidades.  | Supervisor Operativo                               | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información en tiempo real. |
+| RF-02 | Gestionar incidencias operativas durante los recorridos.                         | Supervisor Operativo, Operario de Recolección      | Requiere componentes para registro, seguimiento y trazabilidad de eventos operativos.                |
+| RF-03 | Generar reportes e indicadores históricos para toma de decisiones.               | Jefatura de Servicios Urbanos, Analista de Gestión | Obliga a incorporar almacenamiento histórico y capacidades analíticas.                               |
+| RF-04 | Administrar usuarios, roles y permisos de acceso.                               | Administrador del Sistema                          | Impacta directamente la arquitectura de seguridad y control de acceso.                               |
+| RF-05 | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación.             | Supervisor Operativo                               | Define las entidades principales del dominio y la estructura central del sistema.                    |       |                  |                              |
 
 ### 3.2 Atributos de calidad prioritarios
 
 > Los más importantes para este sistema. Justificá por qué estos y no otros. Máximo 5 — si todo es prioridad, nada lo es.
 
-| ID    | Atributo                                          | Importancia  | Stakeholder | Justificación                                        |
-| ----- | ------------------------------------------------- | ------------ | ----------- | ---------------------------------------------------- |
-| QA-01 | [Rendimiento / Disponibilidad / Seguridad / etc.] | Alta / Media | [Ref.]      | [Por qué este atributo es crítico para este sistema] |
-| QA-02 |                                                   |              |             |                                                      |
-
+| ID    | Atributo                  | Importancia | Stakeholder                                                   | Justificación                                                                                     |
+|-------|---------------------------|-------------|---------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| QA-01 | Disponibilidad            | Alta        | Operarios, Conductores y Supervisores                         | El sistema debe estar disponible durante toda la jornada operativa.                              |
+| QA-02 | Rendimiento               | Alta        | Supervisor Operativo                                          | La información debe mostrarse rápidamente para apoyar decisiones oportunas.                      |
+| QA-03 | Seguridad                 | Alta        | Administrador del Sistema, Departamento de TI                 | Debe proteger la información operativa y administrativa contra accesos no autorizados.           |
+| QA-04 | Auditabilidad             | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental   | Se requiere evidencia completa de actividades, incidencias y cambios realizados.                 |
+| QA-05 | Modificabilidad           | Media       | Departamento de Tecnologías de Información                    | La plataforma debe evolucionar fácilmente para soportar nuevos requerimientos.                   |
 ### 3.3 Restricciones que actúan como drivers
 
 > Restricciones que no son negociables y obligan a decisiones arquitectónicas específicas.
 
-| ID      | Restricción   | Tipo                            | Impacto en el diseño             |
-| ------- | ------------- | ------------------------------- | -------------------------------- |
-| REST-01 | [Descripción] | Técnica / Negocio / Regulatoria | [Cómo condiciona las decisiones] |
-| REST-02 |               |                                 |                                  |
+| ID      | Restricción                                                                 | Tipo        | Impacto en el diseño                                                                    |
+|----------|-----------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------------------|
+| REST-01 | Cumplir las políticas institucionales de seguridad de la información.       | Regulatoria | Obliga a implementar autenticación, autorización y protección de datos.                |
+| REST-02 | Mantener trazabilidad completa de operaciones e incidencias.                | Negocio     | Requiere auditoría y conservación de registros históricos.                             |
+| REST-03 | Integrarse con la infraestructura tecnológica institucional existente.      | Técnica     | Condiciona las tecnologías utilizadas y la arquitectura de despliegue.                 |
+| REST-04 | Conservar información histórica para análisis e indicadores.                | Negocio     | Obliga a diseñar estrategias de persistencia y consulta eficientes.                    |
+| REST-05 | Cumplir normativa costarricense aplicable a gestión municipal y residuos.   | Regulatoria | Condiciona el manejo, almacenamiento y disponibilidad de la información del sistema.    |
 
 ---
 
