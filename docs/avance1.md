@@ -9,7 +9,7 @@
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | **Nombre del sistema**            | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos                                          |
 | **Grupo**                         | Grupo 2                                                                                                                      |
-| **Integrantes**                   | [Michael Jiménez Montero — Carné], [Gregory Morera Torres — Carné], [Nombre — Carné], [Nombre — Carné]                                      |
+| **Integrantes**                   | [Michael Jiménez Montero — Carné], [Gregory Morera Torres — Carné], [Milton Alvarado Ramirez — Carné], [Nombre — Carné]                                      |
 | **URL del repositorio**           | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre |
 | **Docente**                       | [Nombre del docente]                                                                                                         |
 | **Cuatrimestre**                  | 2026 — 2                                                                                                                     |
@@ -23,7 +23,7 @@
 | Versión | Fecha        | Hito                | Cambios principales            | Autor(es)         |
 | ------- | ------------ | ------------------- | ------------------------------ | ----------------- |
 | 0.1     | [fecha]      | Propuesta (S03)     | Creación del documento inicial | [nombres]         |
-| 0.2     | [20/06/2026] | Avance 1 (S07)      | [descripción]                  | [Michael Jiménez, Gregory Morera] |
+| 0.2     | [20/06/2026] | Avance 1 (S07)      | [descripción]                  | [Michael Jiménez, Gregory Morera, Milton Alvarado] |
 | 0.3     | [fecha]      | Avance 2 (S11)      | [descripción]                  | [nombres]         |
 | 1.0     | [fecha]      | Entrega final (S14) | Documento completo             | [nombres]         |
 
@@ -340,18 +340,61 @@ _Hito: Avance 1 (S07)_
 
 > **Qué muestra:** El sistema como una caja negra en su entorno. Las personas y sistemas externos que interactúan con él. Las relaciones entre ellos. **No muestra** lo que hay dentro del sistema.
 >
-> **Notación:** C4 nivel 1 (Context Diagram). Aplica a todos los tipos de sistema — un sistema embebido, un pipeline de datos, un monolito y una plataforma SaaS todos tienen contexto externo.
+> **Notación:** C4 nivel 1 (Context Diagram). Esta notación permite representar la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos dentro del entorno en el que opera, identificando los actores y sistemas externos con los que intercambia información.
 >
-> **Instrucciones:** Incluí el diagrama (imagen exportada o código PlantUML/Mermaid en `/diagramas/c4-contexto.puml`). Debajo del diagrama, describí cada elemento: el sistema central, cada actor externo (persona o rol) y cada sistema externo, con una oración que explique la naturaleza de la relación.
+> **Instrucciones:** Se incluye el diagrama en formato Mermaid. Debajo del diagrama se describe el sistema principal, los actores externos y los sistemas externos, indicando la naturaleza de las relaciones existentes entre ellos.
 
-![Vista de contexto](../diagramas/c4-contexto.png)
-_Figura 1 — Vista de contexto del sistema [Nombre]_
+---
+La vista de contexto representa la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos dentro de su entorno de operación, mostrando los principales actores que interactúan con ella y los sistemas externos necesarios para soportar sus funcionalidades. El objetivo de esta vista es proporcionar una comprensión de alto nivel del sistema y de las relaciones existentes con elementos externos, sin exponer detalles internos de implementación.
 
-| Elemento             | Tipo              | Descripción de la relación                              |
-| -------------------- | ----------------- | ------------------------------------------------------- |
-| [Nombre del sistema] | Sistema principal | [Descripción breve]                                     |
-| [Actor externo 1]    | Persona / Rol     | [Qué hace con el sistema y cómo]                        |
-| [Sistema externo 1]  | Sistema externo   | [Qué datos o servicios intercambia y con qué protocolo] |
+De acuerdo con el modelo C4 propuesto por Brown, la vista de contexto constituye el nivel más alto de abstracción y permite representar el sistema como una única unidad funcional dentro del ecosistema en el que opera, facilitando la comunicación entre los distintos interesados y proporcionando una comprensión común del alcance de la solución (Brown, 2014). Asimismo, Gomaa señala que las vistas arquitectónicas deben permitir identificar las interacciones entre el sistema y su entorno, favoreciendo el entendimiento de los requisitos y las responsabilidades asociadas a cada actor (Gomaa, 2011).
+
+```mermaid
+flowchart LR
+
+Operario["Operario de recolección"]
+Conductor["Conductor de vehículo recolector"]
+Supervisor["Supervisor operativo"]
+Jefatura["Jefatura de Servicios Urbanos"]
+Ambiental["Dirección de Gestión Ambiental"]
+Planificacion["Departamento de Planificación Municipal"]
+
+Sistema["Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos"]
+
+Mapas["Servicio externo de mapas"]
+GPS["Servicio de geolocalización"]
+Notificaciones["Servicio de notificaciones"]
+Identidad["Sistema de identidad municipal"]
+
+Operario -->|"Registra incidencias y consulta rutas"| Sistema
+Conductor -->|"Consulta ruta y reporta avance"| Sistema
+Supervisor -->|"Monitorea operación y gestiona incidencias"| Sistema
+Jefatura -->|"Consulta dashboards e indicadores"| Sistema
+Ambiental -->|"Consulta reportes y análisis"| Sistema
+Planificacion -->|"Consulta métricas históricas"| Sistema
+
+Sistema -->|"Obtiene mapas y rutas"| Mapas
+GPS -->|"Envía ubicación de unidades"| Sistema
+Sistema -->|"Envía alertas operativas"| Notificaciones
+Sistema -->|"Valida usuarios y permisos"| Identidad
+```
+_Figura 1 — Vista de contexto del sistema Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
+
+| Elemento | Tipo | Descripción de la relación |
+|----------|------|----------------------------|
+| Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos | Sistema principal | Sistema central del proyecto. Permite planificar rutas, administrar vehículos y cuadrillas, monitorear unidades recolectoras, registrar incidencias operativas y generar reportes para apoyar la supervisión y la toma de decisiones. |
+| Operario de recolección | Persona / Rol | Registra incidencias operativas y consulta las rutas asignadas durante la ejecución de las labores de recolección. |
+| Conductor de vehículo recolector | Persona / Rol | Consulta el recorrido asignado y reporta el avance de la ruta durante la jornada operativa. |
+| Supervisor operativo | Persona / Rol | Monitorea las unidades recolectoras, supervisa el cumplimiento de las rutas y gestiona incidencias operativas. |
+| Jefatura de Servicios Urbanos | Persona / Rol | Consulta dashboards, reportes e indicadores para supervisar la operación y apoyar la toma de decisiones. |
+| Dirección de Gestión Ambiental | Persona / Rol | Analiza el desempeño del servicio y utiliza la información histórica para apoyar procesos de mejora continua. |
+| Departamento de Planificación Municipal | Persona / Rol | Consulta métricas históricas e información consolidada para apoyar la planificación del servicio. |
+| Servicio externo de mapas | Sistema externo | Proporciona mapas, rutas y capacidades de georreferenciación utilizadas por la plataforma para la visualización geoespacial. |
+| Servicio de geolocalización | Sistema externo | Envía periódicamente la ubicación de las unidades recolectoras para soportar el monitoreo operativo. |
+| Servicio de notificaciones | Sistema externo | Recibe solicitudes de la plataforma para enviar alertas relacionadas con incidencias y eventos relevantes. |
+| Sistema de identidad municipal | Sistema externo | Proporciona servicios de autenticación y autorización para validar usuarios, roles y permisos de acceso. |
+
+Brown (2014) establece que la vista de contexto tiene como objetivo mostrar el sistema dentro del entorno en el que opera y representar las relaciones existentes con personas y sistemas externos. De forma complementaria, Gomaa (2011) señala que la identificación de actores y responsabilidades facilita la comprensión de los requisitos y de las interacciones entre el sistema y su entorno, constituyendo un insumo fundamental para las siguientes vistas arquitectónicas.
 
 ---
 
