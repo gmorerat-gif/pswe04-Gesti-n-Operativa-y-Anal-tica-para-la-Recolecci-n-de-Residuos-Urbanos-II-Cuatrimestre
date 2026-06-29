@@ -9,12 +9,14 @@
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | **Nombre del sistema**            | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos                                          |
 | **Grupo**                         | Grupo 2                                                                                                                      |
-| **Integrantes**                   | [Michael Jiménez Montero — Carné], [Gregory Morera Torres — Carné], [Milton Alvarado Ramirez — Carné], [Nombre — Carné]                                      |
+| **Integrantes**                   | Michael Jiménez Montero — 503580589,    Gregory Morera Torres — 115190172, Milton Alvarado Ramirez — 503510070, Juan Ignacio Gonzales Cortes — 118760078
+
+                                    
 | **URL del repositorio**           | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre |
-| **Docente**                       | [Nombre del docente]                                                                                                         |
+| **Docente**                       | JUAN MAURICIO LEANDRO JIMENEZ                                                                                                         |
 | **Cuatrimestre**                  | 2026 — 2                                                                                                                     |
-| **Versión del documento**         | 0.1 — Propuesta inicial                                                                                                      |
-| **Fecha de última actualización** | [YYYY-MM-DD]                                                                                                                 |
+| **Versión del documento**         | 0.2 — Avance1                                                                                                       |
+| **Fecha de última actualización** | [2026-06-28]                                                                                                                 |
 
 ---
 
@@ -22,8 +24,8 @@
 
 | Versión | Fecha        | Hito                | Cambios principales            | Autor(es)         |
 | ------- | ------------ | ------------------- | ------------------------------ | ----------------- |
-| 0.1     | [fecha]      | Propuesta (S03)     | Creación del documento inicial | [nombres]         |
-| 0.2     | [20/06/2026] | Avance 1 (S07)      | [descripción]                  | [Michael Jiménez, Gregory Morera, Milton Alvarado] |
+| 0.1     | 23/06/2026     | Propuesta (S03)     | Creación del documento inicial | Michael Jiménez/Milton Alvarado         |
+| 0.2     | 28/06/2026 | Avance 1 (S07)      | Contexto del sistema. Stakeholders, Drivers arquitectónicos,Escenarios de Calidad. Vista de Contexto   | Michael Jiménez, Gregory Morera, Milton Alvarado, Juan Ignacio Gonzales Cortes |
 | 0.3     | [fecha]      | Avance 2 (S11)      | [descripción]                  | [nombres]         |
 | 1.0     | [fecha]      | Entrega final (S14) | Documento completo             | [nombres]         |
 
