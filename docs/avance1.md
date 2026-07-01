@@ -1,6 +1,18 @@
 # Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos
+
 ---
 
+| Campo                  | Detalle                                                                                                                                               |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Nombre del sistema** | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos                                                                   |
+| **Grupo**              | Grupo 2                                                                                                                                               |
+| **Integrantes**        | Michael Jiménez Montero — 503580589, Gregory Morera Torres — 115190172, Milton Alvarado Ramirez — 503510070, Juan Ignacio Gonzales Cortes — 118760078 |
+
+| **URL del repositorio** | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre |
+| **Docente** | JUAN MAURICIO LEANDRO JIMENEZ |
+| **Cuatrimestre** | 2026 — 2 |
+| **Versión del documento** | 0.2 — Avance1 |
+| **Fecha de última actualización** | [2026-06-28] |
 | Campo | Detalle |
 |--------|---------|
 | Nombre del sistema | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos |
@@ -16,12 +28,17 @@
 
 ## Historial de versiones
 
-| Versión | Fecha        | Hito                | Cambios principales            | Autor(es)         |
-| ------- | ------------ | ------------------- | ------------------------------ | ----------------- |
-| 0.1     | 23/06/2026     | Propuesta (S03)     | Creación del documento inicial | Michael Jiménez/Milton Alvarado         |
-| 0.2     | 28/06/2026 | Avance 1 (S07)      | Contexto del sistema. Stakeholders, Drivers arquitectónicos,Escenarios de Calidad. Vista de Contexto   | Michael Jiménez, Gregory Morera, Milton Alvarado, Juan Ignacio Gonzales Cortes |
-| 0.3     | 30/06/2026 | Avance 1 (S07)      | Corrección de observaciones derivadas de la revisión del Avance 1 (versión 0.2).   | Michael Jiménez/ Milton Alvarado/ Juan Ignacio Gonzales Cortes |
-
+| Versión | Fecha        | Hito                | Cambios principales                                                                                  | Autor(es)                                                                      |
+| ------- | ------------ | ------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 0.1     | 23/06/2026   | Propuesta (S03)     | Creación del documento inicial                                                                       | Michael Jiménez/Milton Alvarado                                                |
+| 0.2     | 28/06/2026   | Avance 1 (S07)      | Contexto del sistema. Stakeholders, Drivers arquitectónicos,Escenarios de Calidad. Vista de Contexto | Michael Jiménez, Gregory Morera, Milton Alvarado, Juan Ignacio Gonzales Cortes |
+| 0.3     | [fecha]      | Avance 2 (S11)      | [descripción]                                                                                        | [nombres]                                                                      |
+| 1.0     | [fecha]      | Entrega final (S14) | Documento completo                                                                                   | [nombres]                                                                      |
+| Versión | Fecha        | Hito                | Cambios principales                                                                                  | Autor(es)                                                                      |
+| ------- | ------------ | ------------------- | ------------------------------                                                                       | -----------------                                                              |
+| 0.1     | 23/06/2026   | Propuesta (S03)     | Creación del documento inicial                                                                       | Michael Jiménez/Milton Alvarado                                                |
+| 0.2     | 28/06/2026   | Avance 1 (S07)      | Contexto del sistema. Stakeholders, Drivers arquitectónicos,Escenarios de Calidad. Vista de Contexto | Michael Jiménez, Gregory Morera, Milton Alvarado, Juan Ignacio Gonzales Cortes |
+| 0.3     | 30/06/2026   | Avance 1 (S07)      | Corrección de observaciones derivadas de la revisión del Avance 1 (versión 0.2).                     | Michael Jiménez/ Milton Alvarado/ Juan Ignacio Gonzales Cortes                 |
 
 ---
 
@@ -66,20 +83,23 @@
 10. [Principios y técnicas habilitadoras](#10-principios-y-técnicas-habilitadoras)
 
 11. [Calidad y trazabilidad](#11-calidad-y-trazabilidad)
-   - 11.1 [Validación de escenarios de calidad](#111-validación-de-escenarios-de-calidad)
-   - 11.2 [Análisis de trade-offs entre atributos de calidad](#112-análisis-de-trade-offs-entre-atributos-de-calidad)
-   - 11.3 [Métricas de calidad del diseño](#113-métricas-de-calidad-del-diseño)
+
+- 11.1 [Validación de escenarios de calidad](#111-validación-de-escenarios-de-calidad)
+- 11.2 [Análisis de trade-offs entre atributos de calidad](#112-análisis-de-trade-offs-entre-atributos-de-calidad)
+- 11.3 [Métricas de calidad del diseño](#113-métricas-de-calidad-del-diseño)
 
 12. [Secciones específicas según el tipo de sistema](#12-secciones-específicas-según-el-tipo-de-sistema)
-   - 12.1 [Sistemas distribuidos / Cloud](#121-sistemas-distribuidos--cloud)
-   - 12.2 [Sistemas concurrentes o de tiempo real](#122-sistemas-concurrentes-o-de-tiempo-real)
-   - 12.3 [Sistemas IoT / Edge](#123-sistemas-iot--edge)
-   - 12.4 [Sistemas con Inteligencia Artificial Generativa o Agentes](#124-sistemas-con-inteligencia-artificial-generativa-o-agentes)
-   - 12.5 [Sistemas con requerimientos de seguridad crítica](#125-sistemas-con-requerimientos-de-seguridad-crítica)
+
+- 12.1 [Sistemas distribuidos / Cloud](#121-sistemas-distribuidos--cloud)
+- 12.2 [Sistemas concurrentes o de tiempo real](#122-sistemas-concurrentes-o-de-tiempo-real)
+- 12.3 [Sistemas IoT / Edge](#123-sistemas-iot--edge)
+- 12.4 [Sistemas con Inteligencia Artificial Generativa o Agentes](#124-sistemas-con-inteligencia-artificial-generativa-o-agentes)
+- 12.5 [Sistemas con requerimientos de seguridad crítica](#125-sistemas-con-requerimientos-de-seguridad-crítica)
 
 13. [Tendencias y evolución del diseño](#13-tendencias-y-evolución-del-diseño)
-   - 13.1 [Tendencias arquitectónicas](#131-tendencias-arquitectónicas)
-   - 13.2 [Evolución del diseño](#132-evolución-del-diseño)
+
+- 13.1 [Tendencias arquitectónicas](#131-tendencias-arquitectónicas)
+- 13.2 [Evolución del diseño](#132-evolución-del-diseño)
 
 14. [Glosario](#14-glosario)
 
@@ -159,6 +179,27 @@ No administra infraestructura tecnológica institucional, redes, servidores o pl
 | Analista de Planificación y Gestión | Consultar información histórica consolidada, analizar tendencias operativas, generar reportes analíticos, evaluar indicadores de desempeño, exportar información para planificación            |
 | Administrador del Sistema           | Gestionar usuarios y roles, administrar permisos de acceso, configurar parámetros operativos, administrar catálogos y datos maestros, consultar registros de auditoría                         |
 
+### 1.5 Problema arquitectónico central
+
+El problema arquitectónico central de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos no consiste únicamente en digitalizar la gestión de rutas, vehículos, cuadrillas e incidencias. El núcleo del problema está en mantener una visibilidad operativa confiable de la recolección mientras la información se genera en campo, se actualiza en intervalos cercanos al tiempo real y se consolida posteriormente para supervisión, fiscalización y análisis histórico.
+
+La operación de recolección ocurre de forma distribuida: múltiples unidades y cuadrillas ejecutan rutas en distintos puntos geográficos del cantón, mientras supervisores y jefaturas necesitan conocer el estado de la operación para tomar decisiones oportunas. Esto genera una tensión arquitectónica entre la actualización rápida de datos operativos, la confiabilidad de la información recibida desde campo, la trazabilidad de los eventos registrados y la conservación de datos históricos para análisis posterior.
+
+Para efectos del sistema, la fuente primaria de la ubicación de una unidad recolectora será el servicio o dispositivo de geolocalización asociado a la unidad. La plataforma recibirá actualizaciones periódicas de ubicación en un intervalo objetivo de 15 a 30 segundos durante la ejecución de las rutas. Sin embargo, el sistema no debe asumir que esta información estará siempre disponible ni que los servicios externos funcionarán sin interrupciones. Por esta razón, la arquitectura deberá contemplar escenarios donde el GPS no reporte, donde exista conectividad intermitente o donde el servicio externo de mapas presente fallos o latencia.
+
+La información operativa en tiempo casi real corresponde principalmente a la ubicación de unidades, estado de rutas, avance de recorridos, incidencias activas y alertas operativas. En cambio, la información histórica o analítica corresponde a rutas ejecutadas, incidencias cerradas, cumplimiento de recorridos, tiempos de atención, utilización de vehículos y métricas consolidadas para reportes. Esta separación es relevante porque el dashboard operativo requiere datos recientes para supervisión inmediata, mientras que los reportes analíticos requieren datos consistentes, consolidados y consultables a lo largo del tiempo.
+
+Desde el punto de vista de seguridad y fiscalización, el sistema también debe distinguir qué información puede consultar cada rol. Operarios y conductores requieren acceso a datos asociados a sus rutas y actividades asignadas; supervisores requieren visibilidad operativa de rutas, unidades e incidencias; jefaturas, planificación y gestión ambiental requieren reportes e indicadores consolidados; y administradores requieren capacidades de configuración, usuarios, roles y auditoría. Esta diferenciación obliga a diseñar mecanismos de autorización, trazabilidad y control de acceso desde la arquitectura.
+
+Por tanto, las decisiones arquitectónicas del sistema deberán responder a las siguientes preguntas centrales:
+
+- ¿Cómo capturar y actualizar la ubicación de unidades recolectoras sin depender de disponibilidad perfecta del GPS o del servicio de mapas?
+- ¿Cómo mantener un dashboard operativo actualizado sin sacrificar trazabilidad ni consistencia histórica?
+- ¿Cómo separar los datos operativos de corto plazo de los datos históricos usados para reportes y análisis?
+- ¿Cómo registrar eventos auditables relacionados con rutas, incidencias, cambios de estado, usuarios y permisos?
+- ¿Cómo controlar el acceso a la información según el rol del usuario?
+- ¿Cómo diseñar la plataforma para que el Avance 2 derive decisiones arquitectónicas concretas a partir de estos drivers y escenarios de calidad?
+
 ---
 
 ## 2. Stakeholders
@@ -182,34 +223,48 @@ No administra infraestructura tecnológica institucional, redes, servidores o pl
 
 ### 3.1 Requerimientos funcionales clave
 
-
-| ID    | Requerimiento | Stakeholder | ¿Por qué es un driver? |
-|--------|---------------|-------------|--------------------------|
-| RF-01 | Monitorear en tiempo real la ejecución de rutas y la ubicación de las unidades. | Supervisor Operativo | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información en tiempo real. |
-| RF-02 | Gestionar incidencias operativas durante los recorridos. | Supervisor Operativo, Operario de Recolección | Requiere componentes para el registro, seguimiento y trazabilidad de eventos operativos. |
-| RF-03 | Generar reportes e indicadores históricos para la toma de decisiones. | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Obliga a incorporar mecanismos de almacenamiento histórico y capacidades analíticas. |
-| RF-04 | Administrar usuarios, roles y permisos de acceso. | Administrador del Sistema | Impacta directamente la arquitectura de seguridad, autenticación y control de acceso. |
-| RF-05 | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación. | Supervisor Operativo | Define las entidades principales del dominio y condiciona la estructura central de la solución. |
+| ID       | Requerimiento                                                                                                                            | Stakeholder                                                        | Por qué es un driver                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | --- | --- | --- |
+| RF-01    | Monitorear en tiempo casi real la ejecución de rutas y la ubicación de las unidades, con actualizaciones objetivo cada 15 a 30 segundos. | Supervisor Operativo                                               | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información en tiempo real. |
+| RF-02    | Gestionar incidencias operativas durante los recorridos.                                                                                 | Supervisor Operativo, Operario de Recolección                      | Requiere componentes para registro, seguimiento y trazabilidad de eventos operativos.                |
+| RF-03    | Generar reportes e indicadores históricos para toma de decisiones.                                                                       | Jefatura de Servicios Urbanos, Analista de Gestión                 | Obliga a incorporar almacenamiento histórico y capacidades analíticas.                               |
+| RF-04    | Administrar usuarios, roles y permisos de acceso.                                                                                        | Administrador del Sistema                                          | Impacta directamente la arquitectura de seguridad y control de acceso.                               |
+| RF-05    | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación.                                                                     | Supervisor Operativo                                               | Define las entidades principales del dominio y la estructura central del sistema.                    |     |     |     |
+| ID       | Requerimiento                                                                                                                            | Stakeholder                                                        | ¿Por qué es un driver?                                                                               |
+| -------- | ---------------                                                                                                                          | -------------                                                      | --------------------------                                                                           |
+| RF-01    | Monitorear en tiempo real la ejecución de rutas y la ubicación de las unidades.                                                          | Supervisor Operativo                                               | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información en tiempo real. |
+| RF-02    | Gestionar incidencias operativas durante los recorridos.                                                                                 | Supervisor Operativo, Operario de Recolección                      | Requiere componentes para el registro, seguimiento y trazabilidad de eventos operativos.             |
+| RF-03    | Generar reportes e indicadores históricos para la toma de decisiones.                                                                    | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Obliga a incorporar mecanismos de almacenamiento histórico y capacidades analíticas.                 |
+| RF-04    | Administrar usuarios, roles y permisos de acceso.                                                                                        | Administrador del Sistema                                          | Impacta directamente la arquitectura de seguridad, autenticación y control de acceso.                |
+| RF-05    | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación.                                                                     | Supervisor Operativo                                               | Define las entidades principales del dominio y condiciona la estructura central de la solución.      |
 
 ### 3.2 Atributos de calidad prioritarios
 
-| ID    | Atributo                  | Importancia | Stakeholder                                                   | Justificación                                                                                     |
-|-------|---------------------------|-------------|---------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| QA-01 | Disponibilidad            | Alta        | Operarios, Conductores y Supervisores                         | El sistema debe estar disponible durante toda la jornada operativa.                              |
-| QA-02 | Rendimiento               | Alta        | Supervisor Operativo                                          | La información debe mostrarse rápidamente para apoyar decisiones oportunas.                      |
-| QA-03 | Seguridad                 | Alta        | Administrador del Sistema, Departamento de TI                 | Debe proteger la información operativa y administrativa contra accesos no autorizados.           |
-| QA-04 | Auditabilidad             | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental   | Se requiere evidencia completa de actividades, incidencias y cambios realizados.                 |
-| QA-05 | Modificabilidad           | Media       | Departamento de Tecnologías de Información                    | La plataforma debe evolucionar fácilmente para soportar nuevos requerimientos.                   |
+| ID    | Atributo        | Importancia | Stakeholder                                                 | Justificación                                                                          |
+| ----- | --------------- | ----------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                       | El sistema debe estar disponible durante toda la jornada operativa.                    |
+| QA-02 | Rendimiento     | Alta        | Supervisor Operativo                                        | La información debe mostrarse rápidamente para apoyar decisiones oportunas.            |
+| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de TI               | Debe proteger la información operativa y administrativa contra accesos no autorizados. |
+| QA-04 | Auditabilidad   | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental | Se requiere evidencia completa de actividades, incidencias y cambios realizados.       |
+| QA-05 | Modificabilidad | Media       | Departamento de Tecnologías de Información                  | La plataforma debe evolucionar fácilmente para soportar nuevos requerimientos.         |
+
+| ID    | Atributo        | Importancia | Stakeholder                                                 | Justificación                                                                          |
+| ----- | --------------- | ----------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                       | El sistema debe estar disponible durante toda la jornada operativa.                    |
+| QA-02 | Rendimiento     | Alta        | Supervisor Operativo                                        | La información debe mostrarse rápidamente para apoyar decisiones oportunas.            |
+| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de TI               | Debe proteger la información operativa y administrativa contra accesos no autorizados. |
+| QA-04 | Auditabilidad   | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental | Se requiere evidencia completa de actividades, incidencias y cambios realizados.       |
+| QA-05 | Modificabilidad | Media       | Departamento de Tecnologías de Información                  | La plataforma debe evolucionar fácilmente para soportar nuevos requerimientos.         |
 
 ### 3.3 Restricciones que actúan como drivers
 
-| ID      | Restricción                                                                 | Tipo        | Impacto en el diseño                                                                    |
-|----------|-----------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------------------|
-| REST-01 | Cumplir las políticas institucionales de seguridad de la información.       | Regulatoria | Obliga a implementar autenticación, autorización y protección de datos.                |
-| REST-02 | Mantener trazabilidad completa de operaciones e incidencias.                | Negocio     | Requiere auditoría y conservación de registros históricos.                             |
-| REST-03 | Integrarse con la infraestructura tecnológica institucional existente.      | Técnica     | Condiciona las tecnologías utilizadas y la arquitectura de despliegue.                 |
-| REST-04 | Conservar información histórica para análisis e indicadores.                | Negocio     | Obliga a diseñar estrategias de persistencia y consulta eficientes.                    |
-| REST-05 | Cumplir normativa costarricense aplicable a gestión municipal y residuos.   | Regulatoria | Condiciona el manejo, almacenamiento y disponibilidad de la información del sistema.    |
+| ID      | Restricción                                                               | Tipo        | Impacto en el diseño                                                                 |
+| ------- | ------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
+| REST-01 | Cumplir las políticas institucionales de seguridad de la información.     | Regulatoria | Obliga a implementar autenticación, autorización y protección de datos.              |
+| REST-02 | Mantener trazabilidad completa de operaciones e incidencias.              | Negocio     | Requiere auditoría y conservación de registros históricos.                           |
+| REST-03 | Integrarse con la infraestructura tecnológica institucional existente.    | Técnica     | Condiciona las tecnologías utilizadas y la arquitectura de despliegue.               |
+| REST-04 | Conservar información histórica para análisis e indicadores.              | Negocio     | Obliga a diseñar estrategias de persistencia y consulta eficientes.                  |
+| REST-05 | Cumplir normativa costarricense aplicable a gestión municipal y residuos. | Regulatoria | Condiciona el manejo, almacenamiento y disponibilidad de la información del sistema. |
 
 ---
 
@@ -323,6 +378,80 @@ El sistema está compuesto por varios módulos: planificación de rutas, monitor
 
 _Tensión con:_ QS-02 — Disponibilidad del dashboard operativo, porque una arquitectura más modular facilita el mantenimiento, pero puede introducir más dependencias internas que deben gestionarse correctamente para no afectar la operación.
 
+### 4.1 Trazabilidad hacia decisiones arquitectónicas del Avance 2
+
+Los escenarios de calidad definidos en este avance no se consideran elementos aislados. Su propósito es preparar las decisiones arquitectónicas que deberán formalizarse en el Avance 2 mediante la vista de contenedores C4, la selección del estilo arquitectónico, los ADRs y el primer componente con diseño detallado.
+
+La siguiente matriz relaciona los problemas arquitectónicos identificados, los drivers y escenarios de calidad asociados, y las decisiones que deberán analizarse en el siguiente hito.
+
+| Problema arquitectónico                                            | Drivers relacionados       | Escenarios relacionados | Decisión esperada para Avance 2                                                                                                                                                                     |
+| ------------------------------------------------------------------ | -------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Monitoreo geoespacial casi en tiempo real de unidades recolectoras | RF-01, QA-02               | QS-01, QS-05            | Definir el mecanismo de captura, procesamiento y visualización de ubicaciones: actualización periódica, procesamiento asincrónico, almacenamiento temporal y actualización del dashboard operativo. |
+| Falla o latencia de servicios externos de mapas y geolocalización  | RF-01, QA-01, QA-02        | QS-01, QS-05            | Definir una estrategia de resiliencia ante fallos externos: uso de última ubicación conocida, alertas al supervisor, timeouts, reintentos controlados y degradación funcional.                      |
+| Separación entre operación diaria y análisis histórico             | RF-03, QA-04, QA-05        | QS-02, QS-04, QS-06     | Definir si la arquitectura separará el dashboard operativo de los reportes analíticos mediante módulos, bases de datos, vistas materializadas o procesos de consolidación.                          |
+| Trazabilidad de incidencias y eventos operativos                   | RF-02, QA-04               | QS-04                   | Definir cómo se registrarán eventos auditables: creación de incidencias, cambios de estado, usuario responsable, fecha, hora, ubicación y acciones realizadas.                                      |
+| Control de acceso por roles                                        | RF-04, QA-03               | QS-03                   | Definir el mecanismo de autenticación y autorización, incluyendo integración con un sistema de identidad municipal y políticas de acceso por rol.                                                   |
+| Disponibilidad del dashboard operativo durante la jornada          | RF-01, QA-01, QA-02        | QS-02, QS-05            | Definir una estructura que permita mantener disponible la consulta operativa aun cuando algunos servicios externos fallen parcialmente.                                                             |
+| Evolución y mantenibilidad de módulos                              | RF-02, RF-03, RF-05, QA-05 | QS-06                   | Definir fronteras internas entre planificación de rutas, monitoreo, incidencias, administración de recursos, seguridad y analítica.                                                                 |
+| Persistencia de datos operativos e históricos                      | RF-03, QA-04               | QS-04, QS-06            | Definir la estrategia de almacenamiento para datos transaccionales, datos geoespaciales, eventos auditables y datos históricos usados en reportes.                                                  |
+
+A partir de esta trazabilidad, los ADRs del Avance 2 deberán derivarse directamente de los problemas identificados en este documento. De forma preliminar, se identifican las siguientes decisiones candidatas:
+
+| ADR candidato | Decisión a documentar                                             | Justificación                                                                                                                                                 |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ADR-001       | Estrategia de monitoreo geoespacial casi en tiempo real           | Responde a la necesidad de actualizar la ubicación de unidades cada 15 a 30 segundos y mantener visibilidad operativa confiable.                              |
+| ADR-002       | Separación entre dashboard operativo y reportes analíticos        | Permite distinguir datos recientes usados para supervisión inmediata de datos históricos usados para análisis y planificación.                                |
+| ADR-003       | Estrategia de resiliencia ante fallos de mapas/geolocalización    | Permite mantener continuidad operativa cuando servicios externos fallen, respondan lento o dejen de reportar ubicación.                                       |
+| ADR-004       | Modelo de trazabilidad y auditoría de incidencias                 | Permite registrar eventos operativos relevantes para supervisión, fiscalización y análisis posterior.                                                         |
+| ADR-005       | Mecanismo de autenticación y autorización por roles               | Permite controlar qué información puede consultar o modificar cada usuario según sus responsabilidades.                                                       |
+| ADR-006       | Estrategia de persistencia para información operativa e histórica | Permite soportar consultas operativas, conservación histórica, reportes e indicadores sin mezclar necesidades de lectura inmediatas con análisis posteriores. |
+
+## Estas decisiones deberán conectarse en el Avance 2 con la vista de contenedores C4, el estilo arquitectónico seleccionado, los trade-offs identificados y el diseño detallado del primer componente.
+
+## 5. Restricciones
+
+> **Instrucciones:** Las restricciones son decisiones que ya fueron tomadas antes de que el grupo empiece a diseñar — no son negociables. Pueden ser tecnológicas (el cliente ya tiene Oracle), de negocio (el sistema debe estar listo en 6 meses), regulatorias (cumplimiento de la Ley 8968 en Costa Rica) o de equipo (el grupo solo conoce Java). Sé honesto — las restricciones reales ayudan a justificar decisiones de diseño que de otra forma parecerían arbitrarias.
+
+| ID      | Restricción           | Tipo                                     | Origen            | Impacto en el diseño           |
+| ------- | --------------------- | ---------------------------------------- | ----------------- | ------------------------------ |
+| REST-01 | [Descripción precisa] | Técnica / Negocio / Regulatoria / Equipo | [Quién la impone] | [Cómo limita o guía el diseño] |
+| REST-02 |                       |                                          |                   |                                |
+
+---
+
+## 6. Principios de diseño adoptados
+
+> **Instrucciones:** Listá los principios que el grupo se compromete a respetar durante todo el diseño. No los listés todos — elegí los que son más relevantes para este sistema y explicá por qué cada uno importa en este contexto. En la sección 12 vas a demostrar con evidencia concreta que los respetaste.
+
+| Principio                                                | Justificación para este sistema                                              |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [ej. Separación de responsabilidades]                    | [Por qué este principio es especialmente importante dado el tipo de sistema] |
+| [ej. Diseño para el cambio]                              |                                                                              |
+| [ej. Defensa en profundidad]                             |                                                                              |
+| [Agregar los que apliquen: SOLID, DRY, KISS, PoLA, etc.] |                                                                              |
+
+---
+
+# BLOQUE 3 — VISTAS ARQUITECTÓNICAS
+
+_Hito: Avance 1 (S07) — sección 7.1 / Avance 2 (S11) — secciones 7.2 a 7.5_
+
+> **Nota sobre notación:** Este documento usa **C4 como notación por defecto** para las vistas arquitectónicas porque es la notación del texto base del curso (Brown, 2014). Si para alguna vista específica C4 no es la notación más adecuada dado el tipo de sistema, el grupo puede usar la notación UML equivalente (diagrama de componentes, despliegue, estado o actividad), pero debe justificar explícitamente en esa sección por qué C4 no aplica y qué notación alternativa usa. Una justificación insuficiente se evalúa como si no hubiera diagrama.
+
+---
+
+## 7. Vistas arquitectónicas
+
+### 7.1 Vista de contexto
+
+_Hito: Avance 1 (S07)_
+
+> **Qué muestra:** El sistema como una caja negra en su entorno. Las personas y sistemas externos que interactúan con él. Las relaciones entre ellos. **No muestra** lo que hay dentro del sistema.
+>
+> **Notación:** C4 nivel 1 (Context Diagram). Esta notación permite representar la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos dentro del entorno en el que opera, identificando los actores y sistemas externos con los que intercambia información.
+>
+> **Instrucciones:** Se incluye el diagrama en formato Mermaid. Debajo del diagrama se describe el sistema principal, los actores externos y los sistemas externos, indicando la naturaleza de las relaciones existentes entre ellos.
+
 ---
 
 ## 5. Vistas arquitectónicas
@@ -362,21 +491,22 @@ GPS -->|"Envía ubicación de unidades"| Sistema
 Sistema -->|"Envía alertas operativas"| Notificaciones
 Sistema -->|"Valida usuarios y permisos"| Identidad
 ```
+
 _Figura 1 — Vista de contexto del sistema Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
 
-| Elemento | Tipo | Descripción de la relación |
-|----------|------|----------------------------|
+| Elemento                                                                            | Tipo              | Descripción de la relación                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos | Sistema principal | Sistema central del proyecto. Permite planificar rutas, administrar vehículos y cuadrillas, monitorear unidades recolectoras, registrar incidencias operativas y generar reportes para apoyar la supervisión y la toma de decisiones. |
-| Operario de recolección | Persona / Rol | Registra incidencias operativas y consulta las rutas asignadas durante la ejecución de las labores de recolección. |
-| Conductor de vehículo recolector | Persona / Rol | Consulta el recorrido asignado y reporta el avance de la ruta durante la jornada operativa. |
-| Supervisor operativo | Persona / Rol | Monitorea las unidades recolectoras, supervisa el cumplimiento de las rutas y gestiona incidencias operativas. |
-| Jefatura de Servicios Urbanos | Persona / Rol | Consulta dashboards, reportes e indicadores para supervisar la operación y apoyar la toma de decisiones. |
-| Dirección de Gestión Ambiental | Persona / Rol | Analiza el desempeño del servicio y utiliza la información histórica para apoyar procesos de mejora continua. |
-| Departamento de Planificación Municipal | Persona / Rol | Consulta métricas históricas e información consolidada para apoyar la planificación del servicio. |
-| Servicio externo de mapas | Sistema externo | Proporciona mapas, rutas y capacidades de georreferenciación utilizadas por la plataforma para la visualización geoespacial. |
-| Servicio de geolocalización | Sistema externo | Envía periódicamente la ubicación de las unidades recolectoras para soportar el monitoreo operativo. |
-| Servicio de notificaciones | Sistema externo | Recibe solicitudes de la plataforma para enviar alertas relacionadas con incidencias y eventos relevantes. |
-| Sistema de identidad municipal | Sistema externo | Proporciona servicios de autenticación y autorización para validar usuarios, roles y permisos de acceso. |
+| Operario de recolección                                                             | Persona / Rol     | Registra incidencias operativas y consulta las rutas asignadas durante la ejecución de las labores de recolección.                                                                                                                    |
+| Conductor de vehículo recolector                                                    | Persona / Rol     | Consulta el recorrido asignado y reporta el avance de la ruta durante la jornada operativa.                                                                                                                                           |
+| Supervisor operativo                                                                | Persona / Rol     | Monitorea las unidades recolectoras, supervisa el cumplimiento de las rutas y gestiona incidencias operativas.                                                                                                                        |
+| Jefatura de Servicios Urbanos                                                       | Persona / Rol     | Consulta dashboards, reportes e indicadores para supervisar la operación y apoyar la toma de decisiones.                                                                                                                              |
+| Dirección de Gestión Ambiental                                                      | Persona / Rol     | Analiza el desempeño del servicio y utiliza la información histórica para apoyar procesos de mejora continua.                                                                                                                         |
+| Departamento de Planificación Municipal                                             | Persona / Rol     | Consulta métricas históricas e información consolidada para apoyar la planificación del servicio.                                                                                                                                     |
+| Servicio externo de mapas                                                           | Sistema externo   | Proporciona mapas, rutas y capacidades de georreferenciación utilizadas por la plataforma para la visualización geoespacial.                                                                                                          |
+| Servicio de geolocalización                                                         | Sistema externo   | Envía periódicamente la ubicación de las unidades recolectoras para soportar el monitoreo operativo.                                                                                                                                  |
+| Servicio de notificaciones                                                          | Sistema externo   | Recibe solicitudes de la plataforma para enviar alertas relacionadas con incidencias y eventos relevantes.                                                                                                                            |
+| Sistema de identidad municipal                                                      | Sistema externo   | Proporciona servicios de autenticación y autorización para validar usuarios, roles y permisos de acceso.                                                                                                                              |
 
 Brown (2014) establece que la vista de contexto tiene como objetivo mostrar el sistema dentro del entorno en el que opera y representar las relaciones existentes con personas y sistemas externos. De forma complementaria, Gomaa (2011) señala que la identificación de actores y responsabilidades facilita la comprensión de los requisitos y de las interacciones entre el sistema y su entorno, constituyendo un insumo fundamental para las siguientes vistas arquitectónicas.
 
