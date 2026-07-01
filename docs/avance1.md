@@ -462,35 +462,7 @@ La vista de contexto representa la Plataforma de Gestión Operativa y Analítica
 
 De acuerdo con el modelo C4 propuesto por Brown, la vista de contexto constituye el nivel más alto de abstracción y permite representar el sistema como una única unidad funcional dentro del ecosistema en el que opera, facilitando la comunicación entre los distintos interesados y proporcionando una comprensión común del alcance de la solución (Brown, 2014). Asimismo, Gomaa señala que las vistas arquitectónicas deben permitir identificar las interacciones entre el sistema y su entorno, favoreciendo el entendimiento de los requisitos y las responsabilidades asociadas a cada actor (Gomaa, 2011).
 
-```mermaid
-flowchart LR
-
-Operario["Operario de recolección"]
-Conductor["Conductor de vehículo recolector"]
-Supervisor["Supervisor operativo"]
-Jefatura["Jefatura de Servicios Urbanos"]
-Ambiental["Dirección de Gestión Ambiental"]
-Planificacion["Departamento de Planificación Municipal"]
-
-Sistema["Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos"]
-
-Mapas["Servicio externo de mapas"]
-GPS["Servicio de geolocalización"]
-Notificaciones["Servicio de notificaciones"]
-Identidad["Sistema de identidad municipal"]
-
-Operario -->|"Registra incidencias y consulta rutas"| Sistema
-Conductor -->|"Consulta ruta y reporta avance"| Sistema
-Supervisor -->|"Monitorea operación y gestiona incidencias"| Sistema
-Jefatura -->|"Consulta dashboards e indicadores"| Sistema
-Ambiental -->|"Consulta reportes y análisis"| Sistema
-Planificacion -->|"Consulta métricas históricas"| Sistema
-
-Sistema -->|"Obtiene mapas y rutas"| Mapas
-GPS -->|"Envía ubicación de unidades"| Sistema
-Sistema -->|"Envía alertas operativas"| Notificaciones
-Sistema -->|"Valida usuarios y permisos"| Identidad
-```
+![Diagrama C4](../diagramas/c4-contexto.svg)
 
 _Figura 1 — Vista de contexto del sistema Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
 
