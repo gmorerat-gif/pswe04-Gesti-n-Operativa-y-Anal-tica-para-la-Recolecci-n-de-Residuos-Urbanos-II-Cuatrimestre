@@ -1,0 +1,27 @@
+flowchart LR
+
+Operario["Operario de recolección"]
+Conductor["Conductor de vehículo recolector"]
+Supervisor["Supervisor operativo"]
+Jefatura["Jefatura de Servicios Urbanos"]
+Ambiental["Dirección de Gestión Ambiental"]
+Planificacion["Departamento de Planificación Municipal"]
+
+Sistema["Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos"]
+
+Mapas["Servicio externo de mapas"]
+GPS["Servicio de geolocalización"]
+Notificaciones["Servicio de notificaciones"]
+Identidad["Sistema de identidad municipal"]
+
+Operario -->|"Registra incidencias y consulta rutas"| Sistema
+Conductor -->|"Consulta ruta y reporta avance"| Sistema
+Supervisor -->|"Monitorea operación y gestiona incidencias"| Sistema
+Jefatura -->|"Consulta dashboards e indicadores"| Sistema
+Ambiental -->|"Consulta reportes y análisis"| Sistema
+Planificacion -->|"Consulta métricas históricas"| Sistema
+
+Sistema -->|"Obtiene mapas y rutas"| Mapas
+GPS -->|"Envía ubicación de unidades"| Sistema
+Sistema -->|"Envía alertas operativas"| Notificaciones
+Sistema -->|"Valida usuarios y permisos"| Identidad
