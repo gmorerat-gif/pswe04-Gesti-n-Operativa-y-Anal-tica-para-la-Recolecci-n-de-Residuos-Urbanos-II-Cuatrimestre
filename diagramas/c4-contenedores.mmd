@@ -1,0 +1,33 @@
+flowchart LR
+
+Supervisor["Supervisor Operativo"]
+Administrador["Administrador del Sistema"]
+Operario["Operario de Recolección"]
+
+subgraph Sistema["Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos"]
+
+Web["Aplicación Web<br/><<React>>"]
+
+API["API Backend<br/>ASP.NET Core"]
+
+BD["Base de Datos del Sistema<br/>PostgreSQL + PostGIS"]
+
+Web -->|"REST / HTTPS"| API
+
+API -->|"SQL"| BD
+
+end
+
+Identidad["Servicio de Identidad<br/>OpenID Connect / OAuth 2.0"]
+
+Mapas["Servicio de Mapas"]
+
+Notificaciones["Servicio de Notificaciones"]
+
+Supervisor -->|"HTTPS"| Web
+Administrador -->|"HTTPS"| Web
+Operario -->|"HTTPS"| Web
+
+API -->|"HTTPS"| Identidad
+API -->|"REST / HTTPS"| Mapas
+API -->|"REST / HTTPS"| Notificaciones
