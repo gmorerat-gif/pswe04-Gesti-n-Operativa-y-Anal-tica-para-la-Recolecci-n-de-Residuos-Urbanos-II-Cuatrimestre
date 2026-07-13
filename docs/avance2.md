@@ -1,27 +1,27 @@
 # Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos
 
 ---
-| Campo | Detalle |
-|--------|---------|
-| Nombre del sistema | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos |
-| Grupo | Grupo 2 |
-| Integrantes | Michael José Jiménez Montero — 503580589<br>Gregory José Morera Torres — 115190172<br>Milton Alvarado Ramírez — 503510070<br>Juan Ignacio González Cortes — 118760078 |
-| URL del repositorio | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre |
-| Docente | JUAN MAURICIO LEANDRO JIMENEZ |
-| Cuatrimestre | 2026 — 2 |
-| Versión del documento | 0.3 — Avance 2 |
-| Fecha de última actualización | 2026-07-12 |
+
+| Campo                         | Detalle                                                                                                                                                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nombre del sistema            | Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos                                                                                   |
+| Grupo                         | Grupo 2                                                                                                                                                               |
+| Integrantes                   | Michael José Jiménez Montero — 503580589<br>Gregory José Morera Torres — 115190172<br>Milton Alvarado Ramírez — 503510070<br>Juan Ignacio González Cortes — 118760078 |
+| URL del repositorio           | https://github.com/gmorerat-gif/pswe04-Gesti-n-Operativa-y-Anal-tica-para-la-Recolecci-n-de-Residuos-Urbanos-II-Cuatrimestre                                          |
+| Docente                       | JUAN MAURICIO LEANDRO JIMENEZ                                                                                                                                         |
+| Cuatrimestre                  | 2026 — 2                                                                                                                                                              |
+| Versión del documento         | 0.3 — Avance 2                                                                                                                                                        |
+| Fecha de última actualización | 2026-07-12                                                                                                                                                            |
 
 ---
 
 ## Historial de versiones
 
-| Versión | Fecha        | Hito                | Cambios principales                                                                                  | Autor(es)                                                                      |
-| ------- | ------------ | ------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 0.1     | 23/06/2026   | Propuesta (S03) | Creación del documento inicial.                                                                       | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes                                              |
-| 0.2     | 28/06/2026   | Avance 1 (S07) | Desarrollo del contexto del sistema, stakeholders, drivers arquitectónicos, escenarios de calidad y vista de contexto (C4 Nivel 1). | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes |
-| 0.3     | 12/07/2026 | Avance 2 (S11) | Atención de las observaciones derivadas del Avance 1. Desarrollo de la Vista de Estructura Interna (C4 Nivel 2 – Contenedores), Estilo Arquitectónico, Análisis de Trade-offs y Registro de Decisiones Arquitectónicas (ADRs). | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes                                                            |
-
+| Versión | Fecha      | Hito            | Cambios principales                                                                                                                                                                                                            | Autor(es)                                                                                |
+| ------- | ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| 0.1     | 23/06/2026 | Propuesta (S03) | Creación del documento inicial.                                                                                                                                                                                                | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes |
+| 0.2     | 28/06/2026 | Avance 1 (S07)  | Desarrollo del contexto del sistema, stakeholders, drivers arquitectónicos, escenarios de calidad y vista de contexto (C4 Nivel 1).                                                                                            | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes |
+| 0.3     | 12/07/2026 | Avance 2 (S11)  | Atención de las observaciones derivadas del Avance 1. Desarrollo de la Vista de Estructura Interna (C4 Nivel 2 – Contenedores), Estilo Arquitectónico, Análisis de Trade-offs y Registro de Decisiones Arquitectónicas (ADRs). | Michael José Jiménez, Gregory José Morera, Milton Alvarado, Juan Ignacio González Cortes |
 
 ---
 
@@ -174,23 +174,23 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 
 ### 3.1 Requerimientos funcionales clave
 
-| ID | Requerimiento | Stakeholder | ¿Por qué es un driver? |
-|----|---------------|-------------|-------------------------|
-| RF-01 | Monitorear en tiempo casi real la ejecución de rutas y la ubicación de las unidades, con actualizaciones objetivo entre 15 y 30 segundos. | Supervisor Operativo | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información operativa con baja latencia. |
-| RF-02 | Gestionar incidencias operativas durante los recorridos. | Supervisor Operativo, Operario de Recolección | Requiere componentes para el registro, seguimiento y trazabilidad de eventos operativos. |
-| RF-03 | Generar reportes e indicadores históricos para la toma de decisiones. | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Obliga a incorporar mecanismos de almacenamiento histórico y capacidades analíticas. |
-| RF-04 | Administrar usuarios, roles y permisos de acceso. | Administrador del Sistema | Impacta directamente la arquitectura de seguridad, autenticación y control de acceso. |
-| RF-05 | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación. | Supervisor Operativo | Define las entidades principales del dominio y condiciona la estructura central de la solución. |
+| ID    | Requerimiento                                                                                                                             | Stakeholder                                                        | ¿Por qué es un driver?                                                                                            |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| RF-01 | Monitorear en tiempo casi real la ejecución de rutas y la ubicación de las unidades, con actualizaciones objetivo entre 15 y 30 segundos. | Supervisor Operativo                                               | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información operativa con baja latencia. |
+| RF-02 | Gestionar incidencias operativas durante los recorridos.                                                                                  | Supervisor Operativo, Operario de Recolección                      | Requiere componentes para el registro, seguimiento y trazabilidad de eventos operativos.                          |
+| RF-03 | Generar reportes e indicadores históricos para la toma de decisiones.                                                                     | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Obliga a incorporar mecanismos de almacenamiento histórico y capacidades analíticas.                              |
+| RF-04 | Administrar usuarios, roles y permisos de acceso.                                                                                         | Administrador del Sistema                                          | Impacta directamente la arquitectura de seguridad, autenticación y control de acceso.                             |
+| RF-05 | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación.                                                                      | Supervisor Operativo                                               | Define las entidades principales del dominio y condiciona la estructura central de la solución.                   |
 
 ### 3.2 Atributos de calidad prioritarios
 
-| ID | Atributo | Importancia | Stakeholder | Justificación |
-|----|----------|-------------|-------------|---------------|
-| QA-01 | Disponibilidad | Alta | Operarios, Conductores y Supervisores | El sistema debe estar disponible durante toda la jornada operativa para garantizar la continuidad del servicio de recolección. |
-| QA-02 | Rendimiento | Alta | Supervisor Operativo | La información debe mostrarse rápidamente para apoyar la supervisión y la toma de decisiones oportunas. |
-| QA-03 | Seguridad | Alta | Administrador del Sistema, Departamento de Tecnologías de Información | Debe proteger la información operativa y administrativa mediante mecanismos de autenticación, autorización y control de acceso. |
-| QA-04 | Auditabilidad | Alta | Entidades de Fiscalización y Dirección de Gestión Ambiental | Se requiere mantener un registro trazable de las actividades, incidencias y cambios realizados para facilitar la supervisión y la fiscalización. |
-| QA-05 | Modificabilidad | Media | Departamento de Tecnologías de Información | La plataforma debe facilitar la incorporación de nuevos requerimientos y la evolución de los procesos operativos con el menor impacto posible sobre los componentes existentes. |
+| ID    | Atributo        | Importancia | Stakeholder                                                           | Justificación                                                                                                                                                                   |
+| ----- | --------------- | ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                                 | El sistema debe estar disponible durante toda la jornada operativa para garantizar la continuidad del servicio de recolección.                                                  |
+| QA-02 | Rendimiento     | Alta        | Supervisor Operativo                                                  | La información debe mostrarse rápidamente para apoyar la supervisión y la toma de decisiones oportunas.                                                                         |
+| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | Debe proteger la información operativa y administrativa mediante mecanismos de autenticación, autorización y control de acceso.                                                 |
+| QA-04 | Auditabilidad   | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental           | Se requiere mantener un registro trazable de las actividades, incidencias y cambios realizados para facilitar la supervisión y la fiscalización.                                |
+| QA-05 | Modificabilidad | Media       | Departamento de Tecnologías de Información                            | La plataforma debe facilitar la incorporación de nuevos requerimientos y la evolución de los procesos operativos con el menor impacto posible sobre los componentes existentes. |
 
 ### 3.3 Restricciones que actúan como drivers
 
@@ -206,113 +206,131 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 
 ## 4. Requerimientos de calidad — Escenarios
 
-Los escenarios de calidad permiten evaluar cómo debe comportarse la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos ante condiciones relevantes del entorno operativo. Para este avance se consideran atributos como rendimiento, disponibilidad, seguridad, trazabilidad, interoperabilidad y mantenibilidad, debido a que el sistema debe apoyar la supervisión de rutas, unidades recolectoras, incidencias y reportes operativos en un contexto municipal.
+Los escenarios de calidad permiten establecer condiciones verificables para evaluar el comportamiento de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos. Cada escenario incluye una fuente, un estímulo, el entorno de ejecución, el artefacto afectado, la respuesta esperada y una medida objetiva que podrá validarse mediante pruebas, monitoreo o revisión de registros.
 
 ### Escenario QS-01 — Rendimiento en el monitoreo geoespacial
 
-| Elemento                | Descripción                                                                   |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| **Fuente del estímulo** | Unidad recolectora en campo                                                   |
-| **Estímulo**            | La unidad envía su ubicación GPS durante la ejecución de una ruta             |
-| **Entorno**             | Operación normal durante la jornada de recolección                            |
-| **Artefacto**           | Módulo de monitoreo geoespacial y dashboard operativo                         |
-| **Respuesta**           | El sistema actualiza la ubicación de la unidad en el dashboard del supervisor |
-| **Medida de respuesta** | La ubicación debe reflejarse en un intervalo máximo de 15 a 30 segundos       |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuente del estímulo** | Unidad recolectora en campo                                                                                                                                                                                                                                                                                   |
+| **Estímulo**            | La unidad envía una actualización válida de su ubicación GPS durante la ejecución de una ruta                                                                                                                                                                                                                 |
+| **Entorno**             | Operación normal durante la jornada de recolección                                                                                                                                                                                                                                                            |
+| **Artefacto**           | Módulo de monitoreo geoespacial, API Backend y dashboard operativo                                                                                                                                                                                                                                            |
+| **Respuesta**           | El sistema recibe, valida y registra la actualización, y posteriormente refleja la nueva ubicación en el dashboard del supervisor                                                                                                                                                                             |
+| **Medida de respuesta** | En una ventana de medición de 60 minutos, al menos el 95% de las actualizaciones GPS válidas deben reflejarse en el dashboard en un máximo de 30 segundos desde su recepción por el API Backend, y al menos el 99% en un máximo de 45 segundos. Ninguna actualización confirmada como recibida puede perderse |
 
 **Justificación:**  
-Este escenario es relevante porque el sistema requiere monitoreo de unidades móviles en tiempo casi real. La actualización oportuna permite que los supervisores visualicen el estado de las rutas y tomen decisiones operativas durante la jornada.
+El monitoreo geoespacial debe proporcionar información suficientemente reciente para que el supervisor pueda identificar desviaciones, retrasos o interrupciones en la ejecución de las rutas. Los percentiles definidos permiten evaluar el comportamiento habitual y detectar actualizaciones con demoras excepcionales.
 
-_Tensión con:_ QS-05 — Interoperabilidad / Tolerancia a fallos, porque depender de servicios externos de mapas o geolocalización puede afectar el tiempo de actualización esperado.
+**Forma de verificación:**  
+Se utilizarán marcas de tiempo en la recepción de la actualización GPS y en su publicación en el dashboard. La diferencia entre ambas marcas permitirá calcular los percentiles de latencia y la cantidad de eventos procesados correctamente.
+
+_Tensión con:_ QS-05 — Interoperabilidad y tolerancia a fallos, porque la latencia o indisponibilidad de los servicios externos puede impedir el cumplimiento del intervalo objetivo.
 
 ---
 
 ### Escenario QS-02 — Disponibilidad del dashboard operativo
 
-| Elemento                | Descripción                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| **Fuente del estímulo** | Supervisor operativo                                                                       |
-| **Estímulo**            | El supervisor accede al dashboard para consultar rutas, unidades e incidencias             |
-| **Entorno**             | Jornada operativa normal                                                                   |
-| **Artefacto**           | Plataforma web / Dashboard operativo                                                       |
-| **Respuesta**           | El sistema permite el acceso y muestra la información operativa disponible                 |
-| **Medida de respuesta** | El dashboard debe estar disponible al menos el 99% del tiempo durante el horario operativo |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuente del estímulo** | Supervisor operativo                                                                                                                                                                                                                                                         |
+| **Estímulo**            | El supervisor accede al dashboard para consultar rutas, unidades e incidencias activas                                                                                                                                                                                       |
+| **Entorno**             | Jornada operativa normal                                                                                                                                                                                                                                                     |
+| **Artefacto**           | Aplicación Web, API Backend y componentes de consulta operativa                                                                                                                                                                                                              |
+| **Respuesta**           | El sistema permite el acceso al dashboard y presenta la información operativa disponible                                                                                                                                                                                     |
+| **Medida de respuesta** | El dashboard debe alcanzar una disponibilidad mensual mínima del 99% durante el horario operativo institucional, excluyendo mantenimientos programados comunicados previamente. Ante una falla interna recuperable, el servicio debe restablecerse en un máximo de 5 minutos |
 
 **Justificación:**  
-La disponibilidad es crítica porque los supervisores dependen del dashboard para dar seguimiento a las unidades recolectoras y a las incidencias reportadas. Una caída del sistema durante la operación limitaría la capacidad de supervisión y respuesta.
+La disponibilidad del dashboard es necesaria para mantener la supervisión de las rutas durante la jornada. La métrica mensual permite comprobar objetivamente el tiempo real durante el cual el servicio estuvo disponible.
 
-_Tensión con:_ QS-03 — Seguridad en el acceso por roles, porque aplicar validaciones de autenticación y autorización puede agregar procesamiento adicional antes de permitir el acceso a la información.
+**Forma de verificación:**  
+La disponibilidad se calculará mediante monitoreo automático, utilizando verificaciones periódicas sobre la Aplicación Web y el API Backend. El tiempo de recuperación se medirá desde la detección de la falla hasta el restablecimiento exitoso del servicio.
+
+_Tensión con:_ QS-03 — Seguridad en el acceso por roles, debido a que la disponibilidad también depende del funcionamiento del servicio de identidad y de los controles de autorización.
 
 ---
 
-### Escenario QS-03 — Seguridad en el acceso por roles
+### Escenario QS-03 — Seguridad, rechazo y auditoría de accesos no autorizados
 
-| Elemento                | Descripción                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| **Fuente del estímulo** | Usuario autenticado o no autorizado                                                        |
-| **Estímulo**            | El usuario intenta acceder a información o funcionalidades que no corresponden a su rol    |
-| **Entorno**             | Sesión activa en la plataforma                                                             |
-| **Artefacto**           | Módulo de autenticación y autorización                                                     |
-| **Respuesta**           | El sistema valida los permisos del usuario y bloquea el acceso no autorizado               |
-| **Medida de respuesta** | El 100% de las solicitudes a funciones restringidas deben pasar por validación de permisos |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuente del estímulo** | Usuario autenticado sin permisos suficientes o usuario no autenticado                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Estímulo**            | El usuario intenta consultar o ejecutar una funcionalidad restringida que no corresponde a su rol                                                                                                                                                                                                                                                                                                                                                                          |
+| **Entorno**             | Plataforma en operación normal, con una sesión inexistente, inválida, expirada o con permisos insuficientes                                                                                                                                                                                                                                                                                                                                                                |
+| **Artefacto**           | Aplicación Web, API Backend, módulo de autenticación y autorización y registro de auditoría                                                                                                                                                                                                                                                                                                                                                                                |
+| **Respuesta**           | El sistema valida la identidad y los permisos, rechaza la solicitud, evita cualquier modificación o exposición de información y registra el intento para su posterior auditoría                                                                                                                                                                                                                                                                                            |
+| **Medida de respuesta** | El 100% de las solicitudes dirigidas a funciones restringidas debe pasar por validación de autenticación y autorización. Las solicitudes no autorizadas deben responder con código HTTP 401 o 403 en un máximo de 2 segundos. El 100% de los intentos rechazados debe generar un registro de auditoría consultable en un máximo de 5 segundos, incluyendo fecha y hora, usuario o identificador disponible, recurso solicitado, acción, origen de la solicitud y resultado |
 
 **Justificación:**  
-El sistema maneja información operativa municipal, reportes, rutas, incidencias y métricas históricas. Por eso, cada actor debe acceder únicamente a las funcionalidades necesarias según su rol, evitando exposición innecesaria de información.
+La plataforma administra información municipal relacionada con rutas, unidades, incidencias, usuarios e indicadores. Por ello, no basta con bloquear visualmente las opciones en la interfaz: la autorización debe aplicarse en el API Backend y cada intento no autorizado debe quedar documentado.
 
-_Tensión con:_ QS-02 — Disponibilidad del dashboard operativo, porque los controles de acceso aumentan la seguridad, pero pueden introducir dependencia sobre el sistema de identidad y afectar el acceso si dicho servicio presenta fallas.
+**Forma de verificación:**  
+Se ejecutarán pruebas automatizadas con usuarios pertenecientes a diferentes roles, usuarios sin sesión y tokens expirados. Posteriormente se verificará el código de respuesta, la ausencia de modificaciones y la creación del evento correspondiente en el registro de auditoría.
+
+_Tensión con:_ QS-02 — Disponibilidad del dashboard operativo, porque una dependencia estricta del sistema de identidad puede impedir nuevos accesos cuando dicho servicio no esté disponible.
 
 ---
 
 ### Escenario QS-04 — Trazabilidad de incidencias operativas
 
-| Elemento                | Descripción                                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Fuente del estímulo** | Operario de recolección                                                                                 |
-| **Estímulo**            | El operario registra una incidencia durante una ruta asignada                                           |
-| **Entorno**             | Operación normal en campo                                                                               |
-| **Artefacto**           | Módulo de gestión de incidencias                                                                        |
-| **Respuesta**           | El sistema almacena la incidencia con fecha, hora, ubicación, usuario responsable, descripción y estado |
-| **Medida de respuesta** | La incidencia debe quedar registrada y disponible para consulta en menos de 5 segundos                  |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuente del estímulo** | Operario de recolección o conductor autorizado                                                                                                                                                                                                                                                                        |
+| **Estímulo**            | El usuario registra una incidencia durante la ejecución de una ruta                                                                                                                                                                                                                                                   |
+| **Entorno**             | Operación normal en campo                                                                                                                                                                                                                                                                                             |
+| **Artefacto**           | Módulo de gestión de incidencias, API Backend y Base de Datos del Sistema                                                                                                                                                                                                                                             |
+| **Respuesta**           | El sistema valida los datos, almacena la incidencia y la deja disponible para consulta por parte de los usuarios autorizados                                                                                                                                                                                          |
+| **Medida de respuesta** | Al menos el 99% de los registros de incidencias válidos debe confirmarse y quedar disponible para consulta en un máximo de 5 segundos. El 100% de las incidencias confirmadas debe contener identificador único, fecha y hora, ubicación disponible, usuario responsable, descripción, ruta asociada y estado inicial |
 
 **Justificación:**  
-Registrar las incidencias de forma trazable permite reconstruir lo ocurrido durante la operación, dar seguimiento a problemas en campo y generar reportes confiables para supervisores, jefaturas y áreas de planificación.
+La trazabilidad permite reconstruir lo ocurrido durante la operación, conocer quién registró cada evento y verificar las acciones realizadas durante su atención.
 
-_Tensión con:_ QS-01 — Rendimiento en el monitoreo geoespacial, porque almacenar información detallada de cada incidencia mejora la trazabilidad, pero también incrementa el volumen de datos que debe procesar y consultar la plataforma.
+**Forma de verificación:**  
+Se comparará la hora de envío de la incidencia con la hora de confirmación y consulta. También se verificará mediante pruebas de integración que todos los campos obligatorios hayan sido almacenados.
+
+_Tensión con:_ QS-01 — Rendimiento del monitoreo geoespacial, debido a que el almacenamiento detallado de incidencias y eventos incrementa el volumen de operaciones sobre la base de datos.
 
 ---
 
 ### Escenario QS-05 — Interoperabilidad y tolerancia a fallos con servicios externos
 
-| Elemento                | Descripción                                                                                                                         |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **Fuente del estímulo** | Servicio externo de mapas o geolocalización                                                                                         |
-| **Estímulo**            | El servicio externo responde lentamente o deja de estar disponible                                                                  |
-| **Entorno**             | Monitoreo activo de unidades recolectoras                                                                                           |
-| **Artefacto**           | Integración con servicios de mapas y geolocalización                                                                                |
-| **Respuesta**           | El sistema conserva la última ubicación conocida, muestra una alerta al supervisor y evita perder los datos operativos ya recibidos |
-| **Medida de respuesta** | El sistema debe mantener visible la última ubicación registrada y notificar la falla en menos de 10 segundos                        |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Fuente del estímulo** | Servicio externo de mapas, geolocalización o notificaciones                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Estímulo**            | El servicio externo responde lentamente, devuelve un error o deja de estar disponible                                                                                                                                                                                                                                                                                                                                                            |
+| **Entorno**             | Monitoreo activo de unidades recolectoras                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **Artefacto**           | Adaptadores de integración del API Backend y dashboard operativo                                                                                                                                                                                                                                                                                                                                                                                 |
+| **Respuesta**           | El sistema limita el tiempo de espera, conserva la última información válida, identifica los datos como desactualizados, notifica al supervisor y evita la pérdida de información operativa previamente recibida                                                                                                                                                                                                                                 |
+| **Medida de respuesta** | La falla debe detectarse y notificarse al supervisor en un máximo de 10 segundos después de superar el tiempo de espera configurado. La última ubicación válida debe permanecer visible con su fecha, hora y una indicación de desactualización. No debe perderse ningún evento previamente aceptado por la plataforma y la integración debe reanudar su operación en un máximo de 60 segundos después de que el servicio externo se restablezca |
 
 **Justificación:**  
-La plataforma depende de servicios externos para mapas, geolocalización y posiblemente notificaciones. Por ello, debe contemplar fallos o latencia de estos servicios sin detener por completo la supervisión operativa.
+La plataforma no puede asumir disponibilidad permanente de los servicios externos. La degradación controlada permite mantener la visibilidad parcial de la operación sin presentar información desactualizada como si fuera reciente.
 
-_Tensión con:_ QS-01 — Rendimiento en el monitoreo geoespacial, porque la disponibilidad y velocidad de servicios externos puede afectar el cumplimiento del intervalo de actualización de 15 a 30 segundos.
+**Forma de verificación:**  
+Se simularán errores HTTP, respuestas lentas y pérdida de conectividad. Se medirá el tiempo de detección, la generación de la alerta, la conservación de la última ubicación y la recuperación posterior.
+
+_Tensión con:_ QS-01 — Rendimiento del monitoreo geoespacial, porque la utilización de reintentos puede incrementar la latencia y el consumo de recursos.
 
 ---
 
-### Escenario QS-06 — Mantenibilidad de módulos del sistema
+### Escenario QS-06 — Mantenibilidad y aislamiento de cambios
 
-| Elemento                | Descripción                                                                                                          |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| **Fuente del estímulo** | Equipo técnico de desarrollo o mantenimiento                                                                         |
-| **Estímulo**            | Se requiere modificar la lógica de reportes sin alterar el monitoreo geoespacial ni la gestión de incidencias        |
-| **Entorno**             | Evolución normal del sistema                                                                                         |
-| **Artefacto**           | Módulos de reportes, monitoreo e incidencias                                                                         |
-| **Respuesta**           | El sistema permite modificar el módulo de reportes de forma independiente, sin afectar otros módulos principales     |
-| **Medida de respuesta** | El cambio debe poder realizarse sin modificar componentes no relacionados directamente con la generación de reportes |
+| Elemento                | Descripción                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Fuente del estímulo** | Equipo técnico de desarrollo o mantenimiento                                                                                                                                                                                                                                                                                                                           |
+| **Estímulo**            | Se requiere modificar una regla de generación de reportes sin alterar el monitoreo geoespacial ni la gestión de incidencias                                                                                                                                                                                                                                            |
+| **Entorno**             | Evolución normal del sistema dentro del ambiente de desarrollo y pruebas                                                                                                                                                                                                                                                                                               |
+| **Artefacto**           | Módulo de reportes, contratos internos y pruebas automatizadas                                                                                                                                                                                                                                                                                                         |
+| **Respuesta**           | El cambio se realiza dentro de las fronteras del módulo de reportes, manteniendo sin modificaciones el comportamiento de los módulos de monitoreo e incidencias                                                                                                                                                                                                        |
+| **Medida de respuesta** | El cambio debe requerir modificaciones en un máximo de dos componentes de producción: el componente de reportes y, cuando sea indispensable, un contrato compartido. No debe requerir cambios en componentes de monitoreo geoespacial ni gestión de incidencias, y el 100% de las pruebas automatizadas de regresión de esos módulos debe finalizar satisfactoriamente |
 
 **Justificación:**  
-La plataforma integra módulos de planificación, monitoreo operativo, gestión de incidencias, administración de recursos y analítica. Separar responsabilidades mejora la mantenibilidad y reduce el riesgo de errores cuando el sistema evoluciona.
+La separación de responsabilidades debe comprobarse mediante el impacto real de los cambios. Limitar la cantidad de componentes afectados permite evaluar el acoplamiento entre módulos y detectar dependencias innecesarias.
 
-_Tensión con:_ QS-02 — Disponibilidad del dashboard operativo, porque una arquitectura más modular facilita el mantenimiento, pero puede introducir más dependencias internas que deben gestionarse correctamente para no afectar la operación.
+**Forma de verificación:**  
+Durante la revisión del cambio se identificarán los componentes modificados y se ejecutará la suite automatizada de pruebas. El escenario se considerará incumplido si es necesario modificar componentes de monitoreo o incidencias para alterar únicamente una regla de reportes.
+
+_Tensión con:_ QS-02 — Disponibilidad del dashboard operativo, porque una mayor separación modular puede introducir contratos y dependencias internas adicionales que deben monitorearse.
 
 ### 4.1 Trazabilidad hacia decisiones arquitectónicas del Avance 2
 
@@ -333,15 +351,18 @@ La siguiente matriz relaciona los problemas arquitectónicos identificados, los 
 
 A partir de esta trazabilidad, los ADRs del Avance 2 deberán derivarse directamente de los problemas identificados en este documento. De forma preliminar, se identifican las siguientes decisiones candidatas:
 
-| ADR candidato | Decisión a documentar                                             | Justificación                                                                                                                                                 |
-| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ADR-001       | Estrategia de monitoreo geoespacial casi en tiempo real           | Responde a la necesidad de actualizar la ubicación de unidades cada 15 a 30 segundos y mantener visibilidad operativa confiable.                              |
-| ADR-002       | Separación entre dashboard operativo y reportes analíticos        | Permite distinguir datos recientes usados para supervisión inmediata de datos históricos usados para análisis y planificación.                                |
-| ADR-003       | Estrategia de resiliencia ante fallos de mapas/geolocalización    | Permite mantener continuidad operativa cuando servicios externos fallen, respondan lento o dejen de reportar ubicación.                                       |
-| ADR-004       | Modelo de trazabilidad y auditoría de incidencias                 | Permite registrar eventos operativos relevantes para supervisión, fiscalización y análisis posterior.                                                         |
-| ADR-005       | Mecanismo de autenticación y autorización por roles               | Permite controlar qué información puede consultar o modificar cada usuario según sus responsabilidades.                                                       |
-| ADR-006       | Estrategia de persistencia para información operativa e histórica | Permite soportar consultas operativas, conservación histórica, reportes e indicadores sin mezclar necesidades de lectura inmediatas con análisis posteriores. |
+### 4.2 Trazabilidad de los escenarios hacia los ADRs seleccionados
 
+A partir de los drivers, problemas arquitectónicos y escenarios de calidad identificados, se seleccionaron cuatro decisiones arquitectónicas para su formalización. Estas decisiones atienden los principales riesgos relacionados con rendimiento, disponibilidad, seguridad, auditabilidad, interoperabilidad y mantenibilidad.
+
+| ADR     | Decisión arquitectónica                                                                               | Drivers relacionados                  | Escenarios relacionados |
+| ------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------- |
+| ADR-001 | Utilizar actualización periódica y procesamiento asíncrono para el monitoreo geoespacial              | RF-01, QA-01, QA-02                   | QS-01, QS-05            |
+| ADR-002 | Utilizar PostgreSQL y PostGIS con separación lógica entre datos operativos, históricos y de auditoría | RF-03, REST-02, REST-04, QA-04, QA-05 | QS-01, QS-04, QS-06     |
+| ADR-003 | Implementar políticas de resiliencia para las integraciones con servicios externos                    | RF-01, QA-01, QA-02                   | QS-02, QS-05            |
+| ADR-004 | Utilizar OpenID Connect, OAuth 2.0, autorización por roles y auditoría centralizada                   | RF-04, REST-01, QA-03, QA-04          | QS-03, QS-04            |
+
+---
 
 ## 5. Vistas Arquitectónicas
 
@@ -391,14 +412,14 @@ La Figura 2 presenta la Vista de Estructura Interna (C4 Nivel 2), donde se ident
 
 #### 5.2.3 Descripción de elementos
 
-| Elemento | Tipo | Responsabilidad | Tecnología | Interfaces principales | Dependencias |
-|----------|------|-----------------|------------|----------------------|--------------|
-| Aplicación Web | Contenedor | Proporciona la interfaz de usuario para supervisores, administradores y demás actores autorizados, permitiendo la gestión de rutas, vehículos, cuadrillas, incidencias y la consulta del estado operativo del sistema. | React | Interfaz web (HTTPS) | API Backend |
-| API Backend | Contenedor | Implementa la lógica de negocio, ejecuta los casos de uso del sistema y coordina la integración con la Base de Datos del Sistema y los servicios externos. | ASP.NET Core | API REST (HTTPS) | Base de Datos del Sistema, Servicio de Identidad, Servicio de Mapas y Servicio de Notificaciones |
-| Base de Datos del Sistema | Contenedor | Almacena la información operativa, geoespacial e histórica necesaria para soportar la operación, la trazabilidad y el análisis histórico del sistema. | PostgreSQL + PostGIS | SQL | API Backend |
-| Servicio de Identidad | Sistema externo | Autentica a los usuarios y administra la autorización basada en roles para controlar el acceso a las funcionalidades de la plataforma. | OpenID Connect / OAuth 2.0 | HTTPS (OpenID Connect / OAuth 2.0) | API Backend |
-| Servicio de Mapas | Sistema externo | Proporciona cartografía, georreferenciación y visualización de las rutas y la ubicación de las unidades de recolección. | API de mapas | API REST (HTTPS) | API Backend |
-| Servicio de Notificaciones | Sistema externo | Gestiona el envío de notificaciones relacionadas con incidencias, eventos operativos y alertas del sistema. | API de notificaciones | API REST (HTTPS) | API Backend |
+| Elemento                   | Tipo            | Responsabilidad                                                                                                                                                                                                        | Tecnología                 | Interfaces principales             | Dependencias                                                                                     |
+| -------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Aplicación Web             | Contenedor      | Proporciona la interfaz de usuario para supervisores, administradores y demás actores autorizados, permitiendo la gestión de rutas, vehículos, cuadrillas, incidencias y la consulta del estado operativo del sistema. | React                      | Interfaz web (HTTPS)               | API Backend                                                                                      |
+| API Backend                | Contenedor      | Implementa la lógica de negocio, ejecuta los casos de uso del sistema y coordina la integración con la Base de Datos del Sistema y los servicios externos.                                                             | ASP.NET Core               | API REST (HTTPS)                   | Base de Datos del Sistema, Servicio de Identidad, Servicio de Mapas y Servicio de Notificaciones |
+| Base de Datos del Sistema  | Contenedor      | Almacena la información operativa, geoespacial e histórica necesaria para soportar la operación, la trazabilidad y el análisis histórico del sistema.                                                                  | PostgreSQL + PostGIS       | SQL                                | API Backend                                                                                      |
+| Servicio de Identidad      | Sistema externo | Autentica a los usuarios y administra la autorización basada en roles para controlar el acceso a las funcionalidades de la plataforma.                                                                                 | OpenID Connect / OAuth 2.0 | HTTPS (OpenID Connect / OAuth 2.0) | API Backend                                                                                      |
+| Servicio de Mapas          | Sistema externo | Proporciona cartografía, georreferenciación y visualización de las rutas y la ubicación de las unidades de recolección.                                                                                                | API de mapas               | API REST (HTTPS)                   | API Backend                                                                                      |
+| Servicio de Notificaciones | Sistema externo | Gestiona el envío de notificaciones relacionadas con incidencias, eventos operativos y alertas del sistema.                                                                                                            | API de notificaciones      | API REST (HTTPS)                   | API Backend                                                                                      |
 
 ---
 
@@ -445,37 +466,399 @@ La Figura 4 presenta la interacción entre los principales contenedores durante 
 
 ---
 
-
 ## 6. Estilo Arquitectónico
 
-
 ### 6.1 Estilo Arquitectónico Adoptado
-
 
 ---
 
 ### 6.2 Alternativas Arquitectónicas Evaluadas
 
-
 ---
 
 ### 6.3 Análisis de Trade-offs
 
+La arquitectura propuesta busca equilibrar la rapidez de implementación, la sostenibilidad operativa y el cumplimiento de los escenarios de calidad definidos. No existe una alternativa que maximice simultáneamente rendimiento, disponibilidad, seguridad, trazabilidad y modificabilidad; por esta razón, las decisiones adoptadas implican compromisos que deben hacerse explícitos.
+
+#### 6.3.1 Monolito modular frente a microservicios
+
+Se adopta inicialmente un monolito modular para el API Backend, organizado mediante módulos internos con responsabilidades y contratos definidos. Esta alternativa reduce la complejidad de despliegue, monitoreo, comunicación y consistencia transaccional durante las primeras etapas del sistema.
+
+Una arquitectura de microservicios permitiría escalar y desplegar cada capacidad de forma independiente, además de proporcionar mayor aislamiento ante fallos. Sin embargo, introduciría comunicaciones distribuidas, consistencia eventual, observabilidad distribuida, administración de múltiples despliegues y una mayor carga operativa para el Departamento de Tecnologías de Información.
+
+El compromiso consiste en favorecer simplicidad operativa y consistencia, aceptando un menor aislamiento de fallos y una capacidad limitada de escalamiento independiente. Para reducir este riesgo, los módulos de monitoreo, incidencias, reportes, administración y seguridad deberán mantener fronteras explícitas y evitar dependencias directas innecesarias.
+
+**Escenarios relacionados:** QS-02 y QS-06.
+
+**Criterio de validación:** una modificación exclusiva del módulo de reportes no deberá alterar los componentes de monitoreo ni incidencias, de acuerdo con la medida definida en QS-06.
+
+---
+
+#### 6.3.2 Actualización periódica frente a comunicación en tiempo real permanente
+
+Para el monitoreo geoespacial se utilizarán actualizaciones periódicas y procesamiento asíncrono, debido a que el requerimiento establece un intervalo objetivo de 15 a 30 segundos y no una actualización instantánea de cada movimiento.
+
+Una solución basada exclusivamente en WebSockets o transmisión continua permitiría reducir la latencia percibida, pero aumentaría la complejidad para mantener conexiones activas, gestionar reconexiones, escalar sesiones concurrentes y operar bajo conectividad intermitente.
+
+El compromiso consiste en aceptar una latencia de hasta 30 segundos para la mayoría de las actualizaciones, a cambio de una solución más sencilla y tolerante a interrupciones breves. El procesamiento deberá desacoplar la recepción de ubicaciones de la actualización del dashboard para evitar que una consulta lenta bloquee la captura de datos.
+
+**Escenarios relacionados:** QS-01 y QS-05.
+
+**Criterio de validación:** al menos el 95% de las ubicaciones debe reflejarse en un máximo de 30 segundos y ninguna actualización confirmada debe perderse.
+
+---
+
+#### 6.3.3 Persistencia unificada frente a bases de datos especializadas
+
+Se utilizará PostgreSQL con PostGIS como tecnología principal de persistencia, separando lógicamente la información operativa, histórica, geoespacial y de auditoría mediante esquemas, tablas, índices y vistas especializadas.
+
+La utilización de una base transaccional y otra plataforma analítica independiente permitiría aislar las consultas de reportes y escalar las cargas de forma separada. No obstante, requeriría procesos adicionales de replicación, sincronización, transformación y resolución de inconsistencias.
+
+El compromiso consiste en simplificar la consistencia y administración de datos, aceptando el riesgo de que las consultas históricas compitan por recursos con las operaciones diarias. Este riesgo se reducirá mediante índices geoespaciales, consultas optimizadas, particionamiento cuando el volumen lo requiera y vistas materializadas para reportes de alto costo.
+
+**Escenarios relacionados:** QS-01, QS-04 y QS-06.
+
+**Criterio de validación:** durante pruebas con generación de reportes, los escenarios QS-01 y QS-04 deberán mantener sus tiempos máximos de respuesta.
+
+---
+
+#### 6.3.4 Resiliencia frente a frescura absoluta de la información
+
+Ante una falla del servicio de mapas o geolocalización, el sistema conservará la última ubicación válida y la mostrará con una indicación visible de que puede estar desactualizada.
+
+Ocultar por completo la ubicación evitaría mostrar información antigua, pero eliminaría cualquier referencia disponible para el supervisor. Mantenerla sin advertencias proporcionaría mayor continuidad visual, pero podría provocar decisiones basadas en información obsoleta.
+
+El compromiso consiste en mantener la continuidad operativa parcial, aceptando temporalmente información menos reciente, pero mostrando de forma explícita su fecha, hora y condición de desactualización.
+
+**Escenarios relacionados:** QS-01, QS-02 y QS-05.
+
+**Criterio de validación:** la falla debe notificarse en un máximo de 10 segundos y la última ubicación debe mostrarse con una marca de desactualización.
+
+---
+
+#### 6.3.5 Seguridad y auditoría frente a latencia y dependencia externa
+
+Todas las operaciones restringidas serán validadas en el API Backend mediante autenticación, autorización por roles y políticas de acceso. Además, los intentos rechazados y las operaciones privilegiadas generarán eventos de auditoría.
+
+Realizar únicamente controles en la Aplicación Web reduciría el procesamiento del servidor, pero permitiría que un usuario invoque directamente las operaciones del API. Mantener usuarios y contraseñas locales reduciría la dependencia del servicio de identidad, pero aumentaría los riesgos y responsabilidades asociados con el almacenamiento de credenciales.
+
+El compromiso consiste en aceptar una pequeña latencia adicional y una dependencia del Sistema de Identidad Municipal, a cambio de centralizar la identidad, aplicar controles consistentes y mantener evidencia auditable.
+
+**Escenarios relacionados:** QS-02, QS-03 y QS-04.
+
+**Criterio de validación:** las solicitudes no autorizadas deben responder con código 401 o 403 en un máximo de 2 segundos y producir un registro de auditoría consultable.
 
 ---
 
 ## 7. Registro de decisiones — ADRs
 
+Los siguientes registros documentan decisiones arquitectónicas relevantes derivadas de los drivers, restricciones y escenarios de calidad del sistema. Cada ADR presenta el contexto de la decisión, la alternativa seleccionada, las opciones descartadas y sus consecuencias.
+
+---
+
+### ADR-001 — Actualización periódica y procesamiento asíncrono del monitoreo geoespacial
+
+**Estado:** Aceptada  
+**Fecha:** 2026-07-12
+
+#### Contexto
+
+Las unidades recolectoras enviarán actualizaciones de ubicación durante la ejecución de las rutas. El dashboard operativo debe mostrar estas ubicaciones en intervalos cercanos al tiempo real, con un objetivo de 15 a 30 segundos.
+
+La conectividad de las unidades puede ser intermitente y la recepción de una ubicación no debe quedar bloqueada por la actualización de la interfaz, la consulta del servicio de mapas o la ejecución de otros procesos.
+
+#### Decisión
+
+El API Backend recibirá las actualizaciones GPS mediante una interfaz HTTPS autenticada. Cada actualización válida será registrada antes de confirmar su recepción.
+
+El procesamiento de la ubicación y la actualización de la proyección consultada por el dashboard se realizarán de forma asíncrona dentro del módulo de monitoreo. La Aplicación Web consultará periódicamente la información operativa disponible, evitando mantener una conexión permanente como requisito obligatorio.
+
+La solución distinguirá entre:
+
+- El evento de ubicación recibido.
+- La última posición válida de cada unidad.
+- La representación utilizada por el dashboard.
+
+#### Alternativas consideradas
+
+**WebSockets como mecanismo principal:**  
+Permitirían enviar cada actualización inmediatamente al navegador, pero aumentarían la complejidad de conexiones, reconexiones, escalamiento y monitoreo.
+
+**Consulta directa del servicio GPS desde la Aplicación Web:**  
+Reduciría el procesamiento del API Backend, pero expondría la integración externa, dificultaría la auditoría y acoplaría la interfaz con el proveedor de geolocalización.
+
+**Microservicio independiente con plataforma de mensajería:**  
+Proporcionaría mayor escalabilidad y aislamiento, pero agregaría infraestructura y complejidad operativa que no se justifican en la etapa inicial.
+
+#### Consecuencias positivas
+
+- Se evita bloquear la recepción de ubicaciones por procesos posteriores.
+- Se conserva trazabilidad sobre cada actualización aceptada.
+- Se adapta mejor a conectividad intermitente.
+- Se mantiene una arquitectura consistente con el API Backend existente.
+- Se reduce la complejidad de mantener conexiones permanentes.
+
+#### Consecuencias negativas
+
+- La ubicación mostrada puede tener una demora cercana al intervalo de actualización.
+- La consulta periódica genera solicitudes repetidas al API Backend.
+- El almacenamiento de eventos incrementará progresivamente el volumen de datos.
+- La capacidad de escalamiento independiente será menor que con un microservicio dedicado.
+
+#### Medidas de mitigación
+
+- Aplicar índices por unidad y fecha.
+- Separar la tabla de eventos históricos de la proyección de última ubicación.
+- Configurar monitoreo de colas o tareas pendientes.
+- Evaluar una plataforma de mensajería si el volumen futuro supera la capacidad del procesamiento interno.
+
+#### Trazabilidad
+
+- RF-01 — Monitoreo de rutas y unidades.
+- QA-01 — Disponibilidad.
+- QA-02 — Rendimiento.
+- QS-01 — Rendimiento del monitoreo geoespacial.
+- QS-05 — Tolerancia a fallos externos.
+
+#### Criterio de validación
+
+Al menos el 95% de las actualizaciones debe mostrarse en el dashboard en un máximo de 30 segundos y ninguna actualización confirmada puede perderse.
+
+---
+
+### ADR-002 — Persistencia unificada con PostgreSQL y PostGIS y separación lógica de datos
+
+**Estado:** Aceptada  
+**Fecha:** 2026-07-12
+
+#### Contexto
+
+La plataforma debe administrar información transaccional, geoespacial, histórica y auditable. El dashboard requiere consultas frecuentes sobre rutas, incidencias y ubicaciones recientes, mientras que las jefaturas y áreas de planificación necesitan reportes históricos y métricas consolidadas.
+
+La utilización de múltiples bases de datos permitiría optimizar cada carga, pero también aumentaría la complejidad de sincronización y operación.
+
+#### Decisión
+
+Se utilizará PostgreSQL con PostGIS como plataforma principal de persistencia. Los datos se separarán lógicamente mediante estructuras diferenciadas para:
+
+- Información operativa.
+- Información geoespacial.
+- Historial de eventos.
+- Registros de auditoría.
+- Consultas y proyecciones analíticas.
+
+Los reportes de alto costo utilizarán consultas optimizadas, vistas o vistas materializadas, evitando ejecutar agregaciones extensas directamente sobre las consultas operativas del dashboard.
+
+La estructura deberá permitir una futura separación física del almacenamiento analítico sin modificar los contratos principales del dominio.
+
+#### Alternativas consideradas
+
+**Base transaccional y almacén analítico independientes:**  
+Permitirían aislar cargas, pero requerirían procesos de extracción, transformación, sincronización y control de consistencia.
+
+**Base de datos NoSQL para ubicaciones:**  
+Facilitaría el almacenamiento flexible de eventos, pero complicaría las relaciones con rutas, vehículos, cuadrillas e incidencias.
+
+**Base de datos sin extensión geoespacial:**  
+Reduciría dependencias tecnológicas, pero obligaría a implementar o externalizar operaciones geográficas necesarias.
+
+#### Consecuencias positivas
+
+- Permite manejar datos relacionales y geoespaciales en una tecnología integrada.
+- Simplifica las transacciones y la consistencia entre rutas, unidades e incidencias.
+- Reduce la cantidad de tecnologías que debe operar el Departamento de TI.
+- Facilita consultas con coordenadas, geometrías y recorridos.
+- Permite utilizar vistas materializadas para reportes frecuentes.
+
+#### Consecuencias negativas
+
+- Las consultas analíticas pueden competir por recursos con la operación diaria.
+- El crecimiento histórico puede incrementar los tiempos de respaldo y mantenimiento.
+- La base de datos constituye una dependencia central del sistema.
+- Una futura separación física requerirá migración y sincronización de datos.
+
+#### Medidas de mitigación
+
+- Utilizar índices convencionales y geoespaciales.
+- Aplicar particionamiento por fechas cuando el volumen lo requiera.
+- Ejecutar actualizaciones de vistas materializadas fuera de períodos críticos.
+- Monitorear consultas lentas y consumo de recursos.
+- Definir contratos de repositorio que eviten acoplar la lógica de negocio directamente a PostgreSQL.
+
+#### Trazabilidad
+
+- RF-03 — Generación de reportes e indicadores históricos.
+- QA-04 — Auditabilidad.
+- QA-05 — Modificabilidad.
+- REST-02 — Trazabilidad completa.
+- REST-04 — Conservación de información histórica.
+- QS-01 — Rendimiento geoespacial.
+- QS-04 — Trazabilidad de incidencias.
+- QS-06 — Mantenibilidad.
+
+#### Criterio de validación
+
+La ejecución de consultas analíticas no deberá impedir el cumplimiento de los tiempos máximos definidos para el monitoreo geoespacial y el registro de incidencias.
+
+---
+
+### ADR-003 — Políticas de resiliencia para servicios externos
+
+**Estado:** Aceptada  
+**Fecha:** 2026-07-12
+
+#### Contexto
+
+La plataforma depende de servicios externos de mapas, geolocalización, identidad y notificaciones. Estos servicios pueden presentar respuestas lentas, errores temporales o interrupciones completas.
+
+Una dependencia directa sin mecanismos de control podría provocar que una falla externa se propague al dashboard y a otros módulos de la plataforma.
+
+#### Decisión
+
+Las integraciones externas serán encapsuladas mediante adaptadores y aplicarán políticas de resiliencia diferenciadas según el tipo de operación.
+
+Se implementarán:
+
+- Tiempo máximo de espera de 5 segundos por solicitud externa.
+- Hasta dos reintentos con espera incremental únicamente para operaciones idempotentes.
+- Circuit breaker después de cinco fallos consecutivos.
+- Conservación de la última ubicación válida.
+- Identificación visible de información desactualizada.
+- Registro de fallos y generación de alertas operativas.
+- Recuperación automática después del período de apertura del circuito.
+
+Los reintentos no se utilizarán de forma automática en operaciones que puedan producir notificaciones duplicadas o efectos secundarios no controlados.
+
+#### Alternativas consideradas
+
+**Reintentos ilimitados:**  
+Podrían recuperar operaciones temporales, pero aumentarían la latencia y podrían saturar un servicio que ya se encuentra degradado.
+
+**Fallar inmediatamente sin degradación:**  
+Simplificaría la integración, pero eliminaría la visibilidad operativa ante interrupciones breves.
+
+**Duplicar internamente todos los servicios externos:**  
+Proporcionaría mayor independencia, pero implicaría costos, infraestructura y responsabilidades fuera del alcance del sistema.
+
+#### Consecuencias positivas
+
+- Evita que una falla externa bloquee indefinidamente el API Backend.
+- Reduce la propagación de errores entre componentes.
+- Mantiene información parcial disponible para los supervisores.
+- Permite detectar y auditar interrupciones externas.
+- Facilita sustituir un proveedor mediante el adaptador correspondiente.
+
+#### Consecuencias negativas
+
+- La información mostrada puede quedar temporalmente desactualizada.
+- Los circuit breakers y reintentos agregan estados internos que deben monitorearse.
+- Un circuito abierto puede rechazar solicitudes aunque el proveedor ya haya comenzado a recuperarse.
+- Los reintentos incrementan temporalmente el consumo de recursos.
+
+#### Medidas de mitigación
+
+- Mostrar la fecha y hora de la última información válida.
+- Configurar métricas sobre circuitos abiertos y cantidad de reintentos.
+- Utilizar períodos de recuperación cortos y verificaciones controladas.
+- Ajustar los parámetros de acuerdo con evidencia obtenida durante las pruebas.
+
+#### Trazabilidad
+
+- RF-01 — Monitoreo casi en tiempo real.
+- QA-01 — Disponibilidad.
+- QA-02 — Rendimiento.
+- QS-02 — Disponibilidad del dashboard.
+- QS-05 — Interoperabilidad y tolerancia a fallos.
+
+#### Criterio de validación
+
+Las fallas externas deben detectarse y notificarse en un máximo de 10 segundos, sin eliminar la última ubicación válida ni perder eventos previamente confirmados.
+
+---
+
+### ADR-004 — Autenticación centralizada, autorización por roles y auditoría de accesos
+
+**Estado:** Aceptada  
+**Fecha:** 2026-07-12
+
+#### Contexto
+
+La plataforma será utilizada por operarios, conductores, supervisores, jefaturas, analistas y administradores. Cada rol requiere permisos diferentes sobre rutas, incidencias, reportes, configuraciones y registros de auditoría.
+
+El sistema debe integrarse con el Servicio de Identidad Municipal y evitar administrar contraseñas institucionales directamente.
+
+#### Decisión
+
+La autenticación se delegará al Servicio de Identidad Municipal mediante OpenID Connect y OAuth 2.0. El API Backend validará los tokens y aplicará autorización basada en roles y políticas.
+
+Todas las operaciones se considerarán denegadas por defecto y solo se habilitarán cuando exista una política explícita.
+
+La Aplicación Web podrá ocultar opciones según el rol para mejorar la experiencia, pero la decisión definitiva de autorización se realizará en el API Backend.
+
+Se registrarán en auditoría:
+
+- Intentos de acceso rechazados.
+- Cambios de roles y permisos.
+- Operaciones administrativas.
+- Cambios relevantes sobre rutas e incidencias.
+- Consulta o exportación de información sensible cuando corresponda.
+
+Cada registro incluirá fecha y hora, usuario o identificador disponible, recurso, acción, origen y resultado.
+
+#### Alternativas consideradas
+
+**Usuarios y contraseñas almacenados localmente:**  
+Reducirían la dependencia externa, pero aumentarían la responsabilidad de proteger credenciales y administrar ciclos de vida de usuarios.
+
+**Controles únicamente en la Aplicación Web:**  
+Serían sencillos de implementar, pero podrían evadirse invocando directamente el API Backend.
+
+**Permisos incorporados directamente en cada controlador:**  
+Permitirían una implementación rápida, pero producirían duplicación, inconsistencias y dificultad de mantenimiento.
+
+#### Consecuencias positivas
+
+- Centraliza la identidad institucional.
+- Evita almacenar contraseñas municipales.
+- Permite aplicar políticas consistentes.
+- Proporciona trazabilidad de accesos y operaciones sensibles.
+- Facilita agregar nuevos roles y permisos.
+
+#### Consecuencias negativas
+
+- El inicio de nuevas sesiones depende del Servicio de Identidad Municipal.
+- La validación y auditoría agregan procesamiento a cada solicitud.
+- Una definición incorrecta de roles podría conceder o bloquear accesos indebidamente.
+- Los registros de auditoría incrementan el volumen de almacenamiento.
+
+#### Medidas de mitigación
+
+- Mantener en caché las claves públicas necesarias para validar tokens vigentes.
+- Aplicar pruebas automatizadas por rol y recurso.
+- Revisar periódicamente la matriz de permisos.
+- Restringir el acceso a los registros de auditoría.
+- Monitorear fallos de autenticación y patrones anómalos.
+
+#### Trazabilidad
+
+- RF-04 — Administración de usuarios, roles y permisos.
+- QA-03 — Seguridad.
+- QA-04 — Auditabilidad.
+- REST-01 — Políticas institucionales de seguridad.
+- QS-03 — Seguridad, rechazo y auditoría de accesos.
+- QS-04 — Trazabilidad de incidencias.
+
+#### Criterio de validación
+
+El 100% de las operaciones restringidas debe validar permisos. Los accesos no autorizados deben responder con código 401 o 403 en un máximo de 2 segundos y generar un evento de auditoría consultable.
 
 ---
 
 ## 8. Diseño Detallado
 
-
 ### 8.1 Diseño Detallado de Componentes
 
 ---
-
 
 ## 9. Referencias
 
