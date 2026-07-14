@@ -374,7 +374,7 @@ De acuerdo con el modelo C4 propuesto por Brown, la vista de contexto constituye
 
 ![Diagrama C4](../diagramas/c4-contexto.svg)
 
-_Figura 1. Vista de contexto del sistema Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
+**Figura 1. Vista de contexto del sistema Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos.**
 
 | Elemento                                                                            | Tipo              | Descripción de la relación                                                                                                                                                                                                            |
 | ----------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -412,14 +412,15 @@ La Figura 2 presenta la Vista de Estructura Interna (C4 Nivel 2), donde se ident
 
 #### 5.2.3 Descripción de elementos
 
-| Elemento                   | Tipo            | Responsabilidad                                                                                                                                                                                                        | Tecnología                 | Interfaces principales             | Dependencias                                                                                     |
-| -------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Aplicación Web             | Contenedor      | Proporciona la interfaz de usuario para supervisores, administradores y demás actores autorizados, permitiendo la gestión de rutas, vehículos, cuadrillas, incidencias y la consulta del estado operativo del sistema. | React                      | Interfaz web (HTTPS)               | API Backend                                                                                      |
-| API Backend                | Contenedor      | Implementa la lógica de negocio, ejecuta los casos de uso del sistema y coordina la integración con la Base de Datos del Sistema y los servicios externos.                                                             | ASP.NET Core               | API REST (HTTPS)                   | Base de Datos del Sistema, Servicio de Identidad, Servicio de Mapas y Servicio de Notificaciones |
-| Base de Datos del Sistema  | Contenedor      | Almacena la información operativa, geoespacial e histórica necesaria para soportar la operación, la trazabilidad y el análisis histórico del sistema.                                                                  | PostgreSQL + PostGIS       | SQL                                | API Backend                                                                                      |
-| Servicio de Identidad      | Sistema externo | Autentica a los usuarios y administra la autorización basada en roles para controlar el acceso a las funcionalidades de la plataforma.                                                                                 | OpenID Connect / OAuth 2.0 | HTTPS (OpenID Connect / OAuth 2.0) | API Backend                                                                                      |
-| Servicio de Mapas          | Sistema externo | Proporciona cartografía, georreferenciación y visualización de las rutas y la ubicación de las unidades de recolección.                                                                                                | API de mapas               | API REST (HTTPS)                   | API Backend                                                                                      |
-| Servicio de Notificaciones | Sistema externo | Gestiona el envío de notificaciones relacionadas con incidencias, eventos operativos y alertas del sistema.                                                                                                            | API de notificaciones      | API REST (HTTPS)                   | API Backend                                                                                      |
+| Elemento                    | Tipo            | Responsabilidad                                                                                                                                                                                                                 | Tecnología                 | Interfaces principales                    | Dependencias                                                                                                                  |
+| --------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Aplicación Web              | Contenedor      | Proporciona la interfaz de usuario para supervisores, administradores y demás actores autorizados, permitiendo la gestión de rutas, vehículos, cuadrillas e incidencias, así como la consulta del estado operativo del sistema. | React                      | Interfaz web mediante HTTPS               | API Backend                                                                                                                   |
+| API Backend                 | Contenedor      | Implementa la lógica de negocio, ejecuta los casos de uso del sistema y coordina la integración con la Base de Datos del Sistema y los servicios externos.                                                                      | ASP.NET Core               | API REST mediante HTTPS                   | Base de Datos del Sistema, Servicio de Identidad, Servicio de Mapas, Servicio de Geolocalización y Servicio de Notificaciones |
+| Base de Datos del Sistema   | Contenedor      | Almacena la información operativa, geoespacial, histórica y de auditoría necesaria para soportar la operación, la trazabilidad y el análisis del sistema.                                                                       | PostgreSQL con PostGIS     | SQL                                       | API Backend                                                                                                                   |
+| Servicio de Identidad       | Sistema externo | Autentica a los usuarios y proporciona la información necesaria para aplicar la autorización basada en roles y políticas de acceso.                                                                                             | OpenID Connect y OAuth 2.0 | HTTPS mediante OpenID Connect y OAuth 2.0 | API Backend                                                                                                                   |
+| Servicio de Mapas           | Sistema externo | Proporciona cartografía, georreferenciación y capacidades de visualización para representar las rutas y la ubicación de las unidades recolectoras.                                                                              | API de mapas               | API REST mediante HTTPS                   | API Backend                                                                                                                   |
+| Servicio de Geolocalización | Sistema externo | Envía periódicamente la ubicación GPS de las unidades recolectoras durante la ejecución de las rutas.                                                                                                                           | Servicio o dispositivo GPS | API REST mediante HTTPS                   | API Backend                                                                                                                   |
+| Servicio de Notificaciones  | Sistema externo | Gestiona el envío de notificaciones relacionadas con incidencias, eventos operativos y alertas del sistema.                                                                                                                     | API de notificaciones      | API REST mediante HTTPS                   | API Backend                                                                                                                   |
 
 ---
 
@@ -856,7 +857,571 @@ El 100% de las operaciones restringidas debe validar permisos. Los accesos no au
 
 ## 8. Diseño Detallado
 
+Esta sección desarrolla el diseño interno del primer componente de la plataforma. El objetivo es pasar de la vista arquitectónica de contenedores a una especificación suficientemente precisa para orientar la implementación, las pruebas y las revisiones técnicas, manteniendo trazabilidad explícita con los drivers, escenarios de calidad y restricciones identificados previamente.
+
 ### 8.1 Diseño Detallado de Componentes
+
+#### 8.1.1 Componente seleccionado: Gestión de Incidencias Operativas
+
+El primer componente seleccionado para el diseño detallado es el **Componente de Gestión de Incidencias Operativas**, ubicado dentro del API Backend construido como monolito modular. Su propósito es registrar, consultar y dar seguimiento a eventos que afectan la ejecución normal de una ruta de recolección, manteniendo trazabilidad sobre el usuario responsable, la ruta asociada, la ubicación, el momento del registro y el estado de la incidencia.
+
+La selección se fundamenta en que el componente materializa directamente el requerimiento funcional **RF-02 — Gestionar incidencias operativas durante los recorridos** y participa en el cumplimiento de los atributos **QA-02 — Rendimiento**, **QA-03 — Seguridad**, **QA-04 — Auditabilidad** y **QA-05 — Modificabilidad**. Asimismo, permite evaluar de manera directa los escenarios **QS-03 — Seguridad, rechazo y auditoría de accesos no autorizados**, **QS-04 — Trazabilidad de incidencias operativas** y **QS-05 — Interoperabilidad y tolerancia a fallos con servicios externos**.
+
+El diseño se alinea con las decisiones aceptadas:
+
+- **ADR-002:** persistencia unificada con PostgreSQL y PostGIS y separación lógica de datos.
+- **ADR-003:** políticas de resiliencia para servicios externos.
+- **ADR-004:** autenticación centralizada, autorización por roles y auditoría de accesos.
+
+#### 8.1.2 Responsabilidades y límites
+
+El componente es responsable de:
+
+- Recibir solicitudes de registro de incidencias desde la Aplicación Web.
+- Validar los datos obligatorios y las reglas de negocio.
+- Verificar que la ruta exista y se encuentre en un estado que permita registrar eventos.
+- Verificar que el usuario autenticado tenga autorización sobre la ruta.
+- Crear la incidencia con un identificador único y estado inicial.
+- Persistir la incidencia y su evento de auditoría dentro de una misma transacción.
+- Evitar registros duplicados mediante una clave de idempotencia.
+- Solicitar directamente una notificación cuando la severidad lo requiera.
+- Aplicar un tiempo máximo de espera a la integración de notificaciones.
+- Registrar el resultado de la integración externa.
+- Devolver al cliente el resultado del registro y el estado de la notificación.
+
+El componente no es responsable de:
+
+- Autenticar credenciales institucionales.
+- Administrar usuarios, contraseñas o tokens.
+- Implementar el proveedor externo de notificaciones.
+- Calcular recorridos o representar mapas.
+- Ejecutar mantenimiento vehicular.
+- Generar reportes históricos o indicadores analíticos.
+
+La autenticación es delegada al Servicio de Identidad Municipal. El API Backend valida el token y aplica políticas de autorización. El envío efectivo de mensajes es responsabilidad del Servicio de Notificaciones.
+
+#### 8.1.3 Estructura interna del componente
+
+El componente se organiza en cuatro grupos:
+
+| Grupo           | Responsabilidad                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| Interfaz        | Recibir solicitudes HTTP, validar su estructura y transformar resultados en respuestas REST. |
+| Aplicación      | Coordinar el caso de uso sin contener detalles de persistencia o transporte.                 |
+| Dominio         | Proteger las invariantes, estados y reglas propias de una incidencia.                        |
+| Infraestructura | Implementar persistencia PostgreSQL/PostGIS e integración HTTP con servicios externos.       |
+
+La lógica de negocio depende de interfaces internas. Las implementaciones de PostgreSQL, PostGIS, OAuth 2.0 y HTTP se mantienen fuera del dominio para limitar el acoplamiento tecnológico y facilitar pruebas automatizadas.
+
+---
+
+#### 8.1.4 Diagrama de clases de diseño
+
+![Diagrama de clases de diseño](../diagramas/diagrama-clases-disenno.svg)
+
+**Figura 5. Diagrama de clases de diseño del componente de Gestión de Incidencias Operativas.**
+
+##### Justificación de las principales decisiones
+
+- `IncidenciasController` se limita a responsabilidades HTTP.
+- `RegistrarIncidenciaCasoUso` coordina el flujo y representa el objeto de control principal.
+- `Incidencia` protege las reglas del dominio y no depende de ASP.NET Core ni de PostgreSQL.
+- Los repositorios abstraen la persistencia definida en ADR-002.
+- `INotificadorIncidencias` encapsula la integración externa conforme al ADR-003.
+- `IAutorizadorIncidencias` evita incorporar decisiones de permisos directamente en el controlador.
+- `IUnidadTrabajo` asegura consistencia entre la incidencia y su registro de auditoría.
+- `IClock` permite controlar el tiempo durante las pruebas y evita acceder directamente al reloj del sistema.
+
+---
+
+#### 8.1.5 Secuencia del flujo principal
+
+El flujo principal representa el registro exitoso de una incidencia válida por parte de un usuario autorizado. La llamada al Servicio de Notificaciones se realiza directamente después de confirmar la transacción local, en concordancia con la Vista de Comportamiento.
+
+![Secuencia del flujo principal](../diagramas/secuencia-flujo-principal.svg)
+
+**Figura 6. Diagrama de secuencia del flujo principal de registro de una incidencia.**
+
+##### Resultado del flujo
+
+Al finalizar el flujo principal:
+
+- La incidencia queda registrada con un identificador único.
+- Su estado inicial es `Registrada`.
+- La ruta y el usuario reportante quedan asociados.
+- La fecha, ubicación, descripción, categoría y severidad quedan almacenadas.
+- El evento de creación queda disponible en auditoría.
+- Si corresponde, el Servicio de Notificaciones recibe una solicitud directa.
+- El resultado de la integración queda registrado.
+- Una falla del Servicio de Notificaciones no elimina la incidencia confirmada.
+- El cliente recibe el identificador de la incidencia y el estado de la notificación.
+
+---
+
+#### 8.1.6 Análisis de robustez
+
+El análisis de robustez identifica objetos de frontera, control y entidad y verifica que las responsabilidades no se mezclen.
+
+![Análisis de robustez](../diagramas/analisis-robustez.svg)
+
+**Figura 7. Diagrama de robustez del registro de una incidencia operativa.**
+
+##### Objetos de frontera
+
+| Objeto                      | Responsabilidad                                                   |
+| --------------------------- | ----------------------------------------------------------------- |
+| Formulario de incidencia    | Capturar la información suministrada por el usuario.              |
+| `IncidenciasController`     | Exponer la interfaz REST y transformar solicitudes y respuestas.  |
+| Adaptador de identidad      | Obtener la identidad validada y apoyar la evaluación de permisos. |
+| Adaptador de notificaciones | Encapsular la comunicación HTTP con el proveedor externo.         |
+
+##### Objetos de control
+
+| Objeto                       | Responsabilidad                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| `RegistrarIncidenciaCasoUso` | Coordinar todo el flujo de registro.                                            |
+| `AutorizadorIncidencias`     | Evaluar el acceso de acuerdo con roles, políticas y asignación de ruta.         |
+| `UnidadTrabajo`              | Confirmar atómicamente la incidencia y la auditoría de creación.                |
+| Política de resiliencia      | Limitar el tiempo de espera y evitar propagación indefinida de fallos externos. |
+
+##### Objetos de entidad
+
+| Objeto              | Responsabilidad                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `Incidencia`        | Representar el evento operativo y proteger sus invariantes.                          |
+| `Ruta`              | Determinar si la ruta permite el registro y si el usuario está relacionado con ella. |
+| `Ubicacion`         | Representar coordenadas geográficas válidas.                                         |
+| `RegistroAuditoria` | Conservar evidencia de creación, rechazo o fallo de integración.                     |
+
+##### Reglas verificadas
+
+- El actor interactúa únicamente con objetos de frontera.
+- Los objetos de frontera no acceden directamente a repositorios ni entidades.
+- El controlador no implementa reglas de negocio.
+- El objeto de control coordina entidades y puertos.
+- Las entidades no dependen de tecnologías externas.
+- La persistencia local se confirma antes de invocar el servicio externo.
+- La falla de una notificación no revierte una incidencia confirmada.
+- No se ejecutan reintentos automáticos sobre notificaciones para evitar duplicados.
+- Los intentos no autorizados deben rechazarse antes de modificar información.
+- Los eventos relevantes quedan registrados para auditoría.
+
+---
+
+#### 8.1.7 Reglas e invariantes del dominio
+
+1. Toda incidencia debe estar asociada con una ruta existente.
+2. La ruta debe permitir el registro de incidencias según su estado operativo.
+3. El usuario debe estar autenticado y autorizado.
+4. Un operario o conductor solo puede registrar incidencias sobre rutas asignadas.
+5. Un supervisor puede registrar o gestionar incidencias dentro de su ámbito operativo.
+6. La descripción es obligatoria y debe contener información significativa.
+7. La categoría y severidad deben pertenecer a los catálogos definidos.
+8. La latitud debe estar entre `-90` y `90`.
+9. La longitud debe estar entre `-180` y `180`.
+10. La fecha de ocurrencia no puede superar la tolerancia de reloj configurada.
+11. Una clave de idempotencia no puede producir más de una incidencia.
+12. El estado inicial de una incidencia es `Registrada`.
+13. Todo cambio de estado debe generar un registro de auditoría.
+14. Solo incidencias de severidad alta o crítica requieren notificación inmediata.
+15. La creación y su auditoría deben confirmarse en una misma transacción.
+
+##### Transiciones permitidas
+
+```mermaid
+stateDiagram-v2
+    [*] --> Registrada
+    Registrada --> EnRevision
+    EnRevision --> EnAtencion
+    EnRevision --> Cerrada
+    EnAtencion --> Resuelta
+    Resuelta --> Cerrada
+```
+**Figura 8. Vista de transiciones permitidas.**
+
+No se permite regresar una incidencia cerrada a un estado anterior sin un proceso administrativo explícito y auditado.
+
+---
+
+#### 8.1.8 Contrato de interfaz REST
+
+##### Registrar incidencia
+
+| Campo           | Valor                                    |
+| --------------- | ---------------------------------------- |
+| Operación       | Registrar incidencia operativa           |
+| Método          | `POST`                                   |
+| Ruta            | `/api/v1/incidencias`                    |
+| Autenticación   | OAuth 2.0 Bearer Token                   |
+| Autorización    | Política `Incidencias.Registrar`         |
+| Roles previstos | Operario, conductor y supervisor         |
+| Entrada         | `application/json`                       |
+| Salida          | `application/json`                       |
+| Idempotencia    | Encabezado `Idempotency-Key` obligatorio |
+
+##### Encabezados
+
+```http
+Authorization: Bearer {token}
+Content-Type: application/json
+Idempotency-Key: 872e6685-48f1-447d-ab3c-0497129498df
+```
+
+##### Solicitud
+
+```json
+{
+  "rutaId": "a5b1b02d-5280-42ec-a18e-1ca3f2337861",
+  "categoria": "BloqueoVia",
+  "severidad": "Alta",
+  "descripcion": "La vía se encuentra bloqueada por un vehículo pesado.",
+  "ubicacion": {
+    "latitud": 9.934739,
+    "longitud": -84.087502
+  },
+  "fechaOcurrencia": "2026-07-12T08:32:15-06:00"
+}
+```
+
+##### Precondiciones
+
+- El token debe existir, ser válido y no estar expirado.
+- La operación debe pasar por autenticación y autorización.
+- La ruta debe existir.
+- El usuario debe poseer permisos sobre la ruta.
+- La clave de idempotencia debe estar presente.
+- Los campos obligatorios deben cumplir las reglas del dominio.
+
+##### Respuesta exitosa
+
+```http
+HTTP/1.1 201 Created
+Location: /api/v1/incidencias/c552727d-7baf-42aa-a07c-86dc98b26f80
+```
+
+```json
+{
+  "id": "c552727d-7baf-42aa-a07c-86dc98b26f80",
+  "rutaId": "a5b1b02d-5280-42ec-a18e-1ca3f2337861",
+  "estado": "Registrada",
+  "fechaRegistro": "2026-07-12T08:32:17-06:00",
+  "notificacion": {
+    "requerida": true,
+    "estado": "Enviada"
+  }
+}
+```
+
+##### Respuesta cuando falla la notificación
+
+La incidencia ya confirmada se mantiene registrada y se informa el resultado de la integración:
+
+```http
+HTTP/1.1 201 Created
+```
+
+```json
+{
+  "id": "c552727d-7baf-42aa-a07c-86dc98b26f80",
+  "rutaId": "a5b1b02d-5280-42ec-a18e-1ca3f2337861",
+  "estado": "Registrada",
+  "fechaRegistro": "2026-07-12T08:32:17-06:00",
+  "notificacion": {
+    "requerida": true,
+    "estado": "Fallida"
+  }
+}
+```
+
+##### Postcondiciones
+
+- La incidencia existe en la base de datos.
+- Posee un identificador único.
+- Su estado inicial es `Registrada`.
+- El usuario, la ruta y la ubicación quedan asociados.
+- Existe un registro de auditoría de la creación.
+- Si se intentó notificar, el resultado queda registrado.
+- La operación se puede consultar inmediatamente después de la confirmación.
+
+##### Respuestas de error
+
+| Código                     | Condición                                                      | Comportamiento                                      |
+| -------------------------- | -------------------------------------------------------------- | --------------------------------------------------- |
+| `400 Bad Request`          | JSON inválido o ausencia de campos requeridos                  | No se crea la incidencia.                           |
+| `401 Unauthorized`         | Token ausente, inválido o expirado                             | Se rechaza y se registra el intento.                |
+| `403 Forbidden`            | Usuario sin permiso sobre la operación o ruta                  | Se rechaza, no se modifica información y se audita. |
+| `404 Not Found`            | Ruta inexistente                                               | No se crea la incidencia.                           |
+| `409 Conflict`             | La clave de idempotencia fue utilizada con datos incompatibles | No se crea un duplicado.                            |
+| `422 Unprocessable Entity` | Incumplimiento de reglas de negocio                            | Se detallan las reglas incumplidas.                 |
+| `503 Service Unavailable`  | No fue posible confirmar la persistencia local                 | No se considera registrada la incidencia.           |
+
+Una falla del Servicio de Notificaciones no produce `503` cuando la incidencia ya fue confirmada. En ese caso se responde `201 Created` con estado de notificación `Fallida`.
+
+---
+
+#### 8.1.9 Contratos de interfaces internas
+
+##### `IRegistrarIncidenciaCasoUso`
+
+```csharp
+public interface IRegistrarIncidenciaCasoUso
+{
+    Task<ResultadoRegistroIncidencia> EjecutarAsync(
+        RegistrarIncidenciaCommand command,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Precondiciones:**
+
+- `command` no puede ser nulo.
+- El usuario y la ruta deben tener identificadores válidos.
+- La clave de idempotencia debe estar presente.
+- La ubicación debe cumplir sus invariantes.
+
+**Postcondiciones:**
+
+- Devuelve una incidencia existente o recién creada.
+- Cuando el resultado es exitoso, la incidencia y su auditoría están confirmadas.
+- El resultado informa si la notificación no era requerida, fue enviada o falló.
+
+##### `IIncidenciaRepository`
+
+```csharp
+public interface IIncidenciaRepository
+{
+    Task AgregarAsync(
+        Incidencia incidencia,
+        CancellationToken cancellationToken = default);
+
+    Task<Incidencia?> ObtenerPorIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<Incidencia?> ObtenerPorClaveIdempotenciaAsync(
+        string claveIdempotencia,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Contrato:**
+
+- No confirma por sí mismo la transacción.
+- No devuelve entidades pertenecientes a otra clave de idempotencia.
+- La implementación preserva la ubicación mediante tipos compatibles con PostGIS.
+- No expone tipos específicos de PostgreSQL al dominio.
+
+##### `IRutaRepository`
+
+```csharp
+public interface IRutaRepository
+{
+    Task<Ruta?> ObtenerPorIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Contrato:**
+
+- Devuelve `null` cuando la ruta no existe.
+- Devuelve la información mínima necesaria para validar estado y asignaciones.
+
+##### `IAutorizadorIncidencias`
+
+```csharp
+public interface IAutorizadorIncidencias
+{
+    Task<bool> PuedeRegistrarAsync(
+        Guid usuarioId,
+        Ruta ruta,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Contrato:**
+
+- La decisión se basa en políticas explícitas y denegación por defecto.
+- Un resultado `false` impide cualquier modificación.
+- El rechazo debe producir una respuesta `403` y un evento de auditoría.
+- La implementación no administra credenciales.
+
+##### `IAuditoriaRepository`
+
+```csharp
+public interface IAuditoriaRepository
+{
+    Task AgregarAsync(
+        RegistroAuditoria registro,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Contrato:**
+
+Cada registro debe incluir, cuando esté disponible:
+
+- Fecha y hora.
+- Usuario.
+- Recurso.
+- Acción.
+- Origen.
+- Resultado.
+- Identificador de la entidad.
+- Datos suficientes para reconstruir el evento.
+
+##### `INotificadorIncidencias`
+
+```csharp
+public interface INotificadorIncidencias
+{
+    Task<ResultadoNotificacion> NotificarIncidenciaAsync(
+        Incidencia incidencia,
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Precondiciones:**
+
+- La incidencia debe estar confirmada.
+- Debe tener severidad alta o crítica.
+- Debe poseer identificador definitivo.
+
+**Postcondiciones:**
+
+- La solicitud externa no debe esperar más de cinco segundos.
+- No se ejecutan reintentos automáticos.
+- Un fallo se devuelve como resultado controlado o excepción traducible.
+- Un fallo no elimina ni modifica la incidencia confirmada.
+
+##### `IUnidadTrabajo`
+
+```csharp
+public interface IUnidadTrabajo
+{
+    Task ConfirmarAsync(
+        CancellationToken cancellationToken = default);
+}
+```
+
+**Contrato:**
+
+- Confirma atómicamente la incidencia y la auditoría de creación.
+- Ante un error, ninguna de las dos operaciones queda parcialmente confirmada.
+- La llamada al Servicio de Notificaciones no forma parte de la transacción.
+
+---
+
+#### 8.1.10 Flujos alternativos y manejo de errores
+
+##### FA-01 — Token ausente, inválido o expirado
+
+1. El middleware de seguridad rechaza la solicitud.
+2. El API responde `401 Unauthorized`.
+3. No se ejecuta el caso de uso.
+4. Se registra el intento con la información disponible.
+5. El registro debe quedar consultable en un máximo de cinco segundos.
+
+##### FA-02 — Usuario sin permisos
+
+1. La identidad es válida.
+2. El autorizador determina que el usuario no puede registrar sobre la ruta.
+3. El API responde `403 Forbidden`.
+4. No se crea ni modifica ninguna incidencia.
+5. Se registra usuario, recurso, acción, origen y resultado.
+
+##### FA-03 — Ruta inexistente
+
+1. El repositorio no encuentra la ruta.
+2. Se detiene el procesamiento.
+3. El API responde `404 Not Found`.
+4. No se inicia una transacción de escritura.
+
+##### FA-04 — Datos inválidos
+
+1. La solicitud presenta coordenadas, descripción, categoría, severidad o fecha inválidas.
+2. El API responde `400` o `422`, según el tipo de error.
+3. La respuesta identifica los campos o reglas incumplidos.
+4. No se persiste información parcial.
+
+##### FA-05 — Solicitud repetida
+
+1. Se recibe una clave de idempotencia ya procesada.
+2. Si los datos coinciden, se devuelve el resultado previamente registrado.
+3. Si los datos difieren, se responde `409 Conflict`.
+4. Nunca se crea una segunda incidencia para la misma operación lógica.
+
+##### FA-06 — Falla de persistencia
+
+1. La base de datos no puede confirmar la transacción.
+2. Se revierten la incidencia y la auditoría de creación.
+3. No se llama al Servicio de Notificaciones.
+4. El API responde `503 Service Unavailable`.
+
+##### FA-07 — Falla del Servicio de Notificaciones
+
+1. La incidencia y su auditoría ya fueron confirmadas.
+2. La llamada supera cinco segundos, devuelve error o el circuito está abierto.
+3. No se realiza reintento automático.
+4. Se registra el fallo de integración.
+5. La incidencia permanece con estado `Registrada`.
+6. El API responde `201 Created` e informa `notificacion.estado = Fallida`.
+
+---
+
+#### 8.1.11 Criterios verificables de calidad
+
+| ID    | Criterio                                                                                                                                  | Verificación                                                                  |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| CD-01 | Al menos el 99% de incidencias válidas debe confirmarse y quedar disponible para consulta en un máximo de cinco segundos.                 | Pruebas de carga e integración comparando recepción, confirmación y consulta. |
+| CD-02 | El 100% de incidencias confirmadas debe contener identificador, fecha, ubicación disponible, usuario, descripción, ruta y estado inicial. | Pruebas de integración y validación en base de datos.                         |
+| CD-03 | El 100% de operaciones restringidas debe pasar por autenticación y autorización.                                                          | Pruebas automatizadas por rol y recurso.                                      |
+| CD-04 | Las solicitudes no autorizadas deben responder `401` o `403` en un máximo de dos segundos.                                                | Pruebas de seguridad con tokens ausentes, expirados y roles insuficientes.    |
+| CD-05 | El 100% de rechazos debe generar auditoría consultable en un máximo de cinco segundos.                                                    | Consulta del registro de auditoría después de cada prueba negativa.           |
+| CD-06 | La integración de notificaciones no debe esperar más de cinco segundos.                                                                   | Simulación de respuestas lentas y medición del timeout.                       |
+| CD-07 | No debe ejecutarse reintento automático sobre el envío de notificaciones.                                                                 | Pruebas con proveedor simulado y conteo de invocaciones.                      |
+| CD-08 | Una falla de notificación no debe eliminar ni revertir una incidencia confirmada.                                                         | Prueba de integración con error externo posterior al `commit`.                |
+| CD-09 | La misma clave de idempotencia no debe crear más de una incidencia.                                                                       | Envío concurrente y repetido de la misma solicitud.                           |
+| CD-10 | Una modificación interna del adaptador de notificaciones no debe requerir cambios en la entidad `Incidencia`.                             | Revisión de dependencias y pruebas de regresión.                              |
+
+---
+
+#### 8.1.12 Trazabilidad del diseño
+
+| Elemento del diseño                                        | Driver, escenario o decisión atendida |
+| ---------------------------------------------------------- | ------------------------------------- |
+| `RegistrarIncidenciaCasoUso`                               | RF-02, QA-05, QS-04                   |
+| `IAutorizadorIncidencias`                                  | RF-04, QA-03, REST-01, QS-03, ADR-004 |
+| Auditoría de creación y rechazos                           | QA-04, REST-02, QS-03, QS-04, ADR-004 |
+| PostgreSQL y PostGIS mediante repositorios                 | QA-04, QA-05, QS-04, ADR-002          |
+| Transacción de incidencia y auditoría                      | QA-04, REST-02, QS-04, ADR-002        |
+| Adaptador `INotificadorIncidencias`                        | QA-01, QA-05, QS-05, ADR-003          |
+| Timeout de cinco segundos                                  | QA-01, QA-02, QS-05, ADR-003          |
+| Ausencia de reintento automático en notificaciones         | QA-04, QS-05, ADR-003                 |
+| Clave de idempotencia                                      | QA-04, QS-04                          |
+| Separación entre dominio e infraestructura                 | QA-05, QS-06                          |
+| Respuesta `201` aun cuando falla la notificación posterior | QA-01, QS-04, QS-05                   |
+| Registro de fallos externos                                | QA-04, QS-05, ADR-003                 |
+
+---
+
+#### 8.1.13 Evaluación arquitectónica del componente
+
+El diseño favorece la consistencia local porque la incidencia y su registro de auditoría se almacenan en PostgreSQL dentro de una misma transacción. Esta decisión está alineada con el monolito modular y con la persistencia unificada adoptada. La comunicación con el Servicio de Notificaciones se mantiene fuera de la transacción para evitar mantener bloqueos de base de datos mientras se espera una respuesta externa.
+
+La llamada directa a notificaciones conserva concordancia con la Vista de Comportamiento, pero introduce acoplamiento temporal: el tiempo total de respuesta depende parcialmente del proveedor externo. El ADR-003 limita este impacto mediante un timeout máximo de cinco segundos y evitando reintentos automáticos que puedan duplicar mensajes. El costo de esta decisión es que una notificación fallida no se recupera automáticamente; el fallo queda registrado para atención operativa o mecanismos futuros.
+
+La autorización se aplica en el API Backend y no únicamente en la Aplicación Web. Esto garantiza que una invocación directa al endpoint siga protegida. Además, la auditoría de accesos rechazados y operaciones relevantes permite verificar posteriormente quién intentó realizar una acción, sobre qué recurso y con qué resultado.
+
+Finalmente, las interfaces internas reducen el acoplamiento entre el dominio, PostgreSQL, el proveedor de identidad y el proveedor de notificaciones. El componente puede evolucionar o sustituir adaptadores sin modificar las invariantes centrales de `Incidencia`, lo cual contribuye al cumplimiento de la modificabilidad establecida en QA-05 y QS-06.
+
+---
+
+#### 8.1.14 Conclusión del diseño detallado
+
+El Componente de Gestión de Incidencias Operativas concreta los drivers, escenarios y ADRs del documento arquitectónico en un diseño verificable. El modelo separa interfaz, aplicación, dominio e infraestructura; aplica autorización por políticas; mantiene auditoría transaccional; utiliza PostgreSQL y PostGIS sin acoplar el dominio a la tecnología; e integra el Servicio de Notificaciones mediante un adaptador con timeout y sin reintentos automáticos.
+
+El diseño permite registrar incidencias de manera trazable, impedir accesos no autorizados, conservar consistencia local y controlar la propagación de fallos externos. Sus contratos, flujos alternativos y criterios medibles permiten evaluar posteriormente si la implementación cumple las decisiones arquitectónicas aceptadas.
 
 ---
 

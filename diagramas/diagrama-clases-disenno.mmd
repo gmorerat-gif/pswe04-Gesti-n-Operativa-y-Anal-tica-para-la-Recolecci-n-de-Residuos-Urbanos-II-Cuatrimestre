@@ -1,0 +1,238 @@
+classDiagram
+    direction LR
+
+    class IncidenciasController {
+        <<boundary>>
+        -IRegistrarIncidenciaCasoUso registrarIncidencia
+        +Registrar(request, idempotencyKey) ActionResult
+        +ConsultarPorId(id) ActionResult
+    }
+
+    class RegistrarIncidenciaRequest {
+        <<DTO>>
+        +UUID rutaId
+        +CategoriaIncidencia categoria
+        +SeveridadIncidencia severidad
+        +String descripcion
+        +Decimal latitud
+        +Decimal longitud
+        +DateTime fechaOcurrencia
+    }
+
+    class IncidenciaResponse {
+        <<DTO>>
+        +UUID id
+        +UUID rutaId
+        +EstadoIncidencia estado
+        +DateTime fechaRegistro
+        +EstadoNotificacion estadoNotificacion
+    }
+
+    class IRegistrarIncidenciaCasoUso {
+        <<interface>>
+        +EjecutarAsync(command, cancellationToken) ResultadoRegistroIncidencia
+    }
+
+    class RegistrarIncidenciaCasoUso {
+        <<control>>
+        -IIncidenciaRepository incidencias
+        -IRutaRepository rutas
+        -IAutorizadorIncidencias autorizador
+        -IAuditoriaRepository auditoria
+        -INotificadorIncidencias notificador
+        -IUnidadTrabajo unidadTrabajo
+        -IClock reloj
+        +EjecutarAsync(command, cancellationToken) ResultadoRegistroIncidencia
+    }
+
+    class RegistrarIncidenciaCommand {
+        +UUID usuarioId
+        +UUID rutaId
+        +CategoriaIncidencia categoria
+        +SeveridadIncidencia severidad
+        +String descripcion
+        +Ubicacion ubicacion
+        +DateTime fechaOcurrencia
+        +String claveIdempotencia
+        +String origenSolicitud
+    }
+
+    class ResultadoRegistroIncidencia {
+        +UUID incidenciaId
+        +EstadoIncidencia estado
+        +DateTime fechaRegistro
+        +EstadoNotificacion estadoNotificacion
+    }
+
+    class Incidencia {
+        <<entity>>
+        -UUID id
+        -UUID rutaId
+        -UUID usuarioReportanteId
+        -CategoriaIncidencia categoria
+        -SeveridadIncidencia severidad
+        -String descripcion
+        -Ubicacion ubicacion
+        -DateTime fechaOcurrencia
+        -DateTime fechaRegistro
+        -EstadoIncidencia estado
+        -String claveIdempotencia
+        +Crear(...) Incidencia
+        +CambiarEstado(nuevoEstado, usuarioId, fecha) void
+        +RequiereNotificacionInmediata() Boolean
+    }
+
+    class Ruta {
+        <<entity>>
+        -UUID id
+        -EstadoRuta estado
+        -Collection usuariosAsignados
+        +PermiteRegistrarIncidencias() Boolean
+        +EstaAsignado(usuarioId) Boolean
+    }
+
+    class Ubicacion {
+        <<value object>>
+        +Decimal latitud
+        +Decimal longitud
+        +Crear(latitud, longitud) Ubicacion
+    }
+
+    class RegistroAuditoria {
+        <<entity>>
+        -UUID id
+        -UUID entidadId
+        -UUID usuarioId
+        -String recurso
+        -String accion
+        -String origen
+        -String resultado
+        -DateTime fecha
+        -String datos
+        +CrearRegistroIncidencia(incidencia, origen) RegistroAuditoria
+        +CrearFalloNotificacion(incidencia, detalle) RegistroAuditoria
+    }
+
+    class EstadoIncidencia {
+        <<enumeration>>
+        Registrada
+        EnRevision
+        EnAtencion
+        Resuelta
+        Cerrada
+    }
+
+    class SeveridadIncidencia {
+        <<enumeration>>
+        Baja
+        Media
+        Alta
+        Critica
+    }
+
+    class CategoriaIncidencia {
+        <<enumeration>>
+        BloqueoVia
+        FallaMecanica
+        Accidente
+        Retraso
+        ProblemaAcceso
+        Otro
+    }
+
+    class EstadoNotificacion {
+        <<enumeration>>
+        NoRequerida
+        Enviada
+        Fallida
+    }
+
+    class IIncidenciaRepository {
+        <<interface>>
+        +AgregarAsync(incidencia, cancellationToken)
+        +ObtenerPorIdAsync(id, cancellationToken) Incidencia
+        +ObtenerPorClaveIdempotenciaAsync(clave, cancellationToken) Incidencia
+    }
+
+    class IRutaRepository {
+        <<interface>>
+        +ObtenerPorIdAsync(id, cancellationToken) Ruta
+    }
+
+    class IAuditoriaRepository {
+        <<interface>>
+        +AgregarAsync(registro, cancellationToken)
+    }
+
+    class IAutorizadorIncidencias {
+        <<interface>>
+        +PuedeRegistrarAsync(usuarioId, ruta, cancellationToken) Boolean
+    }
+
+    class INotificadorIncidencias {
+        <<interface>>
+        +NotificarIncidenciaAsync(incidencia, cancellationToken) ResultadoNotificacion
+    }
+
+    class IUnidadTrabajo {
+        <<interface>>
+        +ConfirmarAsync(cancellationToken)
+    }
+
+    class IClock {
+        <<interface>>
+        +UtcNow DateTime
+    }
+
+    class IncidenciaRepositoryPostgreSql {
+        <<infrastructure>>
+    }
+
+    class RutaRepositoryPostgreSql {
+        <<infrastructure>>
+    }
+
+    class AuditoriaRepositoryPostgreSql {
+        <<infrastructure>>
+    }
+
+    class NotificadorIncidenciasHttp {
+        <<infrastructure>>
+        -HttpClient cliente
+        -TimeSpan timeout
+        +NotificarIncidenciaAsync(incidencia, cancellationToken) ResultadoNotificacion
+    }
+
+    class AutorizadorIdentidadMunicipal {
+        <<infrastructure>>
+    }
+
+    IncidenciasController --> IRegistrarIncidenciaCasoUso
+    IncidenciasController ..> RegistrarIncidenciaRequest
+    IncidenciasController ..> IncidenciaResponse
+
+    IRegistrarIncidenciaCasoUso <|.. RegistrarIncidenciaCasoUso
+    RegistrarIncidenciaCasoUso --> IIncidenciaRepository
+    RegistrarIncidenciaCasoUso --> IRutaRepository
+    RegistrarIncidenciaCasoUso --> IAuditoriaRepository
+    RegistrarIncidenciaCasoUso --> IAutorizadorIncidencias
+    RegistrarIncidenciaCasoUso --> INotificadorIncidencias
+    RegistrarIncidenciaCasoUso --> IUnidadTrabajo
+    RegistrarIncidenciaCasoUso --> IClock
+    RegistrarIncidenciaCasoUso ..> Incidencia
+    RegistrarIncidenciaCasoUso ..> RegistroAuditoria
+    RegistrarIncidenciaCasoUso ..> RegistrarIncidenciaCommand
+    RegistrarIncidenciaCasoUso ..> ResultadoRegistroIncidencia
+
+    Incidencia --> Ubicacion
+    Incidencia --> EstadoIncidencia
+    Incidencia --> SeveridadIncidencia
+    Incidencia --> CategoriaIncidencia
+    ResultadoRegistroIncidencia --> EstadoNotificacion
+    Ruta "1" --> "*" Incidencia : asociada con
+
+    IIncidenciaRepository <|.. IncidenciaRepositoryPostgreSql
+    IRutaRepository <|.. RutaRepositoryPostgreSql
+    IAuditoriaRepository <|.. AuditoriaRepositoryPostgreSql
+    INotificadorIncidencias <|.. NotificadorIncidenciasHttp
+    IAutorizadorIncidencias <|.. AutorizadorIdentidadMunicipal
