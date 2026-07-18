@@ -176,31 +176,31 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 
 | ID    | Requerimiento                                                                                                                             | Stakeholder                                                        | ¿Por qué es un driver?                                                                                            |
 | ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| RF-01 | Monitorear en tiempo casi real la ejecución de rutas y la ubicación de las unidades, con actualizaciones objetivo entre 15 y 30 segundos. | Supervisor Operativo                                               | Obliga a diseñar mecanismos de captura, procesamiento y visualización de información operativa con baja latencia. |
-| RF-02 | Gestionar incidencias operativas durante los recorridos.                                                                                  | Supervisor Operativo, Operario de Recolección                      | Requiere componentes para el registro, seguimiento y trazabilidad de eventos operativos.                          |
-| RF-03 | Generar reportes e indicadores históricos para la toma de decisiones.                                                                     | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Obliga a incorporar mecanismos de almacenamiento histórico y capacidades analíticas.                              |
-| RF-04 | Administrar usuarios, roles y permisos de acceso.                                                                                         | Administrador del Sistema                                          | Impacta directamente la arquitectura de seguridad, autenticación y control de acceso.                             |
-| RF-05 | Gestionar rutas, vehículos y cuadrillas como núcleo de la operación.                                                                      | Supervisor Operativo                                               | Define las entidades principales del dominio y condiciona la estructura central de la solución.                   |
+| RF-01 | Gestionar la planificación y asignación de rutas de recolección para vehículos y cuadrillas. | Supervisor Operativo                                               | Requiere un módulo central de planificación desacoplado del resto de la operación. |
+| RF-02 | GRegistrar y dar seguimiento a incidencias operativas durante la ejecución de las rutas.     | Supervisor Operativo, Operario de Recolección                      | Obliga a incorporar un componente para la gestión de incidencias y su persistencia.         | 
+| RF-03 | Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real.         | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Requiere integrar servicios de monitoreo y geolocalización independientes del resto del sistema.   |
+| RF-04 | Generar reportes e indicadores para apoyar la toma de decisiones.                            | Jefatura de Servicios Urbanos, Analista de Planificación           | Obliga a separar el procesamiento analítico de las operaciones transaccionales.        |
+| RF-05 | Administrar usuarios, roles y permisos de acceso.                                            | Administrador del Sistema                                          | Requiere un componente de autenticación y autorización desacoplado de la lógica de negocio.  |
 
 ### 3.2 Atributos de calidad prioritarios
 
 | ID    | Atributo        | Importancia | Stakeholder                                                           | Justificación                                                                                                                                                                   |
 | ----- | --------------- | ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                                 | El sistema debe estar disponible durante toda la jornada operativa para garantizar la continuidad del servicio de recolección.                                                  |
-| QA-02 | Rendimiento     | Alta        | Supervisor Operativo                                                  | La información debe mostrarse rápidamente para apoyar la supervisión y la toma de decisiones oportunas.                                                                         |
-| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | Debe proteger la información operativa y administrativa mediante mecanismos de autenticación, autorización y control de acceso.                                                 |
-| QA-04 | Auditabilidad   | Alta        | Entidades de Fiscalización y Dirección de Gestión Ambiental           | Se requiere mantener un registro trazable de las actividades, incidencias y cambios realizados para facilitar la supervisión y la fiscalización.                                |
-| QA-05 | Modificabilidad | Media       | Departamento de Tecnologías de Información                            | La plataforma debe facilitar la incorporación de nuevos requerimientos y la evolución de los procesos operativos con el menor impacto posible sobre los componentes existentes. |
+| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                                 | La plataforma debe mantenerse disponible durante las jornadas de recolección para evitar interrupciones en la operación.         |
+| QA-02 | Mantenibilidad  | Alta        | Departamento de TI                                                    | LLa arquitectura debe facilitar futuras modificaciones sin afectar el funcionamiento del sistema.                                |
+| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | El sistema administra información operativa y requiere autenticación, autorización y trazabilidad de accesos.                             |
+| QA-04 | Escalabilidad   | Media       | Dirección de Gestión Ambiental                                        | SEl sistema debe soportar el crecimiento en usuarios, rutas y volumen de información.                            |
+| QA-05 | Trazabilidad    | Alta        |Entidades de Fiscalización y Control                                   | Todas las operaciones deben quedar registradas para procesos de auditoría y seguimiento institucional.                          |
 
 ### 3.3 Restricciones que actúan como drivers
 
 | ID      | Restricción                                                               | Tipo        | Impacto en el diseño                                                                 |
 | ------- | ------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
-| REST-01 | Cumplir las políticas institucionales de seguridad de la información.     | Regulatoria | Obliga a implementar autenticación, autorización y protección de datos.              |
-| REST-02 | Mantener trazabilidad completa de operaciones e incidencias.              | Negocio     | Requiere auditoría y conservación de registros históricos.                           |
-| REST-03 | Integrarse con la infraestructura tecnológica institucional existente.    | Técnica     | Condiciona las tecnologías utilizadas y la arquitectura de despliegue.               |
-| REST-04 | Conservar información histórica para análisis e indicadores.              | Negocio     | Obliga a diseñar estrategias de persistencia y consulta eficientes.                  |
-| REST-05 | Cumplir normativa costarricense aplicable a gestión municipal y residuos. | Regulatoria | Condiciona el manejo, almacenamiento y disponibilidad de la información del sistema. |
+| REST-01 | El acceso a la plataforma debe realizarse mediante autenticación y control de roles institucionales| Negocio | Obliga a incorporar un servicio de autenticación y autorización.|
+| REST-02 | La plataforma debe mantener trazabilidad de las operaciones realizadas por los usuarios.    | Regulatoria | Requiere implementar mecanismos de auditoría y registro de eventos.|
+| REST-03 | El sistema debe integrarse con un servicio de notificaciones para informar incidencias críticas.   | Técnica | Obliga a desacoplar el envío de notificaciones mediante un servicio especializado.|
+| REST-04 | La información operativa debe almacenarse de forma persistente para consultas históricas y generación de reportes.| Negocio | Condiciona el diseño de la capa de persistencia y del almacenamiento histórico.|
+
 
 ---
 
@@ -471,11 +471,38 @@ La Figura 4 presenta la interacción entre los principales contenedores durante 
 
 ### 6.1 Estilo Arquitectónico Adoptado
 
----
+La solución propuesta adopta una Arquitectura en Capas (Layered Architecture) con una orientación a servicios para los componentes externos. Esta decisión permite separar claramente las responsabilidades del sistema entre la presentación, la lógica de negocio, el acceso a datos y los servicios de infraestructura.
+
+La arquitectura se organiza en las siguientes capas:
+
+-Capa de Presentación: corresponde a la Aplicación Web utilizada por operarios, supervisores y administradores para interactuar con el sistema.
+-Capa de Lógica de Negocio: implementada por el API Backend, donde se ejecutan las reglas de negocio, la validación de permisos, el procesamiento de incidencias y la coordinación de las operaciones del sistema.
+-Capa de Persistencia: encargada del almacenamiento y consulta de la información en la Base de Datos del Sistema.
+-Servicios Externos: integran funcionalidades especializadas como el Servicio de Identidad para autenticación y autorización, y el Servicio de Notificaciones para el envío de alertas en tiempo real.
+
+Este estilo arquitectónico responde a los principales drivers identificados durante el análisis, como la mantenibilidad, seguridad, disponibilidad y escalabilidad. La separación de responsabilidades facilita la evolución del sistema, permite realizar cambios de forma controlada y reduce el impacto de modificaciones futuras.
+
+Además, la incorporación de servicios independientes para autenticación y notificaciones mejora la reutilización de componentes, fortalece la seguridad y permite escalar estos servicios sin afectar la lógica principal de la aplicación.
 
 ### 6.2 Alternativas Arquitectónicas Evaluadas
 
----
+Durante el diseño se analizaron diferentes estilos arquitectónicos antes de seleccionar la arquitectura en capas.
+
+Arquitectura Monolítica
+
+Se consideró una arquitectura monolítica debido a su simplicidad de implementación y despliegue inicial. Sin embargo, fue descartada porque concentra toda la funcionalidad en una única aplicación, dificultando el mantenimiento, la escalabilidad y la evolución del sistema conforme aumenten las funcionalidades relacionadas con rutas, incidencias, monitoreo y reportes.
+
+Arquitectura de Microservicios
+
+También se evaluó una arquitectura basada en microservicios, la cual ofrece ventajas importantes en escalabilidad, independencia de despliegue y tolerancia a fallos. No obstante, se descartó para esta primera versión debido al incremento en la complejidad operativa, la necesidad de mecanismos adicionales de comunicación, descubrimiento de servicios, monitoreo distribuido y administración de infraestructura, aspectos que no resultan necesarios para el alcance actual del proyecto.
+
+Arquitectura Hexagonal
+
+Se analizó igualmente la Arquitectura Hexagonal (Ports and Adapters), reconocida por facilitar el desacoplamiento entre la lógica de negocio y las tecnologías externas. Aunque representa una excelente alternativa para sistemas con múltiples integraciones o cambios frecuentes de infraestructura, se determinó que incorporaría un nivel de complejidad superior al requerido para este proyecto académico, donde una arquitectura en capas proporciona una solución más sencilla y suficiente para satisfacer los drivers arquitectónicos identificados.
+
+Justificación de la decisión
+
+Finalmente, se seleccionó la Arquitectura en Capas por ofrecer el mejor equilibrio entre simplicidad, mantenibilidad, seguridad y facilidad de desarrollo. Este estilo permite una clara separación de responsabilidades, facilita las pruebas, simplifica el mantenimiento y satisface los requerimientos funcionales y atributos de calidad definidos para la plataforma de gestión operativa y analítica de recolección de residuos urbanos.
 
 ### 6.3 Análisis de Trade-offs
 
