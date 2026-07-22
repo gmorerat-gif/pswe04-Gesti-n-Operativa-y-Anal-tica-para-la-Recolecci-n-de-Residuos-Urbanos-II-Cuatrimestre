@@ -11,7 +11,7 @@
 | Docente                       | JUAN MAURICIO LEANDRO JIMENEZ                                                                                                                                         |
 | Cuatrimestre                  | 2026 — 2                                                                                                                                                              |
 | Versión del documento         | 0.3 — Avance 2                                                                                                                                                        |
-| Fecha de última actualización | 2026-07-12                                                                                                                                                            |
+| Fecha de última actualización | 2026-07-122                                                                                                                                                           |
 
 ---
 
