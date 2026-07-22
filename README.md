@@ -41,7 +41,7 @@ JUAN MAURICIO LEANDRO JIMENEZ
 | --------------------------------- | -------------------------------------- | ----------- | 
 | S03 – [Propuesta](./docs/propuesta.md) | Definición del proyecto y alcance |  Aprobado |
 | S07 – [Avance 1](./docs/avance1.md) | Contexto, drivers y vista de contexto |  En revisión |
-| S11 – Avance 2 | Documento pendiente de entrega |  Pendiente |
+| S11 – [Avance 2](./docs/avance2.md) | Documento pendiente de entrega |  En revisión |
 | S14 – Entrega final | Documento pendiente de entrega |  Pendiente |
 
 ## Estructura del repositorio
