@@ -117,7 +117,7 @@ Desde la perspectiva arquitectónica, este dominio combina información operativ
 - No ejecuta procesos de contratación administrativa, compras institucionales o gestión de proveedores.
 - No reemplaza los sistemas corporativos municipales utilizados para gestión financiera, recursos humanos o administración documental.
 - No sustituye la toma de decisiones de supervisores y responsables operativos; la plataforma proporciona información y herramientas de apoyo para la gestión.
-- No administra infraestructura tecnológica institucional, redes, servidores o plataformas corporativas utilizadas por la Municipalidad
+- No administra infraestructura tecnológica institucional, redes, servidores o plataformas corporativas utilizadas por la Municipalidad.
 
 ### 1.4 Usuarios y casos de uso principales
 
@@ -177,7 +177,7 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 | ID    | Requerimiento                                                                                                                             | Stakeholder                                                        | ¿Por qué es un driver?                                                                                            |
 | ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | RF-01 | Gestionar la planificación y asignación de rutas de recolección para vehículos y cuadrillas. | Supervisor Operativo                                               | Requiere un módulo central de planificación desacoplado del resto de la operación. |
-| RF-02 | GRegistrar y dar seguimiento a incidencias operativas durante la ejecución de las rutas.     | Supervisor Operativo, Operario de Recolección                      | Obliga a incorporar un componente para la gestión de incidencias y su persistencia.         | 
+| RF-02 | Registrar y dar seguimiento a incidencias operativas durante la ejecución de las rutas.     | Supervisor Operativo, Operario de Recolección                      | Obliga a incorporar un componente para la gestión de incidencias y su persistencia.         | 
 | RF-03 | Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real.         | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Requiere integrar servicios de monitoreo y geolocalización independientes del resto del sistema.   |
 | RF-04 | Generar reportes e indicadores para apoyar la toma de decisiones.                            | Jefatura de Servicios Urbanos, Analista de Planificación           | Obliga a separar el procesamiento analítico de las operaciones transaccionales.        |
 | RF-05 | Administrar usuarios, roles y permisos de acceso.                                            | Administrador del Sistema                                          | Requiere un componente de autenticación y autorización desacoplado de la lógica de negocio.  |
@@ -187,10 +187,10 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 | ID    | Atributo        | Importancia | Stakeholder                                                           | Justificación                                                                                                                                                                   |
 | ----- | --------------- | ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                                 | La plataforma debe mantenerse disponible durante las jornadas de recolección para evitar interrupciones en la operación.         |
-| QA-02 | Mantenibilidad  | Alta        | Departamento de TI                                                    | LLa arquitectura debe facilitar futuras modificaciones sin afectar el funcionamiento del sistema.                                |
+| QA-02 | Mantenibilidad  | Alta        | Departamento de TI                                                    | La arquitectura debe facilitar futuras modificaciones sin afectar el funcionamiento del sistema.                                |
 | QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | El sistema administra información operativa y requiere autenticación, autorización y trazabilidad de accesos.                             |
-| QA-04 | Escalabilidad   | Media       | Dirección de Gestión Ambiental                                        | SEl sistema debe soportar el crecimiento en usuarios, rutas y volumen de información.                            |
-| QA-05 | Trazabilidad    | Alta        |Entidades de Fiscalización y Control                                   | Todas las operaciones deben quedar registradas para procesos de auditoría y seguimiento institucional.                          |
+| QA-04 | Escalabilidad   | Media       | Dirección de Gestión Ambiental                                        | El sistema debe soportar el crecimiento en usuarios, rutas y volumen de información.                            |
+| QA-05 | Trazabilidad    | Alta        | Entidades de Fiscalización y Control                                   | Todas las operaciones deben quedar registradas para procesos de auditoría y seguimiento institucional.                          |
 
 ### 3.3 Restricciones que actúan como drivers
 
@@ -475,10 +475,10 @@ La solución propuesta adopta una Arquitectura en Capas (Layered Architecture) c
 
 La arquitectura se organiza en las siguientes capas:
 
--Capa de Presentación: corresponde a la Aplicación Web utilizada por operarios, supervisores y administradores para interactuar con el sistema.
--Capa de Lógica de Negocio: implementada por el API Backend, donde se ejecutan las reglas de negocio, la validación de permisos, el procesamiento de incidencias y la coordinación de las operaciones del sistema.
--Capa de Persistencia: encargada del almacenamiento y consulta de la información en la Base de Datos del Sistema.
--Servicios Externos: integran funcionalidades especializadas como el Servicio de Identidad para autenticación y autorización, y el Servicio de Notificaciones para el envío de alertas en tiempo real.
+- Capa de Presentación: corresponde a la Aplicación Web utilizada por operarios, supervisores y administradores para interactuar con el sistema.
+- Capa de Lógica de Negocio: implementada por el API Backend, donde se ejecutan las reglas de negocio, la validación de permisos, el procesamiento de incidencias y la coordinación de las operaciones del sistema.
+- Capa de Persistencia: encargada del almacenamiento y consulta de la información en la Base de Datos del Sistema.
+- Servicios Externos: integran funcionalidades especializadas como el Servicio de Identidad para autenticación y autorización, y el Servicio de Notificaciones para el envío de alertas en tiempo real.
 
 Este estilo arquitectónico responde a los principales drivers identificados durante el análisis, como la mantenibilidad, seguridad, disponibilidad y escalabilidad. La separación de responsabilidades facilita la evolución del sistema, permite realizar cambios de forma controlada y reduce el impacto de modificaciones futuras.
 
@@ -488,9 +488,9 @@ Además, la incorporación de servicios independientes para autenticación y not
 
 Durante el diseño se analizaron diferentes estilos arquitectónicos antes de seleccionar la arquitectura en capas.
 
-Arquitectura Monolítica
+Arquitectura Monolítica Tradicional
 
-Se consideró una arquitectura monolítica debido a su simplicidad de implementación y despliegue inicial. Sin embargo, fue descartada porque concentra toda la funcionalidad en una única aplicación, dificultando el mantenimiento, la escalabilidad y la evolución del sistema conforme aumenten las funcionalidades relacionadas con rutas, incidencias, monitoreo y reportes.
+Se consideró una arquitectura monolítica tradicional en la que toda la funcionalidad se concentra sin una separación modular clara debido a su simplicidad de implementación y despliegue inicial. Sin embargo, fue descartada porque concentra toda la funcionalidad en una única aplicación, dificultando el mantenimiento, la escalabilidad y la evolución del sistema conforme aumenten las funcionalidades relacionadas con rutas, incidencias, monitoreo y reportes.
 
 Arquitectura de Microservicios
 
