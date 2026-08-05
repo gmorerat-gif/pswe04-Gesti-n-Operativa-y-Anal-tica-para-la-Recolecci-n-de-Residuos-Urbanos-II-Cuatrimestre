@@ -1,0 +1,53 @@
+sequenceDiagram
+    autonumber
+
+    actor Usuario as Operario o conductor
+    participant Web as Aplicación Web
+    participant Controller as IncidenciasController
+    participant CasoUso as RegistrarIncidenciaCasoUso
+    participant Rutas as IRutaRepository
+    participant Autorizador as IAutorizadorIncidencias
+    participant Incidencias as IIncidenciaRepository
+    participant Auditoria as IAuditoriaRepository
+    participant UoW as IUnidadTrabajo
+    participant Notificador as INotificadorIncidencias
+
+    Usuario->>Web: Completa el formulario de incidencia
+    Web->>Controller: POST /api/v1/incidencias
+    Note over Web,Controller: Bearer token + Idempotency-Key
+    Controller->>CasoUso: EjecutarAsync(command)
+
+    CasoUso->>Rutas: ObtenerPorIdAsync(rutaId)
+    Rutas-->>CasoUso: Ruta
+
+    CasoUso->>Autorizador: PuedeRegistrarAsync(usuarioId, ruta)
+    Autorizador-->>CasoUso: Autorizado
+
+    CasoUso->>Incidencias: ObtenerPorClaveIdempotenciaAsync(clave)
+    Incidencias-->>CasoUso: No existe registro previo
+
+    CasoUso->>CasoUso: Validar reglas y crear Incidencia
+    CasoUso->>Incidencias: AgregarAsync(incidencia)
+    CasoUso->>Auditoria: AgregarAsync(registro de creación)
+    CasoUso->>UoW: ConfirmarAsync()
+    UoW-->>CasoUso: Transacción confirmada
+
+    alt Severidad alta o crítica
+        CasoUso->>Notificador: NotificarIncidenciaAsync(incidencia)
+        Note over CasoUso,Notificador: Timeout máximo de 5 segundos<br/>Sin reintento automático
+
+        alt Notificación aceptada
+            Notificador-->>CasoUso: Enviada
+            CasoUso->>Auditoria: AgregarAsync(resultado de integración)
+        else Error, timeout o circuito abierto
+            Notificador--xCasoUso: Fallida
+            CasoUso->>Auditoria: AgregarAsync(fallo de integración)
+            Note over CasoUso: La incidencia no se revierte
+        end
+    else Severidad baja o media
+        Note over CasoUso: Notificación no requerida
+    end
+
+    CasoUso-->>Controller: ResultadoRegistroIncidencia
+    Controller-->>Web: HTTP 201 Created
+    Web-->>Usuario: Confirmación y estado de notificación

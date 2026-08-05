@@ -1,0 +1,24 @@
+sequenceDiagram
+
+actor Supervisor
+
+participant Web as Aplicación Web
+participant API as API Backend
+participant BD as Base de Datos del Sistema
+participant Mapas as Servicio de Mapas
+
+Supervisor->>Web: Consulta estado de rutas
+
+Web->>API: Solicita rutas activas
+
+API->>BD: Consulta información operativa
+
+BD-->>API: Datos de rutas
+
+API->>Mapas: Solicita información cartográfica
+
+Mapas-->>API: Información geográfica
+
+API-->>Web: Estado consolidado
+
+Web-->>Supervisor: Visualiza monitoreo

@@ -1,0 +1,35 @@
+flowchart LR
+
+    %% Personas externas
+    Supervisor["Supervisor Operativo"]
+    Administrador["Administrador del Sistema"]
+    Operario["Operario de Recolección"]
+
+    %% Sistema principal
+    subgraph Sistema["Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos"]
+        direction LR
+
+        Web["Aplicación Web<br/>[Contenedor: React]"]
+        API["API Backend<br/>[Contenedor: ASP.NET Core]"]
+        BD[("Base de Datos del Sistema<br/>[Contenedor: PostgreSQL + PostGIS]")]
+
+        Web -->|"Solicita funcionalidades y consulta información<br/>REST / HTTPS"| API
+        API -->|"Lee y almacena información operativa,<br/>geoespacial, histórica y de auditoría<br/>SQL"| BD
+    end
+
+    %% Sistemas externos
+    Identidad["Servicio de Identidad<br/>[Sistema externo: OpenID Connect / OAuth 2.0]"]
+    Mapas["Servicio de Mapas<br/>[Sistema externo: API de mapas]"]
+    Geolocalizacion["Servicio de Geolocalización<br/>[Sistema externo: servicio o dispositivo GPS]"]
+    Notificaciones["Servicio de Notificaciones<br/>[Sistema externo: API de notificaciones]"]
+
+    %% Interacciones de usuarios
+    Supervisor -->|"Monitorea rutas, unidades e incidencias<br/>HTTPS"| Web
+    Administrador -->|"Administra usuarios, roles y configuración<br/>HTTPS"| Web
+    Operario -->|"Consulta rutas y registra incidencias<br/>HTTPS"| Web
+
+    %% Integraciones externas
+    API -->|"Valida identidad, tokens, roles y permisos<br/>HTTPS / OpenID Connect / OAuth 2.0"| Identidad
+    API -->|"Consulta cartografía y georreferenciación<br/>REST / HTTPS"| Mapas
+    Geolocalizacion -->|"Envía actualizaciones periódicas de ubicación GPS<br/>REST / HTTPS"| API
+    API -->|"Solicita el envío de alertas y notificaciones<br/>REST / HTTPS"| Notificaciones

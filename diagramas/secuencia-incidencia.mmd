@@ -1,0 +1,31 @@
+sequenceDiagram
+
+actor Operario
+
+participant Web as Aplicación Web
+participant Auth as Servicio de Identidad
+participant API as API Backend
+participant BD as Base de Datos del Sistema
+participant Notify as Servicio de Notificaciones
+
+Operario->>Web: Inicia sesión
+
+Web->>Auth: Solicita autenticación
+
+Auth-->>Web: Usuario autenticado
+
+Operario->>Web: Registra incidencia
+
+Web->>API: Envía incidencia
+
+API->>BD: Almacena incidencia
+
+BD-->>API: Confirmación
+
+API->>Notify: Envía notificación
+
+Notify-->>API: Confirmación
+
+API-->>Web: Incidencia registrada
+
+Web-->>Operario: Confirmación

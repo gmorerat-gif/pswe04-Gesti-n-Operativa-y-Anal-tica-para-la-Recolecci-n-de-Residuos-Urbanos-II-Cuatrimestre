@@ -1,0 +1,36 @@
+flowchart LR
+    Usuario([Operario o conductor])
+
+    subgraph Frontera["Objetos de frontera"]
+        Formulario["Formulario de incidencia<br/>«boundary»"]
+        Controller["IncidenciasController<br/>«boundary»"]
+        Identidad["Adaptador de identidad<br/>«boundary»"]
+        Notificaciones["Adaptador de notificaciones<br/>«boundary»"]
+    end
+
+    subgraph Control["Objetos de control"]
+        Registrar["RegistrarIncidenciaCasoUso<br/>«control»"]
+        Autorizar["AutorizadorIncidencias<br/>«control»"]
+        Transaccion["UnidadTrabajo<br/>«control»"]
+        Resiliencia["Política de resiliencia<br/>«control»"]
+    end
+
+    subgraph Entidad["Objetos de entidad"]
+        Ruta["Ruta<br/>«entity»"]
+        Incidencia["Incidencia<br/>«entity»"]
+        Ubicacion["Ubicación<br/>«value object»"]
+        Auditoria["RegistroAuditoria<br/>«entity»"]
+    end
+
+    Usuario --> Formulario
+    Formulario --> Controller
+    Controller --> Registrar
+    Registrar --> Ruta
+    Registrar --> Autorizar
+    Autorizar --> Identidad
+    Registrar --> Incidencia
+    Incidencia --> Ubicacion
+    Registrar --> Auditoria
+    Registrar --> Transaccion
+    Registrar --> Resiliencia
+    Resiliencia --> Notificaciones
