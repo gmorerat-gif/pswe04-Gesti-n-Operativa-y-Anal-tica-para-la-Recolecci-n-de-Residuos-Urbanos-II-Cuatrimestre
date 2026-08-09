@@ -42,11 +42,15 @@
    - 3.3 [Restricciones que actúan como drivers](#33-restricciones-que-actúan-como-drivers)
 
 4. [Requerimientos de calidad — Escenarios](#4-requerimientos-de-calidad--escenarios)
+   - 4.1 [Trazabilidad hacia decisiones arquitectónicas](#41-trazabilidad-hacia-decisiones-arquitectónicas-del-avance-2)
+   - 4.2 [Trazabilidad hacia los ADRs seleccionados](#42-trazabilidad-de-los-escenarios-hacia-los-adrs-seleccionados)
 
 5. [Vistas arquitectónicas](#5-vistas-arquitectónicas)
    - 5.1 [Vista de contexto](#51-vista-de-contexto)
    - 5.2 [Vista de estructura interna](#52-vista-de-estructura-interna)
    - 5.3 [Vista de comportamiento](#53-vista-de-comportamiento)
+   - 5.4 [Vista de Componentes (C4 Nivel 3)](#54-vista-de-componentes-c4-nivel-3)
+   - 5.5 [Evolución del diseño](#55-evolución-del-diseño)
 
 6. [Estilo arquitectónico](#6-estilo-arquitectónico)
    - 6.1 [Estilo arquitectónico adoptado](#61-estilo-arquitectónico-adoptado)
@@ -56,9 +60,23 @@
 7. [Registro de decisiones — ADRs](#7-registro-de-decisiones--adrs)
 
 8. [Diseño detallado](#8-diseño-detallado)
-   - 8.1 [Diseño detallado de componentes](#81-diseño-detallado-de-componentes)
+   - 8.1 [Diseño Detallado: Gestión de Incidencias Operativas](#81-diseño-detallado-de-componentes)
+   - 8.2 [Diseño Detallado: Componente de Monitoreo Geoespacial](#82-diseño-detallado-componente-de-monitoreo-geoespacial)
+   - 8.3 [Diseño Detallado: Componente de Planificación de Rutas](#83-diseño-detallado-componente-de-planificación-de-rutas)
 
-9. [Referencias](#9-referencias)
+9. [Patrones de Diseño Aplicados](#9-patrones-de-diseño-aplicados)
+
+10. [Principios y Técnicas Habilitadoras](#10-principios-y-técnicas-habilitadoras)
+
+11. [Calidad y Trazabilidad](#11-calidad-y-trazabilidad)
+
+12. [Secciones Específicas según el Tipo de Sistema](#12-secciones-específicas-según-el-tipo-de-sistema)
+
+13. [Tendencias y Evolución del Diseño](#13-tendencias-y-evolución-del-diseño)
+
+14. [Glosario](#14-glosario)
+
+15. [Referencias](#15-referencias)
 
 ---
 
@@ -174,33 +192,32 @@ Por tanto, las decisiones arquitectónicas del sistema deberán responder a las 
 
 ### 3.1 Requerimientos funcionales clave
 
-| ID    | Requerimiento                                                                                                                             | Stakeholder                                                        | ¿Por qué es un driver?                                                                                            |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| RF-01 | Gestionar la planificación y asignación de rutas de recolección para vehículos y cuadrillas. | Supervisor Operativo                                               | Requiere un módulo central de planificación desacoplado del resto de la operación. |
-| RF-02 | Registrar y dar seguimiento a incidencias operativas durante la ejecución de las rutas.     | Supervisor Operativo, Operario de Recolección                      | Obliga a incorporar un componente para la gestión de incidencias y su persistencia.         | 
-| RF-03 | Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real.         | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Requiere integrar servicios de monitoreo y geolocalización independientes del resto del sistema.   |
-| RF-04 | Generar reportes e indicadores para apoyar la toma de decisiones.                            | Jefatura de Servicios Urbanos, Analista de Planificación           | Obliga a separar el procesamiento analítico de las operaciones transaccionales.        |
-| RF-05 | Administrar usuarios, roles y permisos de acceso.                                            | Administrador del Sistema                                          | Requiere un componente de autenticación y autorización desacoplado de la lógica de negocio.  |
+| ID    | Requerimiento                                                                                | Stakeholder                                                        | ¿Por qué es un driver?                                                                           |
+| ----- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| RF-01 | Gestionar la planificación y asignación de rutas de recolección para vehículos y cuadrillas. | Supervisor Operativo                                               | Requiere un módulo central de planificación desacoplado del resto de la operación.               |
+| RF-02 | Registrar y dar seguimiento a incidencias operativas durante la ejecución de las rutas.      | Supervisor Operativo, Operario de Recolección                      | Obliga a incorporar un componente para la gestión de incidencias y su persistencia.              |
+| RF-03 | Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real.         | Jefatura de Servicios Urbanos, Analista de Planificación y Gestión | Requiere integrar servicios de monitoreo y geolocalización independientes del resto del sistema. |
+| RF-04 | Generar reportes e indicadores para apoyar la toma de decisiones.                            | Jefatura de Servicios Urbanos, Analista de Planificación           | Obliga a separar el procesamiento analítico de las operaciones transaccionales.                  |
+| RF-05 | Administrar usuarios, roles y permisos de acceso.                                            | Administrador del Sistema                                          | Requiere un componente de autenticación y autorización desacoplado de la lógica de negocio.      |
 
 ### 3.2 Atributos de calidad prioritarios
 
-| ID    | Atributo        | Importancia | Stakeholder                                                           | Justificación                                                                                                                                                                   |
-| ----- | --------------- | ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| QA-01 | Disponibilidad  | Alta        | Operarios, Conductores y Supervisores                                 | La plataforma debe mantenerse disponible durante las jornadas de recolección para evitar interrupciones en la operación.         |
-| QA-02 | Mantenibilidad  | Alta        | Departamento de TI                                                    | La arquitectura debe facilitar futuras modificaciones sin afectar el funcionamiento del sistema.                                |
-| QA-03 | Seguridad       | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | El sistema administra información operativa y requiere autenticación, autorización y trazabilidad de accesos.                             |
-| QA-04 | Escalabilidad   | Media       | Dirección de Gestión Ambiental                                        | El sistema debe soportar el crecimiento en usuarios, rutas y volumen de información.                            |
-| QA-05 | Trazabilidad    | Alta        | Entidades de Fiscalización y Control                                   | Todas las operaciones deben quedar registradas para procesos de auditoría y seguimiento institucional.                          |
+| ID    | Atributo       | Importancia | Stakeholder                                                           | Justificación                                                                                                            |
+| ----- | -------------- | ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| QA-01 | Disponibilidad | Alta        | Operarios, Conductores y Supervisores                                 | La plataforma debe mantenerse disponible durante las jornadas de recolección para evitar interrupciones en la operación. |
+| QA-02 | Mantenibilidad | Alta        | Departamento de TI                                                    | La arquitectura debe facilitar futuras modificaciones sin afectar el funcionamiento del sistema.                         |
+| QA-03 | Seguridad      | Alta        | Administrador del Sistema, Departamento de Tecnologías de Información | El sistema administra información operativa y requiere autenticación, autorización y trazabilidad de accesos.            |
+| QA-04 | Escalabilidad  | Media       | Dirección de Gestión Ambiental                                        | El sistema debe soportar el crecimiento en usuarios, rutas y volumen de información.                                     |
+| QA-05 | Trazabilidad   | Alta        | Entidades de Fiscalización y Control                                  | Todas las operaciones deben quedar registradas para procesos de auditoría y seguimiento institucional.                   |
 
 ### 3.3 Restricciones que actúan como drivers
 
-| ID      | Restricción                                                               | Tipo        | Impacto en el diseño                                                                 |
-| ------- | ------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------ |
-| REST-01 | El acceso a la plataforma debe realizarse mediante autenticación y control de roles institucionales| Negocio | Obliga a incorporar un servicio de autenticación y autorización.|
-| REST-02 | La plataforma debe mantener trazabilidad de las operaciones realizadas por los usuarios.    | Regulatoria | Requiere implementar mecanismos de auditoría y registro de eventos.|
-| REST-03 | El sistema debe integrarse con un servicio de notificaciones para informar incidencias críticas.   | Técnica | Obliga a desacoplar el envío de notificaciones mediante un servicio especializado.|
-| REST-04 | La información operativa debe almacenarse de forma persistente para consultas históricas y generación de reportes.| Negocio | Condiciona el diseño de la capa de persistencia y del almacenamiento histórico.|
-
+| ID      | Restricción                                                                                                        | Tipo        | Impacto en el diseño                                                               |
+| ------- | ------------------------------------------------------------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
+| REST-01 | El acceso a la plataforma debe realizarse mediante autenticación y control de roles institucionales                | Negocio     | Obliga a incorporar un servicio de autenticación y autorización.                   |
+| REST-02 | La plataforma debe mantener trazabilidad de las operaciones realizadas por los usuarios.                           | Regulatoria | Requiere implementar mecanismos de auditoría y registro de eventos.                |
+| REST-03 | El sistema debe integrarse con un servicio de notificaciones para informar incidencias críticas.                   | Técnica     | Obliga a desacoplar el envío de notificaciones mediante un servicio especializado. |
+| REST-04 | La información operativa debe almacenarse de forma persistente para consultas históricas y generación de reportes. | Negocio     | Condiciona el diseño de la capa de persistencia y del almacenamiento histórico.    |
 
 ---
 
@@ -464,6 +481,64 @@ La Figura 4 presenta la interacción entre los principales contenedores durante 
 5. La incidencia se almacena en la Base de Datos del Sistema.
 6. Si la incidencia requiere atención inmediata, el API Backend solicita al Servicio de Notificaciones el envío de la alerta correspondiente.
 7. El API Backend confirma el registro de la incidencia y devuelve el resultado a la Aplicación Web.
+
+### 5.4 Vista de Componentes (C4 Nivel 3)
+
+Para profundizar en la estructura del **API Backend** (Monolito Modular), se detallan los componentes internos de los dos subsistemas más críticos de la plataforma, evidenciando sus fronteras lógicas y responsabilidades.
+
+#### 5.4.1 Subsistema: Módulo de Gestión de Incidencias
+
+```mermaid
+flowchart TB
+    subgraph API[API Backend - Módulo de Incidencias]
+        Ctrl("Incidencias Controller\n[ASP.NET Core Controller]\nExpone endpoints REST")
+        Auth("Autorizador\n[Componente de Seguridad]\nValida roles y políticas")
+        CU("Registrar Incidencia (Caso Uso)\n[Orquestador de Dominio]\nEjecuta la lógica de negocio")
+        Repo("Incidencia Repository\n[Acceso a Datos]\nAbstrae persistencia")
+        Notif("Adaptador Notificaciones\n[Cliente HTTP]\nIntegra alertas externas")
+    end
+    SPA[Aplicación Web] -->|JSON/HTTPS| Ctrl
+    Ctrl --> Auth
+    Ctrl --> CU
+    CU --> Repo
+    CU --> Notif
+    Repo --> DB[(PostgreSQL)]
+    Notif --> Ext[Servicio Notificaciones]
+```
+
+_Figura 5. Vista de Componentes del Módulo de Incidencias._
+
+#### 5.4.2 Subsistema: Módulo de Monitoreo Geoespacial
+
+```mermaid
+flowchart TB
+    subgraph APIM[API Backend - Módulo de Monitoreo]
+        CtrlM("Monitoreo Controller\n[ASP.NET Core Controller]\nRecibe lat/lon")
+        CUM("Recepción (Caso Uso)\n[Encolador]\nValida y acepta el payload")
+        Cola(("Canal de Eventos\n[Buffer en Memoria]"))
+        Worker("Procesador Worker\n[Background Service]\nProcesa asíncronamente")
+        RepoM("Ubicación Repository\n[Acceso a Datos]\nGuarda histórico y proyección")
+        Mapas("Adaptador Mapas\n[Cliente HTTP + Circuit Breaker]")
+    end
+    GPS[Unidad GPS] -->|JSON/HTTPS| CtrlM
+    CtrlM --> CUM
+    CUM --> Cola
+    Cola --> Worker
+    Worker --> RepoM
+    Worker --> Mapas
+    RepoM --> DB[(PostGIS)]
+    Mapas --> Ext[Servicio de Mapas]
+```
+
+_Figura 6. Vista de Componentes del Módulo de Monitoreo Geoespacial._
+
+### 5.5 Evolución del diseño
+
+La arquitectura del sistema ha evolucionado de forma iterativa y trazable durante las fases del proyecto:
+
+1. **Avance 1 (S07):** Se definió la Vista de Contexto, delimitando las fronteras del sistema, identificando a los actores y servicios externos, y estableciendo los Escenarios de Calidad que rigen el diseño.
+2. **Avance 2 (S11):** Se descompuso la solución en la Vista de Contenedores (Aplicación Web, API Backend, PostGIS), seleccionando el estilo de Arquitectura en Capas / Monolito Modular y documentando las decisiones clave (ADRs).
+3. **Entrega Final (S14):** Se profundizó al nivel de Componentes y Diseño Detallado, aplicando patrones tácticos (Unit of Work, Circuit Breaker) y principios SOLID para garantizar que el código interno cumpla con la mantenibilidad, rendimiento y auditabilidad exigidas.
 
 ---
 
@@ -1064,6 +1139,7 @@ stateDiagram-v2
     EnAtencion --> Resuelta
     Resuelta --> Cerrada
 ```
+
 **Figura 8. Vista de transiciones permitidas.**
 
 No se permite regresar una incidencia cerrada a un estado anterior sin un proceso administrativo explícito y auditado.
@@ -1450,9 +1526,324 @@ El Componente de Gestión de Incidencias Operativas concreta los drivers, escena
 
 El diseño permite registrar incidencias de manera trazable, impedir accesos no autorizados, conservar consistencia local y controlar la propagación de fallos externos. Sus contratos, flujos alternativos y criterios medibles permiten evaluar posteriormente si la implementación cumple las decisiones arquitectónicas aceptadas.
 
+### 8.2 Diseño Detallado: Componente de Monitoreo Geoespacial
+
+#### 8.2.1 Componente seleccionado: Monitoreo Geoespacial
+
+El segundo componente detallado es el **Componente de Monitoreo Geoespacial**, responsable de recibir, validar, procesar de forma asíncrona y proyectar la ubicación en tiempo casi real de las unidades recolectoras. Este componente materializa el requerimiento **RF-03** y atiende los atributos de **Rendimiento (QA-02)** y **Disponibilidad (QA-01)**.
+
+Se alinea con las siguientes decisiones arquitectónicas:
+
+- **ADR-001:** Recepción síncrona con procesamiento asíncrono para no bloquear la operación.
+- **ADR-002:** Uso de PostGIS para almacenamiento de geometrías y proyecciones.
+- **ADR-003:** Resiliencia (Circuit Breaker y Timeouts) al consultar el Servicio de Mapas.
+
+#### 8.2.2 Responsabilidades y límites
+
+**El componente es responsable de:**
+
+- Recibir actualizaciones de GPS desde los dispositivos de las unidades.
+- Validar el formato y rango geográfico de las coordenadas.
+- Confirmar la recepción rápidamente (HTTP 202 Accepted) y encolar el evento.
+- Actualizar el registro histórico del recorrido en PostgreSQL (PostGIS).
+- Actualizar la proyección de "última ubicación conocida" para el Dashboard.
+- Tolerar latencias del Servicio de Mapas usando un Circuit Breaker.
+
+**El componente no es responsable de:**
+
+- Dibujar el mapa en la interfaz gráfica.
+- Gestionar las incidencias operativas.
+- Autenticar al dispositivo (eso se delega al API Gateway o middleware de seguridad).
+
+#### 8.2.3 Diagrama de clases de diseño
+
+```mermaid
+classDiagram
+    class MonitoreoController {
+        +ReportarUbicacion(dto: UbicacionDto) IActionResult
+    }
+    class IRecepcionUbicacionCasoUso {
+        <<interface>>
+        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~Resultado~
+    }
+    class RecepcionUbicacionCasoUso {
+        -IColaUbicaciones cola
+        +EncolarUbicacionAsync(cmd)
+    }
+    class ProcesadorUbicacionWorker {
+        -IRepositorioUbicacion repo
+        -IServicioMapasAdapter mapas
+        +ExecuteAsync(CancellationToken)
+    }
+    class UbicacionUnidad {
+        +Guid UnidadId
+        +double Latitud
+        +double Longitud
+        +DateTime MarcaDeTiempo
+        +ValidarCoordenadas()
+    }
+    class IServicioMapasAdapter {
+        <<interface>>
+        +ObtenerReferenciaGeografica(lat, lon) Task~string~
+    }
+
+    MonitoreoController ..> IRecepcionUbicacionCasoUso
+    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
+    ProcesadorUbicacionWorker --> UbicacionUnidad
+    ProcesadorUbicacionWorker ..> IServicioMapasAdapter
+```
+
+_Figura 9. Diagrama de clases del componente de Monitoreo Geoespacial._
+
+#### 8.2.4 Secuencia del flujo principal
+
+```mermaid
+sequenceDiagram
+    participant GPS as Unidad GPS
+    participant API as MonitoreoController
+    participant CasoUso as RecepcionCasoUso
+    participant Cola as Cola En Memoria
+    participant Worker as ProcesadorWorker
+    participant Mapas as IServicioMapasAdapter
+    participant DB as PostGIS
+
+    GPS->>API: POST /api/v1/monitoreo/ubicaciones
+    API->>CasoUso: EncolarUbicacionAsync(data)
+    CasoUso->>Cola: EscribirEnCanal(data)
+    Cola-->>CasoUso: OK
+    CasoUso-->>API: Resultado (Encolado)
+    API-->>GPS: HTTP 202 Accepted
+
+    Note over Worker, DB: Procesamiento Asíncrono en Background
+    Cola->>Worker: LeerMensaje()
+    Worker->>Worker: ValidarCoordenadas()
+    Worker->>Mapas: ObtenerReferenciaGeografica()
+    Mapas-->>Worker: "Av. 2, San José" (Con Timeout)
+    Worker->>DB: Insertar UbicacionHistorica
+    Worker->>DB: Upsert UltimaUbicacion (Proyección)
+```
+
+_Figura 10. Secuencia de recepción y procesamiento asíncrono._
+
+#### 8.2.5 Contrato de interfaz REST y Robustez
+
+**Endpoint:** `POST /api/v1/monitoreo/ubicaciones`
+**Precondiciones:** Token de telemetría válido.
+**Cuerpo de la Solicitud:**
+
+```json
+{
+  "unidadId": "f9a2b1c3-4280-42ec-a18e-1ca3f2337111",
+  "latitud": 9.932452,
+  "longitud": -84.079213,
+  "timestamp": "2026-07-12T08:35:10Z"
+}
+```
+
+**Respuesta:** `HTTP/1.1 202 Accepted` (Procesamiento diferido).
+
+La separación entre la recepción HTTP y el Worker en Background garantiza que, ante picos masivos de datos, el servidor no agote sus hilos (thread pool). El patrón _Circuit Breaker_ en el adaptador de mapas encapsula la fragilidad de depender de APIs externas, asegurando que el Dashboard siga recibiendo latitud/longitud aunque falte la traducción a texto de la calle.
+
+### 8.3 Diseño Detallado: Componente de Planificación de Rutas
+
+#### 8.3.1 Componente seleccionado: Planificación de Rutas
+
+El tercer componente detallado aborda el núcleo logístico de la plataforma: la asignación de vehículos y cuadrillas a rutas específicas para una jornada. Materializa el requerimiento **RF-01** y es vital para la organización diaria de la Municipalidad de San José.
+
+#### 8.3.2 Responsabilidades y límites
+
+**Responsabilidades:** Validar la disponibilidad de vehículos y operarios para una fecha determinada, prevenir sobreasignaciones (doble turno cruzado), y generar el manifiesto de ruta para que sea consumido por el conductor.
+**Límites:** No hace trazabilidad en tiempo real (es planificación a futuro) ni geocodifica mapas.
+
+#### 8.3.3 Diagrama de clases de diseño
+
+```mermaid
+classDiagram
+    class PlanificacionController {
+        +AsignarRuta(dto: AsignacionDto) IActionResult
+    }
+    class IAsignarRutaCasoUso {
+        <<interface>>
+        +EjecutarAsync(cmd: AsignarRutaCmd) Task~Resultado~
+    }
+    class AsignarRutaCasoUso {
+        -IRutaRepository rutasRepo
+        -IValidadorDisponibilidad validador
+        +EjecutarAsync(cmd)
+    }
+    class ValidadorDisponibilidad {
+        -IVehiculoRepository vehiculosRepo
+        -ICuadrillaRepository cuadrillaRepo
+        +ValidarDisponibilidad(vehiculoId, fecha) bool
+    }
+    class AsignacionRuta {
+        +Guid RutaId
+        +Guid VehiculoId
+        +DateTime FechaOperacion
+        +ConfirmarAsignacion()
+    }
+
+    PlanificacionController ..> IAsignarRutaCasoUso
+    IAsignarRutaCasoUso <|-- AsignarRutaCasoUso
+    AsignarRutaCasoUso --> ValidadorDisponibilidad
+    AsignarRutaCasoUso --> AsignacionRuta
+```
+
+_Figura 12. Diagrama de clases de Planificación de Rutas._
+
+#### 8.3.4 Secuencia del flujo principal
+
+```mermaid
+sequenceDiagram
+    participant UI as Supervisor (Web)
+    participant API as PlanificacionController
+    participant CU as AsignarRutaCasoUso
+    participant Val as ValidadorDisponibilidad
+    participant DB as PostgreSQL
+
+    UI->>API: POST /api/v1/rutas/asignaciones
+    API->>CU: EjecutarAsync(cmd)
+    CU->>Val: ValidarDisponibilidad(vehiculoId, fecha)
+    Val->>DB: Check Vehiculo asignado
+    DB-->>Val: Libre
+    Val-->>CU: true
+    CU->>DB: Insert AsignacionRuta
+    DB-->>CU: OK
+    CU-->>API: 201 Created (AsignacionId)
+    API-->>UI: Confirmación Visual
+```
+
+_Figura 13. Flujo de asignación de ruta._
+
+#### 8.3.5 Contrato de interfaz REST y Robustez
+
+**Endpoint:** `POST /api/v1/rutas/asignaciones`
+**Cuerpo de la Solicitud:**
+
+```json
+{
+  "rutaId": "d321c1c3-4280-42ec-a18e-1ca3f2331111",
+  "vehiculoId": "b1a2b1c3-4280-42ec-a18e-1ca3f2332222",
+  "fechaOperacion": "2026-08-10"
+}
+```
+
+**Reglas e Invariantes del Dominio:**
+
+1. Un vehículo no puede estar asignado a dos rutas superpuestas en el mismo turno.
+2. Solo usuarios con rol de `Supervisor Operativo` o `Planificador` pueden ejecutar este endpoint.
+3. Si el validador detecta conflicto de horarios, el controlador retorna `409 Conflict` evitando inconsistencias de datos.
+
+La separación del `ValidadorDisponibilidad` como un servicio de dominio independiente garantiza la cohesión (SRP) y facilita inyectar reglas de negocio más complejas a futuro (ej. mantenimientos programados de los vehículos) sin modificar el Caso de Uso principal.
+
 ---
 
-## 9. Referencias
+## 9. Patrones de Diseño Aplicados
+
+Para satisfacer los requerimientos de disponibilidad, mantenibilidad y resiliencia, se implementaron los siguientes patrones de diseño (Gamma et al., 1995):
+
+### 9.1 Patrón 1: Unit of Work (Unidad de Trabajo)
+
+- **Problema específico:** Al registrar una incidencia (Componente 1), se debe guardar la entidad operativa y el evento de auditoría. Si la base de datos falla al guardar la auditoría, la incidencia quedaría registrada de forma "fantasma", violando el requerimiento regulatorio de trazabilidad (REST-02).
+- **Diagrama de aplicación:** Se evidenció en la Figura 5 (Diseño del Componente 1), donde el objeto `RegistrarIncidenciaCasoUso` coordina con `IUnidadTrabajo.ConfirmarAsync()`.
+- **Justificación:** Se seleccionó este patrón en lugar de hacer `commit` directamente en los repositorios, porque permite agrupar múltiples operaciones de escritura en una única transacción atómica a nivel de la capa de aplicación, garantizando que los datos operativos y los registros de auditoría sean siempre consistentes entre sí.
+
+### 9.2 Patrón 2: Circuit Breaker (Cortacircuitos)
+
+- **Problema específico:** El sistema depende del Servicio Externo de Mapas para geocodificar coordenadas (Componente 2). Si este servicio colapsa y experimenta _timeouts_, los hilos de procesamiento del API se quedarían bloqueados esperando respuestas, provocando una falla en cascada que tumbaría el dashboard operativo.
+- **Diagrama de aplicación:** Se evidencia en la Figura 10, donde `IServicioMapasAdapter` implementa este patrón internamente.
+- **Justificación:** Se eligió sobre un simple bloque `try-catch` con reintentos porque el Circuit Breaker detecta la falla continua y "abre" el circuito, fallando inmediatamente las siguientes peticiones durante un periodo de gracia. Esto permite que el sistema siga guardando las coordenadas en crudo sin saturar los recursos de red ni empeorar el estado del servicio de mapas.
+
+### 9.3 Patrón 3: Asynchronous Competing Consumers (Consumidores Asíncronos)
+
+- **Problema específico:** La llegada concurrente de actualizaciones de GPS cada 15 segundos desde cientos de camiones saturaría los controladores REST si se procesaran e insertaran en la base de datos de manera síncrona.
+- **Diagrama de aplicación:** Se evidencia en la Figura 9, donde `IRecepcionUbicacionCasoUso` encola los mensajes y `ProcesadorUbicacionWorker` actúa como consumidor en segundo plano.
+- **Justificación:** Se prefirió este patrón de mensajería interna sobre el procesamiento síncrono para nivelar la carga (_load leveling_). El controlador responde inmediatamente con un código `202 Accepted`, liberando recursos HTTP, mientras los _Workers_ consumen la cola al ritmo que soporta la base de datos PostgreSQL.
+
+---
+
+## 10. Principios y Técnicas Habilitadoras
+
+El diseño de la arquitectura y de los componentes detallados se ha regido estrictamente por los principios **SOLID**:
+
+1. **Single Responsibility Principle (SRP):** En ambos componentes detallados, los Controladores (`IncidenciasController`, `MonitoreoController`) se limitan exclusivamente a la mediación HTTP (rutas, códigos de estado, serialización). La lógica de negocio fue extraída a objetos `CasoUso`, evitando controladores monolíticos.
+2. **Dependency Inversion Principle (DIP):** El núcleo del sistema (Capa de Dominio y Aplicación) no depende de PostgreSQL, ni de librerías de notificaciones, ni del proveedor de mapas. Depende de interfaces puras (`IRutaRepository`, `IServicioMapasAdapter`). La capa de infraestructura implementa estos contratos.
+3. **Tensión y Trade-offs en los principios:** Aplicar SRP y DIP rigurosamente provocó una "explosión de clases" (interfaces, DTOs, implementaciones y controladores). Se aceptó este nivel de complejidad inicial (aumento de archivos) a cambio de obtener una alta _Mantenibilidad_ y facilidad para inyectar _Mocks_ durante las pruebas unitarias.
+
+---
+
+## 11. Calidad y Trazabilidad
+
+### 11.1 Validación de Escenarios de Calidad
+
+- **QS-01 (Rendimiento Monitoreo):** Validado. Al delegar la escritura en base de datos al _Worker_ asíncrono, la API puede recibir la coordenada y responder en menos de 30ms, logrando que el dashboard se actualice dentro de la ventana de los 15 a 30 segundos.
+- **QS-03 (Seguridad):** Validado en el Componente 1. Se implementó `IAutorizadorIncidencias` a nivel de Caso de Uso (no solo en la UI), asegurando que peticiones no autorizadas desde herramientas como Postman sean rechazadas y auditadas (Criterio CD-05).
+- **QS-05 (Tolerancia a fallos):** Validado mediante la implementación explícita del patrón _Circuit Breaker_ en el adaptador del Servicio de Mapas y el límite de timeout de 5 segundos.
+
+### 11.2 Análisis de Trade-offs y Métricas de Calidad
+
+- **Métrica de Acoplamiento:** Para asegurar la modificabilidad (QA-05), se midió el acoplamiento eferente (Ce) de los módulos de la lógica de negocio. Al depender de interfaces genéricas y no de Entity Framework Core ni de PostGIS, el dominio tiene un **Ce cercano a 0**.
+- **Métrica de Cohesión:** Las clases de los Casos de Uso se diseñaron buscando una alta cohesión (LCOM4 = 1), asegurando que cada clase utilice la mayoría de sus métodos y dependencias inyectadas para cumplir su única responsabilidad.
+- **Trade-off validado:** Alta Mantenibilidad vs. Complejidad Inicial. Separar las proyecciones analíticas del flujo transaccional añade la necesidad de sincronizar datos internamente, pero asegura que un reporte analítico pesado de la Jefatura nunca bloqueará la transacción de inserción de una coordenada del camión.
+
+---
+
+## 12. Secciones Específicas según el Tipo de Sistema
+
+### 12.1 Diseño del API Backend como Monolito Modular (H14-014)
+
+Para evitar la complejidad de la orquestación de microservicios, el sistema se construyó como un **Monolito Modular**. Internamente, el código fuente está separado en módulos lógicos rígidos: `ModuloRutas`, `ModuloIncidencias`, `ModuloMonitoreo` y `ModuloIdentidad`.
+
+- **Regla de frontera:** Un módulo no puede hacer `JOIN` directo a las tablas de base de datos de otro módulo.
+- **Comunicación inter-módulos:** Se realiza mediante llamadas a interfaces públicas locales (ej. `IIncidenciaServicioInterno`) o mediante un bus de eventos en memoria (Domain Events) tipo _MediatR_. Esto permitirá que, si en un futuro se requiere escalar el módulo de Monitoreo por separado, su extracción hacia un Microservicio puro sea un esfuerzo de bajo impacto.
+
+### 12.2 Proyecciones del Dashboard Operativo (H14-015)
+
+El Dashboard Operativo es el módulo más consultado del sistema. Para evitar saturar las tablas relacionales de PostgreSQL:
+
+- Se implementó un modelo inspirado en **CQRS (Command and Query Responsibility Segregation)** a nivel lógico.
+- El _Worker_ de monitoreo realiza actualizaciones sobre una vista materializada (Proyección) optimizada para la lectura, que contiene datos pre-calculados (Unidad, Placa, Lat, Lon, Estado y Última Actualización).
+- El Dashboard simplemente realiza un `SELECT` plano sobre esta proyección, eliminando la necesidad de hacer `JOINs` complejos en tiempo de ejecución.
+
+### 12.4 Sistemas con Inteligencia Artificial Generativa o Agentes (H14-016)
+
+Para potenciar la capacidad de análisis (Requerimiento RF-04 para Jefaturas y Planificación), se integra un **Agente Analítico basado en RAG (Retrieval-Augmented Generation)**.
+
+- **El Problema:** Las jefaturas necesitan encontrar patrones de incidencias (ej. zonas donde los bloqueos de vías son sistemáticos los días martes), lo cual es difícil de ver en reportes tabulares estándar.
+- **La Solución:** Un LLM que asiste con el análisis de la información histórica.
+- **Arquitectura del Agente RAG:**
+  1. **Ingesta y Embeddings:** Semanalmente, las incidencias cerradas se anonimizan, se convierten en texto descriptivo y se vectorizan (usando la extensión `pgvector` en PostgreSQL).
+  2. **Recuperación de Contexto (Retrieval):** Cuando el analista hace una pregunta (ej. "¿Cuáles son los mayores retos de recolección en el sector de Pavas?"), el sistema busca en PostGIS/pgvector las incidencias históricas más relevantes semánticamente.
+  3. **Generación (Guardrails):** Se orquesta un prompt inyectando ese contexto estricto. Se implementan _guardrails_ a nivel de API para obligar al LLM a responder _exclusivamente_ basándose en la data inyectada y no en conocimiento externo.
+  4. **Trazabilidad:** Toda respuesta generada por el agente incluye las referencias (IDs de las incidencias) para evitar alucinaciones y permitir validación humana (_Human-in-the-loop_).
+
+---
+
+## 13. Tendencias y Evolución del Diseño
+
+### 13.1 Tendencias Arquitectónicas
+
+- **Edge Computing en Unidades:** A futuro, parte de la lógica de validación de coordenadas se podrá trasladar a dispositivos embebidos (_Edge_) dentro de los camiones recolectores. Esto reducirá la carga de validación del API Central y ahorrará ancho de banda.
+- **Bases de Datos Vectoriales:** La utilización de PostgreSQL no solo para datos relacionales y geoespaciales (PostGIS), sino para datos vectoriales (`pgvector`), alinea a la plataforma con la tendencia de "AI-ready databases", unificando el gobierno de datos en una sola herramienta.
+
+### 13.2 Evolución del Diseño
+
+Si el cantón de San José escala la operación sumando cantones aledaños (multitenancy):
+
+1. El canal de eventos en memoria actual (Canal/Buffer) evolucionará a un _Message Broker_ externo (ej. Apache Kafka o RabbitMQ).
+2. El Monolito Modular permitirá la "rotura natural" (_strangler fig pattern_): El módulo de monitoreo geoespacial será el primero en extraerse a un clúster de Kubernetes como un microservicio real, ya que sus fronteras lógicas y contratos ya están delimitados desde esta versión.
+
+---
+
+## 14. Glosario
+
+- **ADR (Architecture Decision Record):** Documento corto que captura una decisión arquitectónica significativa aceptada.
+- **Circuit Breaker:** Patrón de diseño que detecta fallas y encapsula la lógica para evitar que dichas fallas afecten otros sistemas.
+- **CQRS:** Separación de los modelos de comando (escritura) y los modelos de consulta (lectura).
+- **RAG:** Generación Aumentada por Recuperación, técnica para inyectar datos propios a modelos fundacionales de IA.
+- **SRP:** Principio de Responsabilidad Única (SOLID).
+
+## 15. Referencias
 
 - Brown, S. (2014). _Software Architecture for Developers_. Leanpub.
 - Budgen, D. (2003). _Software Design_ (2.ª ed.). Addison-Wesley.
