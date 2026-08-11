@@ -50,7 +50,8 @@
    - 5.2 [Vista de estructura interna](#52-vista-de-estructura-interna)
    - 5.3 [Vista de comportamiento](#53-vista-de-comportamiento)
    - 5.4 [Vista de Componentes (C4 Nivel 3)](#54-vista-de-componentes-c4-nivel-3)
-   - 5.5 [Evolución del diseño](#55-evolución-del-diseño)
+   - 5.5 [Vista de Concurrencia](#55-vista-de-concurrencia)
+   - 5.6 [Evolución del diseño](#56-evolución-del-diseño)
 
 6. [Estilo arquitectónico](#6-estilo-arquitectónico)
    - 6.1 [Estilo arquitectónico adoptado](#61-estilo-arquitectónico-adoptado)
@@ -480,7 +481,20 @@ La Figura 4 presenta la interacción entre los principales contenedores durante 
 4. El API Backend valida la autenticación del usuario, verifica los permisos asociados al rol y aplica las reglas de negocio correspondientes.
 5. La incidencia se almacena en la Base de Datos del Sistema.
 6. Si la incidencia requiere atención inmediata, el API Backend solicita al Servicio de Notificaciones el envío de la alerta correspondiente.
+
+**Escenario de excepción**
+
+Si el Servicio de Mapas no está disponible, el API Backend mantiene la información operativa disponible y utiliza la última ubicación válida registrada cuando esta exista, evitando que la falla del servicio externo impida consultar el estado de las rutas.
+
+**Escenarios de calidad relacionados:** QS-01, QS-02 y QS-05.
+
 7. El API Backend confirma el registro de la incidencia y devuelve el resultado a la Aplicación Web.
+
+**Escenario de excepción**
+
+Si el usuario no cuenta con los permisos requeridos, el API Backend rechaza la solicitud y no modifica la información operativa. La operación queda registrada mediante los mecanismos de auditoría definidos y la Aplicación Web informa al usuario que no está autorizado para realizarla.
+
+**Escenarios de calidad relacionados:** QS-03, QS-04 y QS-05.
 
 ### 5.4 Vista de Componentes (C4 Nivel 3)
 
@@ -532,7 +546,57 @@ flowchart TB
 
 _Figura 6. Vista de Componentes del Módulo de Monitoreo Geoespacial._
 
-### 5.5 Evolución del diseño
+### 5.5 Vista de concurrencia.
+
+#### 5.5.1 Justificación
+
+La Vista de Concurrencia aplica a la plataforma debido a que durante la operación pueden ejecutarse de forma simultánea diferentes procesos. Mientras las unidades de recolección generan actualizaciones de ubicación, los supervisores pueden consultar el estado de las rutas y los operarios pueden registrar incidencias.
+
+Además, el monitoreo de rutas utiliza procesamiento asíncrono para separar la recepción de las actualizaciones de ubicación de la actualización de la información utilizada por el dashboard operativo. Esta separación permite que la recepción de nuevas ubicaciones no dependa de que una consulta del dashboard haya finalizado.
+
+#### 5.5.2 Modelo de concurrencia
+
+La Figura 5 muestra de forma simplificada los principales procesos que pueden ejecutarse de manera concurrente durante la operación de la plataforma.
+
+![Vista de concurrencia](../diagramas/vista-concurrencia.svg)
+
+*Figura 5 — Modelo de concurrencia de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos.*
+
+El modelo contempla principalmente los siguientes procesos:
+
+- **Recepción de ubicaciones:** recibe las actualizaciones periódicas enviadas por las unidades de recolección y registra la información correspondiente.
+- **Procesamiento del monitoreo:** procesa de forma asíncrona las actualizaciones recibidas y mantiene disponible la última ubicación válida para las consultas operativas.
+- **Consulta del dashboard:** permite que los supervisores consulten simultáneamente el estado de las rutas y la ubicación disponible de las unidades.
+- **Registro de incidencias:** permite que los usuarios autorizados registren incidencias mientras continúan los procesos de monitoreo.
+
+Estos procesos pueden ejecutarse simultáneamente sin requerir que una consulta del dashboard bloquee la recepción de nuevas ubicaciones.
+
+#### 5.5.3 Recursos compartidos y consistencia
+
+Los principales recursos compartidos corresponden a la información operativa almacenada en la Base de Datos del Sistema, incluyendo las rutas, las últimas ubicaciones válidas y las incidencias registradas.
+
+La persistencia de las operaciones transaccionales se mantiene en PostgreSQL. En el caso de las incidencias, el registro de la información operativa y su correspondiente auditoría se mantienen dentro de la misma operación transaccional.
+
+Para las actualizaciones de ubicación, el sistema mantiene una separación entre la recepción de los eventos y la información utilizada para las consultas del monitoreo. De esta forma, una actualización en proceso no impide que los usuarios consulten la información operativa disponible.
+
+#### 5.5.4 Manejo de condiciones de concurrencia
+
+La arquitectura evita depender de operaciones distribuidas para mantener la consistencia de la información. Las operaciones que requieren consistencia se resuelven mediante transacciones en la Base de Datos del Sistema.
+
+En el caso de las actualizaciones de ubicación, la información se procesa considerando la fecha y hora de la actualización para mantener como referencia la última ubicación válida disponible. Esto evita que una actualización anterior sobrescriba información más reciente.
+
+Las integraciones con servicios externos no forman parte de las transacciones de persistencia de la información operativa. Esto permite que una falla o demora de un servicio externo no mantenga abierta una operación transaccional durante un tiempo prolongado.
+
+#### 5.5.5 Relación con los escenarios de calidad
+
+La Vista de Concurrencia contribuye principalmente a los siguientes escenarios de calidad:
+
+- **QS-01 — Rendimiento del monitoreo geoespacial:** el procesamiento asíncrono permite recibir y procesar actualizaciones de ubicación sin bloquear las consultas del dashboard.
+- **QS-02 — Disponibilidad del dashboard operativo:** las consultas del monitoreo permanecen separadas de la recepción y procesamiento de nuevas ubicaciones.
+- **QS-04 — Trazabilidad de incidencias operativas:** las operaciones transaccionales mantienen la consistencia entre la información registrada y su auditoría.
+- **QS-05 — Interoperabilidad y tolerancia a fallos:** la separación entre las operaciones internas y los servicios externos permite manejar fallos externos sin comprometer la información operativa ya registrada.
+
+### 5.6 Evolución del diseño
 
 La arquitectura del sistema ha evolucionado de forma iterativa y trazable durante las fases del proyecto:
 
