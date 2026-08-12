@@ -532,6 +532,16 @@ flowchart TB
 
 _Figura 6. Vista de Componentes del Módulo de Monitoreo Geoespacial._
 
+| Nodo | Descripción | Artefactos desplegados | Conectividad |
+| --- | --- | --- | --- |
+| Cliente / Navegador Web | Dispositivo utilizado por operadores, supervisores y demás usuarios para acceder a la plataforma. | Aplicación Web | HTTPS hacia el API Backend |
+| Servidor de Aplicación | Nodo encargado de ejecutar la lógica principal de la plataforma y exponer los servicios del sistema. | API Backend | HTTPS desde la Aplicación Web; conexión SQL hacia PostgreSQL/PostGIS; comunicación con Servicio de Identidad y Servicio de Notificaciones |
+| Servidor de Base de Datos | Nodo encargado del almacenamiento persistente de la información operativa del sistema y de la información geoespacial. | PostgreSQL + PostGIS | Conexión SQL desde el API Backend |
+| Servicio de Identidad | Servicio externo encargado de autenticar a los usuarios y proporcionar la información necesaria para validar sus permisos y roles. | Servicio de Identidad | Comunicación segura con el API Backend mediante HTTPS |
+| Servicio de Notificaciones | Servicio encargado del envío de alertas asociadas a incidencias que requieren atención inmediata. | Servicio de Notificaciones | Comunicación segura con el API Backend mediante HTTPS |
+
+La distribución propuesta permite mantener separadas las responsabilidades de presentación, lógica de negocio, persistencia, autenticación y notificaciones. El API Backend actúa como punto central de comunicación entre la Aplicación Web y los servicios de datos y externos. PostgreSQL/PostGIS concentra la información persistente y geoespacial, mientras que los servicios de Identidad y Notificaciones permanecen desacoplados de la lógica principal del sistema.
+
 ### 5.5 Evolución del diseño
 
 La arquitectura del sistema ha evolucionado de forma iterativa y trazable durante las fases del proyecto:
@@ -539,6 +549,99 @@ La arquitectura del sistema ha evolucionado de forma iterativa y trazable durant
 1. **Avance 1 (S07):** Se definió la Vista de Contexto, delimitando las fronteras del sistema, identificando a los actores y servicios externos, y estableciendo los Escenarios de Calidad que rigen el diseño.
 2. **Avance 2 (S11):** Se descompuso la solución en la Vista de Contenedores (Aplicación Web, API Backend, PostGIS), seleccionando el estilo de Arquitectura en Capas / Monolito Modular y documentando las decisiones clave (ADRs).
 3. **Entrega Final (S14):** Se profundizó al nivel de Componentes y Diseño Detallado, aplicando patrones tácticos (Unit of Work, Circuit Breaker) y principios SOLID para garantizar que el código interno cumpla con la mantenibilidad, rendimiento y auditabilidad exigidas.
+
+### 5.6 Vista de Despliegue
+
+La Vista de Despliegue describe cómo se distribuyen físicamente los principales componentes de la plataforma de gestión operativa y analítica para la recolección de residuos urbanos. La propuesta separa la aplicación web, el API Backend y la Base de Datos PostgreSQL/PostGIS en nodos independientes, permitiendo aislar responsabilidades, facilitar el mantenimiento y controlar el acceso a los datos.
+
+El despliegue mantiene la decisión arquitectónica de utilizar un **API Backend como monolito modular**, evitando distribuir innecesariamente los módulos internos en múltiples servicios. De esta forma, los módulos de gestión de incidencias, monitoreo, rutas, vehículos, cuadrillas y reportes se ejecutan dentro del mismo nodo de aplicación, mientras que PostgreSQL/PostGIS se mantiene como un nodo de persistencia independiente.
+
+Esta distribución responde principalmente a los atributos de **seguridad, disponibilidad, rendimiento, mantenibilidad y modificabilidad**, manteniendo una infraestructura sencilla de operar y evitando la complejidad adicional de un despliegue basado en microservicios.
+
+#### 5.6.1 Diagrama de despliegue
+
+```mermaid
+flowchart TB
+
+    U[Usuarios\nOperarios / Supervisores / Administradores]
+
+    subgraph APP[Infraestructura de Aplicación]
+        WEB[Servidor Web\nAplicación React\nHTTPS / 443]
+
+        API[Servidor de Aplicaciones\nAPI Backend ASP.NET Core\nMonolito Modular]
+    end
+
+    subgraph DATA[Infraestructura de Datos]
+        DB[(Servidor de Base de Datos\nPostgreSQL + PostGIS)]
+    end
+
+    ID[Servicio de Identidad\nOpenID Connect / OAuth 2.0]
+    MAP[Servicio de Mapas\nAPI REST]
+    GEO[Servicio de Geolocalización\nGPS / API REST]
+    NOTIF[Servicio de Notificaciones\nAPI REST]
+
+    U -->|HTTPS / 443| WEB
+    WEB -->|HTTPS / JSON| API
+
+    API -->|TCP/IP - PostgreSQL| DB
+
+    API -->|HTTPS| ID
+    API -->|HTTPS| MAP
+    GEO -->|HTTPS / JSON| API
+    API -->|HTTPS| NOTIF
+```
+
+#### 5.6.2 Distribución de nodos
+
+| Nodo | Contenido | Especificación mínima sugerida | Justificación |
+| --- | --- | --- | --- |
+| Nodo Web (Frontend) | Aplicación Web (React) servida como contenido estático | Servidor web / CDN, 2 vCPU, 2 GB RAM | Carga liviana; se beneficia de cacheo y distribución estática. |
+| Nodo de Aplicación (API Backend) | API Backend (ASP.NET Core, monolito modular) | 4 vCPU, 8 GB RAM por instancia, mínimo 2 instancias | Concentra la lógica de negocio, autorización y orquestación con servicios externos; requiere redundancia por ser punto crítico de disponibilidad (QS-02). |
+| Nodo de Base de Datos | PostgreSQL + PostGIS | 4 vCPU, 16 GB RAM, almacenamiento SSD con IOPS garantizados | Debe soportar escritura frecuente de eventos GPS/incidencias y consultas analíticas simultáneas (ADR-002). |
+| Balanceador de carga | Enruta tráfico hacia las instancias del API Backend | — | Habilita escalamiento horizontal y tolerancia a fallos de una instancia. |
+
+
+### 5.6.3 Decisiones de despliegue del API Backend
+
+- **Escalamiento horizontal, no vertical como estrategia primaria:** se despliegan mínimo dos instancias del API Backend detrás de un balanceador de carga, de forma que la caída de una instancia no interrumpa el servicio (soporta QS-02, disponibilidad del dashboard ≥ 99%).
+- **Instancias sin estado (stateless):** el API Backend no almacena sesión en memoria local; cualquier estado de sesión o token se valida contra el Servicio de Identidad en cada solicitud. Esto permite que el balanceador enrute solicitudes indistintamente a cualquier instancia.
+- **Health checks activos:** el balanceador ejecuta verificaciones periódicas (`/health`) sobre cada instancia; una instancia que falle repetidamente se retira automáticamente de la rotación, y el tiempo de recuperación ante falla interna recuperable debe mantenerse dentro del máximo de 5 minutos definido en QS-02.
+- **Configuración externalizada:** cadenas de conexión, endpoints de servicios externos (mapas, identidad, notificaciones) y parámetros de resiliencia (timeouts, umbrales de circuit breaker) se gestionan mediante variables de entorno o un servicio de configuración, evitando reconstruir el artefacto ante cambios de ambiente.
+- **Despliegue por ambientes:** se mantienen ambientes separados de desarrollo, pruebas y producción, con bases de datos independientes, evitando que pruebas de carga o datos de prueba afecten la operación real.
+- **Zero-downtime deployment (recomendado):** despliegues mediante actualización progresiva (rolling update) de instancias, de manera que siempre exista al menos una instancia disponible durante una nueva versión.
+
+### 5.6.4 Decisiones de despliegue de PostgreSQL/PostGIS
+
+- **Nodo dedicado e independiente:** la base de datos se despliega en un nodo separado del API Backend, permitiendo escalar, respaldar y asegurar cada capa de forma independiente, consistente con la separación de responsabilidades adoptada en ADR-002.
+- **Alta disponibilidad mediante réplica en espera (standby replication):** se configura una instancia réplica en modo *warm standby* con replicación asíncrona o semisíncrona, promovible a primaria ante una falla del nodo principal, para reducir el riesgo de indisponibilidad total del almacenamiento.
+- **Respaldo (backup) programado:** respaldos completos diarios fuera de horario operativo y respaldo continuo de WAL (*Write-Ahead Log*) para permitir recuperación a un punto en el tiempo (*point-in-time recovery*), dado el carácter regulatorio de la información de auditoría (REST-02, REST-04).
+- **Retención diferenciada:** los respaldos completos se retienen según política institucional (por ejemplo, 30 días) mientras que los registros de auditoría e histórico operativo permanecen en la base con una política de retención propia, independiente del ciclo de respaldos.
+- **Particionamiento por fecha:** las tablas de eventos de ubicación GPS y de auditoría se particionan por rango de fecha a medida que el volumen crece, de forma que el mantenimiento (VACUUM, reindexado) y las consultas recientes no se degraden con el histórico acumulado (ADR-002, ADR-001).
+- **Índices geoespaciales y convencionales:** índices GiST/SP-GiST sobre las columnas geométricas de PostGIS y índices B-tree sobre unidad, fecha y estado, priorizando el cumplimiento de los tiempos de respuesta de QS-01 y QS-04.
+- **Aislamiento de red:** el nodo de base de datos no se expone directamente a Internet; únicamente acepta conexiones entrantes desde el nodo del API Backend, mediante reglas de firewall o grupos de seguridad restringidos al puerto de PostgreSQL.
+- **Cifrado:** conexión API Backend–Base de Datos cifrada (TLS) y cifrado en reposo del volumen de almacenamiento, dado que la base contiene información operativa sensible y registros de auditoría (QA-03).
+- **Monitoreo de recursos y consultas:** métricas de uso de CPU, memoria, IOPS, conexiones activas y consultas lentas (*slow queries*), con alertas ante saturación, para anticipar la contención entre las consultas transaccionales del dashboard y las consultas analíticas de reportes descrita en el análisis de trade-offs (sección 6.3.3).
+
+### 5.6.5 Decisiones operativas transversales
+
+| Aspecto | Decisión |
+| --- | --- |
+| Monitoreo y observabilidad | El API Backend expone métricas (tiempo de respuesta, tasa de error, estado de circuit breakers) y logs estructurados centralizados, permitiendo verificar los criterios medibles de QS-01, QS-02, QS-03 y QS-05. |
+| Gestión de secretos | Credenciales de base de datos y claves de integración con servicios externos se almacenan en un gestor de secretos (vault) o variables de entorno protegidas, nunca en el código fuente ni en el repositorio. |
+| Comunicación cifrada | Todo el tráfico entre nodos (Web–API, API–Base de Datos, API–Servicios externos) se realiza mediante HTTPS/TLS. |
+| Escalamiento futuro | Si el volumen de unidades y eventos GPS crece significativamente, el nodo de aplicación permite agregar instancias adicionales sin cambios arquitectónicos, y la separación lógica de datos en PostgreSQL (ADR-002) facilita una eventual migración del componente analítico a infraestructura independiente. |
+| Aislamiento de fallos externos | Los servicios externos (mapas, identidad, notificaciones, geolocalización) no comparten infraestructura con el nodo de aplicación ni de base de datos, de modo que una falla de red hacia un proveedor externo no compromete la disponibilidad interna del sistema (ADR-003). |
+
+### 5.6.6 Trazabilidad de la vista de despliegue
+
+| Decisión de despliegue | Escenario/Driver relacionado |
+| --- | --- |
+| Múltiples instancias del API Backend + balanceador | QS-02 (disponibilidad del dashboard), QA-01 |
+| Réplica en espera de PostgreSQL | QS-02, REST-04 |
+| Respaldo con recuperación a punto en el tiempo | REST-02, REST-04, QA-04 |
+| Particionamiento e índices | QS-01, QS-04, ADR-001, ADR-002 |
+| Aislamiento de red y cifrado | QA-03, QS-03, ADR-004 |
+| Monitoreo y alertas | QA-01, QA-02, QS-02, QS-05 |
 
 ---
 
@@ -1044,6 +1147,9 @@ El flujo principal representa el registro exitoso de una incidencia válida por 
 
 **Figura 6. Diagrama de secuencia del flujo principal de registro de una incidencia.**
 
+
+
+
 ##### Resultado del flujo
 
 Al finalizar el flujo principal:
@@ -1067,6 +1173,167 @@ El análisis de robustez identifica objetos de frontera, control y entidad y ver
 ![Análisis de robustez](../diagramas/analisis-robustez.svg)
 
 **Figura 7. Diagrama de robustez del registro de una incidencia operativa.**
+
+
+### Componente 2 — Monitoreo Geoespacial
+
+ Recibir, validar y procesar de forma asíncrona las actualizaciones de ubicación GPS de las unidades recolectoras, manteniendo un historial de recorrido y una proyección de última ubicación conocida para el dashboard operativo, sin bloquear la recepción ante fallas del Servicio de Mapas.
+
+ RF-03 (Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real), sección 1.4 → Contenedor API Backend, módulo de Monitoreo, sección 5.2 (Vista de Estructura Interna)
+
+#### 8.2.1 Diagrama de clases de diseño
+
+```mermaid
+classDiagram
+    class MonitoreoController {
+        +ReportarUbicacion(dto: UbicacionDto) IActionResult
+    }
+    class IRecepcionUbicacionCasoUso {
+        <<interface>>
+        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~ResultadoRecepcion~
+    }
+    class RecepcionUbicacionCasoUso {
+        -IColaUbicaciones cola
+        -IClock reloj
+        +EncolarUbicacionAsync(cmd) Task~ResultadoRecepcion~
+    }
+    class IColaUbicaciones {
+        <<interface>>
+        +EscribirAsync(evento: EventoUbicacion) Task
+        +LeerAsync(ct: CancellationToken) IAsyncEnumerable~EventoUbicacion~
+    }
+    class ProcesadorUbicacionWorker {
+        -IColaUbicaciones cola
+        -IUbicacionRepository repo
+        -IServicioMapasAdapter mapas
+        -INotificadorSupervisor notificador
+        +ExecuteAsync(ct: CancellationToken) Task
+    }
+    class UbicacionUnidad {
+        +Guid UnidadId
+        +double Latitud
+        +double Longitud
+        +DateTime MarcaDeTiempo
+        +ValidarCoordenadas() void
+    }
+    class UltimaUbicacionUnidad {
+        +Guid UnidadId
+        +UbicacionUnidad Posicion
+        +DateTime ActualizadaEn
+        +bool Desactualizada
+        +MarcarDesactualizada() void
+        +Actualizar(pos: UbicacionUnidad) void
+    }
+    class IUbicacionRepository {
+        <<interface>>
+        +RegistrarHistoricoAsync(u: UbicacionUnidad) Task
+        +UpsertUltimaUbicacionAsync(u: UltimaUbicacionUnidad) Task
+        +ObtenerUltimaUbicacionAsync(unidadId: Guid) Task~UltimaUbicacionUnidad~
+    }
+    class IServicioMapasAdapter {
+        <<interface>>
+        +ObtenerReferenciaGeograficaAsync(lat: double, lon: double, ct: CancellationToken) Task~string~
+    }
+    class INotificadorSupervisor {
+        <<interface>>
+        +NotificarUnidadSinReporteAsync(unidadId: Guid, ct: CancellationToken) Task
+    }
+
+    MonitoreoController ..> IRecepcionUbicacionCasoUso
+    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
+    RecepcionUbicacionCasoUso --> IColaUbicaciones
+    ProcesadorUbicacionWorker --> IColaUbicaciones
+    ProcesadorUbicacionWorker --> IUbicacionRepository
+    ProcesadorUbicacionWorker --> IServicioMapasAdapter
+    ProcesadorUbicacionWorker --> INotificadorSupervisor
+    ProcesadorUbicacionWorker --> UbicacionUnidad
+    ProcesadorUbicacionWorker --> UltimaUbicacionUnidad
+    IUbicacionRepository ..> UbicacionUnidad
+    IUbicacionRepository ..> UltimaUbicacionUnidad
+```
+
+*Figura 9 — Diagrama de clases de diseño: Monitoreo Geoespacial*
+
+#### 8.2.2 Contratos de interfaz
+
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `POST /api/v1/monitoreo/ubicaciones` | Token de telemetría válido; `unidadId` existente; latitud ∈ [-90,90]; longitud ∈ [-180,180] | El evento queda encolado antes de responder; ninguna actualización confirmada se pierde | `400` datos inválidos; `401` token inválido/expirado; `403` unidad no autorizada; `422` timestamp fuera de tolerancia; `503` cola no disponible |
+| `IRecepcionUbicacionCasoUso.EncolarUbicacionAsync(ComandoUbicacion cmd)` | `cmd` no nulo; coordenadas válidas | Evento escrito en `IColaUbicaciones`; no realiza I/O de persistencia ni de red | `ArgumentException` si las coordenadas no cumplen invariantes |
+| `IServicioMapasAdapter.ObtenerReferenciaGeograficaAsync(double lat, double lon)` | Coordenadas válidas | Retorna la referencia geográfica o `null` si el servicio falla/excede timeout; nunca bloquea más de 5s | No propaga excepciones de red; las traduce a `null` |
+| `IUbicacionRepository.UpsertUltimaUbicacionAsync(UltimaUbicacionUnidad u)` | `u.UnidadId` válido | Existe un único registro vigente de última ubicación por unidad | `RepositoryException` ante falla de persistencia |
+
+#### 8.2.3 Análisis de robustez
+
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `MonitoreoController` | Boundary | Recibe la solicitud HTTP, valida su estructura y responde `202 Accepted` |
+| Adaptador de mapas (`IServicioMapasAdapter`) | Boundary | Encapsula la comunicación HTTP con el Servicio de Mapas externo |
+| `RecepcionUbicacionCasoUso` | Control | Valida el comando y lo encola sin persistirlo |
+| `ProcesadorUbicacionWorker` | Control | Coordina el procesamiento asíncrono: persistencia, enriquecimiento geográfico y actualización de proyección |
+| `UbicacionUnidad` | Entity | Representa un evento de ubicación válido y protege sus invariantes |
+| `UltimaUbicacionUnidad` | Entity | Representa la proyección de lectura consumida por el dashboard |
+
+#### 8.2.4 Diagrama de secuencia — flujo principal
+
+```mermaid
+sequenceDiagram
+    participant GPS as Unidad GPS
+    participant API as MonitoreoController
+    participant CU as RecepcionUbicacionCasoUso
+    participant Cola as IColaUbicaciones
+    participant Worker as ProcesadorUbicacionWorker
+    participant Mapas as IServicioMapasAdapter
+    participant DB as PostGIS
+
+    GPS->>API: POST /api/v1/monitoreo/ubicaciones
+    API->>API: Validar estructura del DTO
+    API->>CU: EncolarUbicacionAsync(cmd)
+    CU->>CU: ValidarCoordenadas()
+    CU->>Cola: EscribirAsync(evento)
+    Cola-->>CU: OK
+    CU-->>API: ResultadoRecepcion (Encolado)
+    API-->>GPS: HTTP 202 Accepted
+
+    Note over Worker, DB: Procesamiento asíncrono en background
+    Cola->>Worker: LeerAsync() -> evento
+    Worker->>DB: RegistrarHistoricoAsync(ubicacion)
+    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
+    Mapas-->>Worker: referencia geográfica
+    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion)
+    DB-->>Worker: OK
+```
+
+*Figura 10 — Secuencia: recepción y procesamiento asíncrono de una ubicación GPS*
+
+```mermaid
+sequenceDiagram
+    participant Worker as ProcesadorUbicacionWorker
+    participant Mapas as IServicioMapasAdapter
+    participant CB as Circuit Breaker
+    participant DB as PostGIS
+    participant Notif as INotificadorSupervisor
+
+    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
+    Mapas->>CB: Verificar estado del circuito
+    alt Circuito cerrado, servicio responde lento
+        CB->>Mapas: Ejecutar llamada externa
+        Mapas--xCB: Timeout (>5s)
+        CB->>CB: Registrar fallo consecutivo
+    else Circuito abierto (umbral de fallos superado)
+        CB-->>Mapas: Rechazar llamada inmediatamente
+    end
+    Mapas-->>Worker: null (referencia no disponible)
+    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion sin referencia)
+    DB-->>Worker: OK
+    Worker->>Worker: Evaluar tiempo desde última actualización
+    alt Unidad sin reportes supera umbral
+        Worker->>Notif: NotificarUnidadSinReporteAsync(unidadId)
+        Notif-->>Worker: OK
+    end
+```
+
+*Figura 11 — Secuencia: falla del Servicio de Mapas durante el procesamiento (circuit breaker)*
 
 ##### Objetos de frontera
 
