@@ -1,0 +1,66 @@
+classDiagram
+    class MonitoreoController {
+        +ReportarUbicacion(dto: UbicacionDto) IActionResult
+    }
+    class IRecepcionUbicacionCasoUso {
+        <<interface>>
+        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~ResultadoRecepcion~
+    }
+    class RecepcionUbicacionCasoUso {
+        -IColaUbicaciones cola
+        -IClock reloj
+        +EncolarUbicacionAsync(cmd) Task~ResultadoRecepcion~
+    }
+    class IColaUbicaciones {
+        <<interface>>
+        +EscribirAsync(evento: EventoUbicacion) Task
+        +LeerAsync(ct: CancellationToken) IAsyncEnumerable~EventoUbicacion~
+    }
+    class ProcesadorUbicacionWorker {
+        -IColaUbicaciones cola
+        -IUbicacionRepository repo
+        -IServicioMapasAdapter mapas
+        -INotificadorSupervisor notificador
+        +ExecuteAsync(ct: CancellationToken) Task
+    }
+    class UbicacionUnidad {
+        +Guid UnidadId
+        +double Latitud
+        +double Longitud
+        +DateTime MarcaDeTiempo
+        +ValidarCoordenadas() void
+    }
+    class UltimaUbicacionUnidad {
+        +Guid UnidadId
+        +UbicacionUnidad Posicion
+        +DateTime ActualizadaEn
+        +bool Desactualizada
+        +MarcarDesactualizada() void
+        +Actualizar(pos: UbicacionUnidad) void
+    }
+    class IUbicacionRepository {
+        <<interface>>
+        +RegistrarHistoricoAsync(u: UbicacionUnidad) Task
+        +UpsertUltimaUbicacionAsync(u: UltimaUbicacionUnidad) Task
+        +ObtenerUltimaUbicacionAsync(unidadId: Guid) Task~UltimaUbicacionUnidad~
+    }
+    class IServicioMapasAdapter {
+        <<interface>>
+        +ObtenerReferenciaGeograficaAsync(lat: double, lon: double, ct: CancellationToken) Task~string~
+    }
+    class INotificadorSupervisor {
+        <<interface>>
+        +NotificarUnidadSinReporteAsync(unidadId: Guid, ct: CancellationToken) Task
+    }
+
+    MonitoreoController ..> IRecepcionUbicacionCasoUso
+    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
+    RecepcionUbicacionCasoUso --> IColaUbicaciones
+    ProcesadorUbicacionWorker --> IColaUbicaciones
+    ProcesadorUbicacionWorker --> IUbicacionRepository
+    ProcesadorUbicacionWorker --> IServicioMapasAdapter
+    ProcesadorUbicacionWorker --> INotificadorSupervisor
+    ProcesadorUbicacionWorker --> UbicacionUnidad
+    ProcesadorUbicacionWorker --> UltimaUbicacionUnidad
+    IUbicacionRepository ..> UbicacionUnidad
+    IUbicacionRepository ..> UltimaUbicacionUnidad

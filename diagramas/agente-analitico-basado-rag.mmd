@@ -1,0 +1,19 @@
+flowchart LR
+    HIST["Incidencias Históricas<br/>Cerradas"] --> PREP["Preparación y<br/>Anonimización"]
+
+    PREP --> EMB["Generación de<br/>Embeddings"]
+
+    EMB --> VDB["PostgreSQL<br/>pgvector"]
+
+    USER["Pregunta del Analista"] --> RET["Recuperación<br/>Semántica"]
+
+    VDB --> RET
+
+    RET --> CTX["Contexto<br/>Recuperado"]
+
+    CTX --> LLM["Modelo<br/>Generativo"]
+    USER --> LLM
+
+    LLM --> RESP["Respuesta con<br/>Referencias"]
+
+    RESP --> HITL["Validación Humana<br/>Human-in-the-loop"]

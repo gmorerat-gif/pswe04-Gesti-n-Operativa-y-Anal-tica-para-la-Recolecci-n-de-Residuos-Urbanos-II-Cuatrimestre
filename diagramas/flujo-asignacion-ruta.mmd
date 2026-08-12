@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant UI as Supervisor (Web)
+    participant API as PlanificacionController
+    participant CU as AsignarRutaCasoUso
+    participant Val as ValidadorDisponibilidad
+    participant DB as PostgreSQL
+
+    UI->>API: POST /api/v1/rutas/asignaciones
+    API->>CU: EjecutarAsync(cmd)
+    CU->>Val: ValidarDisponibilidad(vehiculoId, fecha)
+    Val->>DB: Check Vehiculo asignado
+    DB-->>Val: Libre
+    Val-->>CU: true
+    CU->>DB: Insert AsignacionRuta
+    DB-->>CU: OK
+    CU-->>API: 201 Created (AsignacionId)
+    API-->>UI: Confirmación Visual

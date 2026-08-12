@@ -502,57 +502,23 @@ Para profundizar en la estructura del **API Backend** (Monolito Modular), se det
 
 #### 5.4.1 Subsistema: Módulo de Gestión de Incidencias
 
-```mermaid
-flowchart TB
-    subgraph API[API Backend - Módulo de Incidencias]
-        Ctrl("Incidencias Controller\n[ASP.NET Core Controller]\nExpone endpoints REST")
-        Auth("Autorizador\n[Componente de Seguridad]\nValida roles y políticas")
-        CU("Registrar Incidencia (Caso Uso)\n[Orquestador de Dominio]\nEjecuta la lógica de negocio")
-        Repo("Incidencia Repository\n[Acceso a Datos]\nAbstrae persistencia")
-        Notif("Adaptador Notificaciones\n[Cliente HTTP]\nIntegra alertas externas")
-    end
-    SPA[Aplicación Web] -->|JSON/HTTPS| Ctrl
-    Ctrl --> Auth
-    Ctrl --> CU
-    CU --> Repo
-    CU --> Notif
-    Repo --> DB[(PostgreSQL)]
-    Notif --> Ext[Servicio Notificaciones]
-```
+![Módulo de Gestión de Incidencias](../diagramas/vista-componente-modulo-incidencias.svg)
 
 _Figura 5. Vista de Componentes del Módulo de Incidencias._
 
 #### 5.4.2 Subsistema: Módulo de Monitoreo Geoespacial
 
-```mermaid
-flowchart TB
-    subgraph APIM[API Backend - Módulo de Monitoreo]
-        CtrlM("Monitoreo Controller\n[ASP.NET Core Controller]\nRecibe lat/lon")
-        CUM("Recepción (Caso Uso)\n[Encolador]\nValida y acepta el payload")
-        Cola(("Canal de Eventos\n[Buffer en Memoria]"))
-        Worker("Procesador Worker\n[Background Service]\nProcesa asíncronamente")
-        RepoM("Ubicación Repository\n[Acceso a Datos]\nGuarda histórico y proyección")
-        Mapas("Adaptador Mapas\n[Cliente HTTP + Circuit Breaker]")
-    end
-    GPS[Unidad GPS] -->|JSON/HTTPS| CtrlM
-    CtrlM --> CUM
-    CUM --> Cola
-    Cola --> Worker
-    Worker --> RepoM
-    Worker --> Mapas
-    RepoM --> DB[(PostGIS)]
-    Mapas --> Ext[Servicio de Mapas]
-```
+![Módulo de Monitoreo Geoespacial](../diagramas/vista-componente-modulo-monitoreo-geoespacial.svg)
 
 _Figura 6. Vista de Componentes del Módulo de Monitoreo Geoespacial._
 
-| Nodo | Descripción | Artefactos desplegados | Conectividad |
-| --- | --- | --- | --- |
-| Cliente / Navegador Web | Dispositivo utilizado por operadores, supervisores y demás usuarios para acceder a la plataforma. | Aplicación Web | HTTPS hacia el API Backend |
-| Servidor de Aplicación | Nodo encargado de ejecutar la lógica principal de la plataforma y exponer los servicios del sistema. | API Backend | HTTPS desde la Aplicación Web; conexión SQL hacia PostgreSQL/PostGIS; comunicación con Servicio de Identidad y Servicio de Notificaciones |
-| Servidor de Base de Datos | Nodo encargado del almacenamiento persistente de la información operativa del sistema y de la información geoespacial. | PostgreSQL + PostGIS | Conexión SQL desde el API Backend |
-| Servicio de Identidad | Servicio externo encargado de autenticar a los usuarios y proporcionar la información necesaria para validar sus permisos y roles. | Servicio de Identidad | Comunicación segura con el API Backend mediante HTTPS |
-| Servicio de Notificaciones | Servicio encargado del envío de alertas asociadas a incidencias que requieren atención inmediata. | Servicio de Notificaciones | Comunicación segura con el API Backend mediante HTTPS |
+| Nodo                       | Descripción                                                                                                                        | Artefactos desplegados     | Conectividad                                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Cliente / Navegador Web    | Dispositivo utilizado por operadores, supervisores y demás usuarios para acceder a la plataforma.                                  | Aplicación Web             | HTTPS hacia el API Backend                                                                                                                |
+| Servidor de Aplicación     | Nodo encargado de ejecutar la lógica principal de la plataforma y exponer los servicios del sistema.                               | API Backend                | HTTPS desde la Aplicación Web; conexión SQL hacia PostgreSQL/PostGIS; comunicación con Servicio de Identidad y Servicio de Notificaciones |
+| Servidor de Base de Datos  | Nodo encargado del almacenamiento persistente de la información operativa del sistema y de la información geoespacial.             | PostgreSQL + PostGIS       | Conexión SQL desde el API Backend                                                                                                         |
+| Servicio de Identidad      | Servicio externo encargado de autenticar a los usuarios y proporcionar la información necesaria para validar sus permisos y roles. | Servicio de Identidad      | Comunicación segura con el API Backend mediante HTTPS                                                                                     |
+| Servicio de Notificaciones | Servicio encargado del envío de alertas asociadas a incidencias que requieren atención inmediata.                                  | Servicio de Notificaciones | Comunicación segura con el API Backend mediante HTTPS                                                                                     |
 
 La distribución propuesta permite mantener separadas las responsabilidades de presentación, lógica de negocio, persistencia, autenticación y notificaciones. El API Backend actúa como punto central de comunicación entre la Aplicación Web y los servicios de datos y externos. PostgreSQL/PostGIS concentra la información persistente y geoespacial, mientras que los servicios de Identidad y Notificaciones permanecen desacoplados de la lógica principal del sistema.
 
@@ -570,7 +536,7 @@ La Figura 5 muestra de forma simplificada los principales procesos que pueden ej
 
 ![Vista de concurrencia](../diagramas/vista-concurrencia.svg)
 
-*Figura 5 — Modelo de concurrencia de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos.*
+_Figura 5 — Modelo de concurrencia de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
 
 El modelo contempla principalmente los siguientes procesos:
 
@@ -624,46 +590,16 @@ Esta distribución responde principalmente a los atributos de **seguridad, dispo
 
 #### 5.6.1 Diagrama de despliegue
 
-```mermaid
-flowchart TB
-
-    U[Usuarios\nOperarios / Supervisores / Administradores]
-
-    subgraph APP[Infraestructura de Aplicación]
-        WEB[Servidor Web\nAplicación React\nHTTPS / 443]
-
-        API[Servidor de Aplicaciones\nAPI Backend ASP.NET Core\nMonolito Modular]
-    end
-
-    subgraph DATA[Infraestructura de Datos]
-        DB[(Servidor de Base de Datos\nPostgreSQL + PostGIS)]
-    end
-
-    ID[Servicio de Identidad\nOpenID Connect / OAuth 2.0]
-    MAP[Servicio de Mapas\nAPI REST]
-    GEO[Servicio de Geolocalización\nGPS / API REST]
-    NOTIF[Servicio de Notificaciones\nAPI REST]
-
-    U -->|HTTPS / 443| WEB
-    WEB -->|HTTPS / JSON| API
-
-    API -->|TCP/IP - PostgreSQL| DB
-
-    API -->|HTTPS| ID
-    API -->|HTTPS| MAP
-    GEO -->|HTTPS / JSON| API
-    API -->|HTTPS| NOTIF
-```
+![Diagrama de despliegue](../diagramas/diagrama-despliegue.svg)
 
 #### 5.6.2 Distribución de nodos
 
-| Nodo | Contenido | Especificación mínima sugerida | Justificación |
-| --- | --- | --- | --- |
-| Nodo Web (Frontend) | Aplicación Web (React) servida como contenido estático | Servidor web / CDN, 2 vCPU, 2 GB RAM | Carga liviana; se beneficia de cacheo y distribución estática. |
-| Nodo de Aplicación (API Backend) | API Backend (ASP.NET Core, monolito modular) | 4 vCPU, 8 GB RAM por instancia, mínimo 2 instancias | Concentra la lógica de negocio, autorización y orquestación con servicios externos; requiere redundancia por ser punto crítico de disponibilidad (QS-02). |
-| Nodo de Base de Datos | PostgreSQL + PostGIS | 4 vCPU, 16 GB RAM, almacenamiento SSD con IOPS garantizados | Debe soportar escritura frecuente de eventos GPS/incidencias y consultas analíticas simultáneas (ADR-002). |
-| Balanceador de carga | Enruta tráfico hacia las instancias del API Backend | — | Habilita escalamiento horizontal y tolerancia a fallos de una instancia. |
-
+| Nodo                             | Contenido                                              | Especificación mínima sugerida                              | Justificación                                                                                                                                             |
+| -------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nodo Web (Frontend)              | Aplicación Web (React) servida como contenido estático | Servidor web / CDN, 2 vCPU, 2 GB RAM                        | Carga liviana; se beneficia de cacheo y distribución estática.                                                                                            |
+| Nodo de Aplicación (API Backend) | API Backend (ASP.NET Core, monolito modular)           | 4 vCPU, 8 GB RAM por instancia, mínimo 2 instancias         | Concentra la lógica de negocio, autorización y orquestación con servicios externos; requiere redundancia por ser punto crítico de disponibilidad (QS-02). |
+| Nodo de Base de Datos            | PostgreSQL + PostGIS                                   | 4 vCPU, 16 GB RAM, almacenamiento SSD con IOPS garantizados | Debe soportar escritura frecuente de eventos GPS/incidencias y consultas analíticas simultáneas (ADR-002).                                                |
+| Balanceador de carga             | Enruta tráfico hacia las instancias del API Backend    | —                                                           | Habilita escalamiento horizontal y tolerancia a fallos de una instancia.                                                                                  |
 
 ### 5.6.3 Decisiones de despliegue del API Backend
 
@@ -677,35 +613,35 @@ flowchart TB
 ### 5.6.4 Decisiones de despliegue de PostgreSQL/PostGIS
 
 - **Nodo dedicado e independiente:** la base de datos se despliega en un nodo separado del API Backend, permitiendo escalar, respaldar y asegurar cada capa de forma independiente, consistente con la separación de responsabilidades adoptada en ADR-002.
-- **Alta disponibilidad mediante réplica en espera (standby replication):** se configura una instancia réplica en modo *warm standby* con replicación asíncrona o semisíncrona, promovible a primaria ante una falla del nodo principal, para reducir el riesgo de indisponibilidad total del almacenamiento.
-- **Respaldo (backup) programado:** respaldos completos diarios fuera de horario operativo y respaldo continuo de WAL (*Write-Ahead Log*) para permitir recuperación a un punto en el tiempo (*point-in-time recovery*), dado el carácter regulatorio de la información de auditoría (REST-02, REST-04).
+- **Alta disponibilidad mediante réplica en espera (standby replication):** se configura una instancia réplica en modo _warm standby_ con replicación asíncrona o semisíncrona, promovible a primaria ante una falla del nodo principal, para reducir el riesgo de indisponibilidad total del almacenamiento.
+- **Respaldo (backup) programado:** respaldos completos diarios fuera de horario operativo y respaldo continuo de WAL (_Write-Ahead Log_) para permitir recuperación a un punto en el tiempo (_point-in-time recovery_), dado el carácter regulatorio de la información de auditoría (REST-02, REST-04).
 - **Retención diferenciada:** los respaldos completos se retienen según política institucional (por ejemplo, 30 días) mientras que los registros de auditoría e histórico operativo permanecen en la base con una política de retención propia, independiente del ciclo de respaldos.
 - **Particionamiento por fecha:** las tablas de eventos de ubicación GPS y de auditoría se particionan por rango de fecha a medida que el volumen crece, de forma que el mantenimiento (VACUUM, reindexado) y las consultas recientes no se degraden con el histórico acumulado (ADR-002, ADR-001).
 - **Índices geoespaciales y convencionales:** índices GiST/SP-GiST sobre las columnas geométricas de PostGIS y índices B-tree sobre unidad, fecha y estado, priorizando el cumplimiento de los tiempos de respuesta de QS-01 y QS-04.
 - **Aislamiento de red:** el nodo de base de datos no se expone directamente a Internet; únicamente acepta conexiones entrantes desde el nodo del API Backend, mediante reglas de firewall o grupos de seguridad restringidos al puerto de PostgreSQL.
 - **Cifrado:** conexión API Backend–Base de Datos cifrada (TLS) y cifrado en reposo del volumen de almacenamiento, dado que la base contiene información operativa sensible y registros de auditoría (QA-03).
-- **Monitoreo de recursos y consultas:** métricas de uso de CPU, memoria, IOPS, conexiones activas y consultas lentas (*slow queries*), con alertas ante saturación, para anticipar la contención entre las consultas transaccionales del dashboard y las consultas analíticas de reportes descrita en el análisis de trade-offs (sección 6.3.3).
+- **Monitoreo de recursos y consultas:** métricas de uso de CPU, memoria, IOPS, conexiones activas y consultas lentas (_slow queries_), con alertas ante saturación, para anticipar la contención entre las consultas transaccionales del dashboard y las consultas analíticas de reportes descrita en el análisis de trade-offs (sección 6.3.3).
 
 ### 5.6.5 Decisiones operativas transversales
 
-| Aspecto | Decisión |
-| --- | --- |
-| Monitoreo y observabilidad | El API Backend expone métricas (tiempo de respuesta, tasa de error, estado de circuit breakers) y logs estructurados centralizados, permitiendo verificar los criterios medibles de QS-01, QS-02, QS-03 y QS-05. |
-| Gestión de secretos | Credenciales de base de datos y claves de integración con servicios externos se almacenan en un gestor de secretos (vault) o variables de entorno protegidas, nunca en el código fuente ni en el repositorio. |
-| Comunicación cifrada | Todo el tráfico entre nodos (Web–API, API–Base de Datos, API–Servicios externos) se realiza mediante HTTPS/TLS. |
-| Escalamiento futuro | Si el volumen de unidades y eventos GPS crece significativamente, el nodo de aplicación permite agregar instancias adicionales sin cambios arquitectónicos, y la separación lógica de datos en PostgreSQL (ADR-002) facilita una eventual migración del componente analítico a infraestructura independiente. |
-| Aislamiento de fallos externos | Los servicios externos (mapas, identidad, notificaciones, geolocalización) no comparten infraestructura con el nodo de aplicación ni de base de datos, de modo que una falla de red hacia un proveedor externo no compromete la disponibilidad interna del sistema (ADR-003). |
+| Aspecto                        | Decisión                                                                                                                                                                                                                                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Monitoreo y observabilidad     | El API Backend expone métricas (tiempo de respuesta, tasa de error, estado de circuit breakers) y logs estructurados centralizados, permitiendo verificar los criterios medibles de QS-01, QS-02, QS-03 y QS-05.                                                                                              |
+| Gestión de secretos            | Credenciales de base de datos y claves de integración con servicios externos se almacenan en un gestor de secretos (vault) o variables de entorno protegidas, nunca en el código fuente ni en el repositorio.                                                                                                 |
+| Comunicación cifrada           | Todo el tráfico entre nodos (Web–API, API–Base de Datos, API–Servicios externos) se realiza mediante HTTPS/TLS.                                                                                                                                                                                               |
+| Escalamiento futuro            | Si el volumen de unidades y eventos GPS crece significativamente, el nodo de aplicación permite agregar instancias adicionales sin cambios arquitectónicos, y la separación lógica de datos en PostgreSQL (ADR-002) facilita una eventual migración del componente analítico a infraestructura independiente. |
+| Aislamiento de fallos externos | Los servicios externos (mapas, identidad, notificaciones, geolocalización) no comparten infraestructura con el nodo de aplicación ni de base de datos, de modo que una falla de red hacia un proveedor externo no compromete la disponibilidad interna del sistema (ADR-003).                                 |
 
 ### 5.6.6 Trazabilidad de la vista de despliegue
 
-| Decisión de despliegue | Escenario/Driver relacionado |
-| --- | --- |
+| Decisión de despliegue                             | Escenario/Driver relacionado                |
+| -------------------------------------------------- | ------------------------------------------- |
 | Múltiples instancias del API Backend + balanceador | QS-02 (disponibilidad del dashboard), QA-01 |
-| Réplica en espera de PostgreSQL | QS-02, REST-04 |
-| Respaldo con recuperación a punto en el tiempo | REST-02, REST-04, QA-04 |
-| Particionamiento e índices | QS-01, QS-04, ADR-001, ADR-002 |
-| Aislamiento de red y cifrado | QA-03, QS-03, ADR-004 |
-| Monitoreo y alertas | QA-01, QA-02, QS-02, QS-05 |
+| Réplica en espera de PostgreSQL                    | QS-02, REST-04                              |
+| Respaldo con recuperación a punto en el tiempo     | REST-02, REST-04, QA-04                     |
+| Particionamiento e índices                         | QS-01, QS-04, ADR-001, ADR-002              |
+| Aislamiento de red y cifrado                       | QA-03, QS-03, ADR-004                       |
+| Monitoreo y alertas                                | QA-01, QA-02, QS-02, QS-05                  |
 
 ---
 
@@ -1211,9 +1147,6 @@ El flujo principal representa el registro exitoso de una incidencia válida por 
 
 **Figura 6. Diagrama de secuencia del flujo principal de registro de una incidencia.**
 
-
-
-
 ##### Resultado del flujo
 
 Al finalizar el flujo principal:
@@ -1238,166 +1171,47 @@ El análisis de robustez identifica objetos de frontera, control y entidad y ver
 
 **Figura 7. Diagrama de robustez del registro de una incidencia operativa.**
 
-
 ### Componente 2 — Monitoreo Geoespacial
 
- Recibir, validar y procesar de forma asíncrona las actualizaciones de ubicación GPS de las unidades recolectoras, manteniendo un historial de recorrido y una proyección de última ubicación conocida para el dashboard operativo, sin bloquear la recepción ante fallas del Servicio de Mapas.
+Recibir, validar y procesar de forma asíncrona las actualizaciones de ubicación GPS de las unidades recolectoras, manteniendo un historial de recorrido y una proyección de última ubicación conocida para el dashboard operativo, sin bloquear la recepción ante fallas del Servicio de Mapas.
 
- RF-03 (Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real), sección 1.4 → Contenedor API Backend, módulo de Monitoreo, sección 5.2 (Vista de Estructura Interna)
+RF-03 (Monitorear el estado y ubicación de las unidades de recolección en tiempo casi real), sección 1.4 → Contenedor API Backend, módulo de Monitoreo, sección 5.2 (Vista de Estructura Interna)
 
 #### 8.2.1 Diagrama de clases de diseño
 
-```mermaid
-classDiagram
-    class MonitoreoController {
-        +ReportarUbicacion(dto: UbicacionDto) IActionResult
-    }
-    class IRecepcionUbicacionCasoUso {
-        <<interface>>
-        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~ResultadoRecepcion~
-    }
-    class RecepcionUbicacionCasoUso {
-        -IColaUbicaciones cola
-        -IClock reloj
-        +EncolarUbicacionAsync(cmd) Task~ResultadoRecepcion~
-    }
-    class IColaUbicaciones {
-        <<interface>>
-        +EscribirAsync(evento: EventoUbicacion) Task
-        +LeerAsync(ct: CancellationToken) IAsyncEnumerable~EventoUbicacion~
-    }
-    class ProcesadorUbicacionWorker {
-        -IColaUbicaciones cola
-        -IUbicacionRepository repo
-        -IServicioMapasAdapter mapas
-        -INotificadorSupervisor notificador
-        +ExecuteAsync(ct: CancellationToken) Task
-    }
-    class UbicacionUnidad {
-        +Guid UnidadId
-        +double Latitud
-        +double Longitud
-        +DateTime MarcaDeTiempo
-        +ValidarCoordenadas() void
-    }
-    class UltimaUbicacionUnidad {
-        +Guid UnidadId
-        +UbicacionUnidad Posicion
-        +DateTime ActualizadaEn
-        +bool Desactualizada
-        +MarcarDesactualizada() void
-        +Actualizar(pos: UbicacionUnidad) void
-    }
-    class IUbicacionRepository {
-        <<interface>>
-        +RegistrarHistoricoAsync(u: UbicacionUnidad) Task
-        +UpsertUltimaUbicacionAsync(u: UltimaUbicacionUnidad) Task
-        +ObtenerUltimaUbicacionAsync(unidadId: Guid) Task~UltimaUbicacionUnidad~
-    }
-    class IServicioMapasAdapter {
-        <<interface>>
-        +ObtenerReferenciaGeograficaAsync(lat: double, lon: double, ct: CancellationToken) Task~string~
-    }
-    class INotificadorSupervisor {
-        <<interface>>
-        +NotificarUnidadSinReporteAsync(unidadId: Guid, ct: CancellationToken) Task
-    }
+![Diagrama de clases de diseño](../diagramas/diagrama-clases-diseno.svg)
 
-    MonitoreoController ..> IRecepcionUbicacionCasoUso
-    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
-    RecepcionUbicacionCasoUso --> IColaUbicaciones
-    ProcesadorUbicacionWorker --> IColaUbicaciones
-    ProcesadorUbicacionWorker --> IUbicacionRepository
-    ProcesadorUbicacionWorker --> IServicioMapasAdapter
-    ProcesadorUbicacionWorker --> INotificadorSupervisor
-    ProcesadorUbicacionWorker --> UbicacionUnidad
-    ProcesadorUbicacionWorker --> UltimaUbicacionUnidad
-    IUbicacionRepository ..> UbicacionUnidad
-    IUbicacionRepository ..> UltimaUbicacionUnidad
-```
-
-*Figura 9 — Diagrama de clases de diseño: Monitoreo Geoespacial*
+_Figura 9 — Diagrama de clases de diseño: Monitoreo Geoespacial_
 
 #### 8.2.2 Contratos de interfaz
 
-| Método / Endpoint | Precondición | Postcondición | Excepciones |
-|---|---|---|---|
-| `POST /api/v1/monitoreo/ubicaciones` | Token de telemetría válido; `unidadId` existente; latitud ∈ [-90,90]; longitud ∈ [-180,180] | El evento queda encolado antes de responder; ninguna actualización confirmada se pierde | `400` datos inválidos; `401` token inválido/expirado; `403` unidad no autorizada; `422` timestamp fuera de tolerancia; `503` cola no disponible |
-| `IRecepcionUbicacionCasoUso.EncolarUbicacionAsync(ComandoUbicacion cmd)` | `cmd` no nulo; coordenadas válidas | Evento escrito en `IColaUbicaciones`; no realiza I/O de persistencia ni de red | `ArgumentException` si las coordenadas no cumplen invariantes |
-| `IServicioMapasAdapter.ObtenerReferenciaGeograficaAsync(double lat, double lon)` | Coordenadas válidas | Retorna la referencia geográfica o `null` si el servicio falla/excede timeout; nunca bloquea más de 5s | No propaga excepciones de red; las traduce a `null` |
-| `IUbicacionRepository.UpsertUltimaUbicacionAsync(UltimaUbicacionUnidad u)` | `u.UnidadId` válido | Existe un único registro vigente de última ubicación por unidad | `RepositoryException` ante falla de persistencia |
+| Método / Endpoint                                                                | Precondición                                                                                | Postcondición                                                                                          | Excepciones                                                                                                                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/v1/monitoreo/ubicaciones`                                             | Token de telemetría válido; `unidadId` existente; latitud ∈ [-90,90]; longitud ∈ [-180,180] | El evento queda encolado antes de responder; ninguna actualización confirmada se pierde                | `400` datos inválidos; `401` token inválido/expirado; `403` unidad no autorizada; `422` timestamp fuera de tolerancia; `503` cola no disponible |
+| `IRecepcionUbicacionCasoUso.EncolarUbicacionAsync(ComandoUbicacion cmd)`         | `cmd` no nulo; coordenadas válidas                                                          | Evento escrito en `IColaUbicaciones`; no realiza I/O de persistencia ni de red                         | `ArgumentException` si las coordenadas no cumplen invariantes                                                                                   |
+| `IServicioMapasAdapter.ObtenerReferenciaGeograficaAsync(double lat, double lon)` | Coordenadas válidas                                                                         | Retorna la referencia geográfica o `null` si el servicio falla/excede timeout; nunca bloquea más de 5s | No propaga excepciones de red; las traduce a `null`                                                                                             |
+| `IUbicacionRepository.UpsertUltimaUbicacionAsync(UltimaUbicacionUnidad u)`       | `u.UnidadId` válido                                                                         | Existe un único registro vigente de última ubicación por unidad                                        | `RepositoryException` ante falla de persistencia                                                                                                |
 
 #### 8.2.3 Análisis de robustez
 
-| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
-|---|---|---|
-| `MonitoreoController` | Boundary | Recibe la solicitud HTTP, valida su estructura y responde `202 Accepted` |
-| Adaptador de mapas (`IServicioMapasAdapter`) | Boundary | Encapsula la comunicación HTTP con el Servicio de Mapas externo |
-| `RecepcionUbicacionCasoUso` | Control | Valida el comando y lo encola sin persistirlo |
-| `ProcesadorUbicacionWorker` | Control | Coordina el procesamiento asíncrono: persistencia, enriquecimiento geográfico y actualización de proyección |
-| `UbicacionUnidad` | Entity | Representa un evento de ubicación válido y protege sus invariantes |
-| `UltimaUbicacionUnidad` | Entity | Representa la proyección de lectura consumida por el dashboard |
+| Objeto                                       | Tipo (Boundary / Control / Entity) | Responsabilidad                                                                                             |
+| -------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `MonitoreoController`                        | Boundary                           | Recibe la solicitud HTTP, valida su estructura y responde `202 Accepted`                                    |
+| Adaptador de mapas (`IServicioMapasAdapter`) | Boundary                           | Encapsula la comunicación HTTP con el Servicio de Mapas externo                                             |
+| `RecepcionUbicacionCasoUso`                  | Control                            | Valida el comando y lo encola sin persistirlo                                                               |
+| `ProcesadorUbicacionWorker`                  | Control                            | Coordina el procesamiento asíncrono: persistencia, enriquecimiento geográfico y actualización de proyección |
+| `UbicacionUnidad`                            | Entity                             | Representa un evento de ubicación válido y protege sus invariantes                                          |
+| `UltimaUbicacionUnidad`                      | Entity                             | Representa la proyección de lectura consumida por el dashboard                                              |
 
 #### 8.2.4 Diagrama de secuencia — flujo principal
 
-```mermaid
-sequenceDiagram
-    participant GPS as Unidad GPS
-    participant API as MonitoreoController
-    participant CU as RecepcionUbicacionCasoUso
-    participant Cola as IColaUbicaciones
-    participant Worker as ProcesadorUbicacionWorker
-    participant Mapas as IServicioMapasAdapter
-    participant DB as PostGIS
+![Diagrama de secuencia](../diagramas/recepcion-procesamiento-asincrono.svg)
 
-    GPS->>API: POST /api/v1/monitoreo/ubicaciones
-    API->>API: Validar estructura del DTO
-    API->>CU: EncolarUbicacionAsync(cmd)
-    CU->>CU: ValidarCoordenadas()
-    CU->>Cola: EscribirAsync(evento)
-    Cola-->>CU: OK
-    CU-->>API: ResultadoRecepcion (Encolado)
-    API-->>GPS: HTTP 202 Accepted
+_Figura 10 — Secuencia: recepción y procesamiento asíncrono de una ubicación GPS_
 
-    Note over Worker, DB: Procesamiento asíncrono en background
-    Cola->>Worker: LeerAsync() -> evento
-    Worker->>DB: RegistrarHistoricoAsync(ubicacion)
-    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
-    Mapas-->>Worker: referencia geográfica
-    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion)
-    DB-->>Worker: OK
-```
+![Diagrama de secuencia](../diagramas/falla-servicio-mapas-durante-procesamiento.svg)
 
-*Figura 10 — Secuencia: recepción y procesamiento asíncrono de una ubicación GPS*
-
-```mermaid
-sequenceDiagram
-    participant Worker as ProcesadorUbicacionWorker
-    participant Mapas as IServicioMapasAdapter
-    participant CB as Circuit Breaker
-    participant DB as PostGIS
-    participant Notif as INotificadorSupervisor
-
-    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
-    Mapas->>CB: Verificar estado del circuito
-    alt Circuito cerrado, servicio responde lento
-        CB->>Mapas: Ejecutar llamada externa
-        Mapas--xCB: Timeout (>5s)
-        CB->>CB: Registrar fallo consecutivo
-    else Circuito abierto (umbral de fallos superado)
-        CB-->>Mapas: Rechazar llamada inmediatamente
-    end
-    Mapas-->>Worker: null (referencia no disponible)
-    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion sin referencia)
-    DB-->>Worker: OK
-    Worker->>Worker: Evaluar tiempo desde última actualización
-    alt Unidad sin reportes supera umbral
-        Worker->>Notif: NotificarUnidadSinReporteAsync(unidadId)
-        Notif-->>Worker: OK
-    end
-```
-
-*Figura 11 — Secuencia: falla del Servicio de Mapas durante el procesamiento (circuit breaker)*
+_Figura 11 — Secuencia: falla del Servicio de Mapas durante el procesamiento (circuit breaker)_
 
 ##### Objetos de frontera
 
@@ -1461,15 +1275,7 @@ sequenceDiagram
 
 ##### Transiciones permitidas
 
-```mermaid
-stateDiagram-v2
-    [*] --> Registrada
-    Registrada --> EnRevision
-    EnRevision --> EnAtencion
-    EnRevision --> Cerrada
-    EnAtencion --> Resuelta
-    Resuelta --> Cerrada
-```
+![Transiciones permitidas](../diagramas/transiciones-permitidas.svg)
 
 **Figura 8. Vista de transiciones permitidas.**
 
@@ -1888,71 +1694,13 @@ Se alinea con las siguientes decisiones arquitectónicas:
 
 #### 8.2.3 Diagrama de clases de diseño
 
-```mermaid
-classDiagram
-    class MonitoreoController {
-        +ReportarUbicacion(dto: UbicacionDto) IActionResult
-    }
-    class IRecepcionUbicacionCasoUso {
-        <<interface>>
-        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~Resultado~
-    }
-    class RecepcionUbicacionCasoUso {
-        -IColaUbicaciones cola
-        +EncolarUbicacionAsync(cmd)
-    }
-    class ProcesadorUbicacionWorker {
-        -IRepositorioUbicacion repo
-        -IServicioMapasAdapter mapas
-        +ExecuteAsync(CancellationToken)
-    }
-    class UbicacionUnidad {
-        +Guid UnidadId
-        +double Latitud
-        +double Longitud
-        +DateTime MarcaDeTiempo
-        +ValidarCoordenadas()
-    }
-    class IServicioMapasAdapter {
-        <<interface>>
-        +ObtenerReferenciaGeografica(lat, lon) Task~string~
-    }
-
-    MonitoreoController ..> IRecepcionUbicacionCasoUso
-    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
-    ProcesadorUbicacionWorker --> UbicacionUnidad
-    ProcesadorUbicacionWorker ..> IServicioMapasAdapter
-```
+![Diagrama de clases de diseño](../diagramas/diagrama-clases-componente-monitoreo-geoespacial.svg)
 
 _Figura 9. Diagrama de clases del componente de Monitoreo Geoespacial._
 
 #### 8.2.4 Secuencia del flujo principal
 
-```mermaid
-sequenceDiagram
-    participant GPS as Unidad GPS
-    participant API as MonitoreoController
-    participant CasoUso as RecepcionCasoUso
-    participant Cola as Cola En Memoria
-    participant Worker as ProcesadorWorker
-    participant Mapas as IServicioMapasAdapter
-    participant DB as PostGIS
-
-    GPS->>API: POST /api/v1/monitoreo/ubicaciones
-    API->>CasoUso: EncolarUbicacionAsync(data)
-    CasoUso->>Cola: EscribirEnCanal(data)
-    Cola-->>CasoUso: OK
-    CasoUso-->>API: Resultado (Encolado)
-    API-->>GPS: HTTP 202 Accepted
-
-    Note over Worker, DB: Procesamiento Asíncrono en Background
-    Cola->>Worker: LeerMensaje()
-    Worker->>Worker: ValidarCoordenadas()
-    Worker->>Mapas: ObtenerReferenciaGeografica()
-    Mapas-->>Worker: "Av. 2, San José" (Con Timeout)
-    Worker->>DB: Insertar UbicacionHistorica
-    Worker->>DB: Upsert UltimaUbicacion (Proyección)
-```
+![Secuencia del flujo principal](../diagramas/secuencia-recepcion-procesamiento-asincrono.svg)
 
 _Figura 10. Secuencia de recepción y procesamiento asíncrono._
 
@@ -1988,61 +1736,13 @@ El tercer componente detallado aborda el núcleo logístico de la plataforma: la
 
 #### 8.3.3 Diagrama de clases de diseño
 
-```mermaid
-classDiagram
-    class PlanificacionController {
-        +AsignarRuta(dto: AsignacionDto) IActionResult
-    }
-    class IAsignarRutaCasoUso {
-        <<interface>>
-        +EjecutarAsync(cmd: AsignarRutaCmd) Task~Resultado~
-    }
-    class AsignarRutaCasoUso {
-        -IRutaRepository rutasRepo
-        -IValidadorDisponibilidad validador
-        +EjecutarAsync(cmd)
-    }
-    class ValidadorDisponibilidad {
-        -IVehiculoRepository vehiculosRepo
-        -ICuadrillaRepository cuadrillaRepo
-        +ValidarDisponibilidad(vehiculoId, fecha) bool
-    }
-    class AsignacionRuta {
-        +Guid RutaId
-        +Guid VehiculoId
-        +DateTime FechaOperacion
-        +ConfirmarAsignacion()
-    }
-
-    PlanificacionController ..> IAsignarRutaCasoUso
-    IAsignarRutaCasoUso <|-- AsignarRutaCasoUso
-    AsignarRutaCasoUso --> ValidadorDisponibilidad
-    AsignarRutaCasoUso --> AsignacionRuta
-```
+![Diagrama de clases de diseño](../diagramas/diagrama-clases-planificacion-rutas.svg)
 
 _Figura 12. Diagrama de clases de Planificación de Rutas._
 
 #### 8.3.4 Secuencia del flujo principal
 
-```mermaid
-sequenceDiagram
-    participant UI as Supervisor (Web)
-    participant API as PlanificacionController
-    participant CU as AsignarRutaCasoUso
-    participant Val as ValidadorDisponibilidad
-    participant DB as PostgreSQL
-
-    UI->>API: POST /api/v1/rutas/asignaciones
-    API->>CU: EjecutarAsync(cmd)
-    CU->>Val: ValidarDisponibilidad(vehiculoId, fecha)
-    Val->>DB: Check Vehiculo asignado
-    DB-->>Val: Libre
-    Val-->>CU: true
-    CU->>DB: Insert AsignacionRuta
-    DB-->>CU: OK
-    CU-->>API: 201 Created (AsignacionId)
-    API-->>UI: Confirmación Visual
-```
+![Secuencia del flujo principal](../diagramas/flujo-asignacion-ruta.svg)
 
 _Figura 13. Flujo de asignación de ruta._
 
@@ -2095,74 +1795,1021 @@ Para satisfacer los requerimientos de disponibilidad, mantenibilidad y resilienc
 
 ## 10. Principios y Técnicas Habilitadoras
 
-El diseño de la arquitectura y de los componentes detallados se ha regido estrictamente por los principios **SOLID**:
+El diseño de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos utiliza principios y técnicas de diseño orientados a preservar las fronteras arquitectónicas definidas en los niveles anteriores del documento. Su propósito es evitar que las decisiones tomadas a nivel de arquitectura —como el uso de un monolito modular, la separación de responsabilidades, la persistencia unificada y el encapsulamiento de servicios externos— se pierdan posteriormente durante el diseño interno de los componentes.
 
-1. **Single Responsibility Principle (SRP):** En ambos componentes detallados, los Controladores (`IncidenciasController`, `MonitoreoController`) se limitan exclusivamente a la mediación HTTP (rutas, códigos de estado, serialización). La lógica de negocio fue extraída a objetos `CasoUso`, evitando controladores monolíticos.
-2. **Dependency Inversion Principle (DIP):** El núcleo del sistema (Capa de Dominio y Aplicación) no depende de PostgreSQL, ni de librerías de notificaciones, ni del proveedor de mapas. Depende de interfaces puras (`IRutaRepository`, `IServicioMapasAdapter`). La capa de infraestructura implementa estos contratos.
-3. **Tensión y Trade-offs en los principios:** Aplicar SRP y DIP rigurosamente provocó una "explosión de clases" (interfaces, DTOs, implementaciones y controladores). Se aceptó este nivel de complejidad inicial (aumento de archivos) a cambio de obtener una alta _Mantenibilidad_ y facilidad para inyectar _Mocks_ durante las pruebas unitarias.
+En particular, los principios **SOLID** se utilizan como guía para organizar responsabilidades y controlar la dirección de las dependencias dentro del API Backend. Su aplicación se relaciona principalmente con **QA-02 — Mantenibilidad**, que establece la necesidad de facilitar modificaciones futuras sin afectar innecesariamente otras capacidades del sistema, y con **QS-06 — Mantenibilidad y aislamiento de cambios**, cuyo criterio exige que una modificación localizada no provoque cambios en módulos no relacionados.
+
+### 10.1 Single Responsibility Principle — SRP
+
+El principio de responsabilidad única se refleja en la separación entre componentes de interfaz, aplicación, dominio e infraestructura.
+
+Los controladores como `IncidenciasController`, `MonitoreoController` y `PlanificacionController` se concentran principalmente en la interacción HTTP: reciben solicitudes, realizan las validaciones correspondientes al contrato de entrada y devuelven el resultado mediante los códigos de respuesta definidos.
+
+La lógica asociada con los procesos del negocio se delega a componentes especializados. Entre los ejemplos presentes en el diseño se encuentran:
+
+- `RegistrarIncidenciaCasoUso`, responsable de coordinar el registro de una incidencia.
+- `RecepcionUbicacionCasoUso`, encargado de coordinar la recepción de actualizaciones geoespaciales.
+- `ProcesadorUbicacionWorker`, encargado del procesamiento posterior de las ubicaciones.
+- `AsignarRutaCasoUso`, responsable del proceso de asignación de rutas.
+- `ValidadorDisponibilidad`, encargado de concentrar las reglas relacionadas con la disponibilidad de los recursos utilizados en la planificación.
+
+Esta separación evita que los controladores acumulen simultáneamente responsabilidades de transporte, negocio, persistencia e integración externa.
+
+También permite que cada componente pueda evolucionar de acuerdo con una razón específica de cambio. Por ejemplo, una modificación en las reglas para determinar la disponibilidad de un vehículo no debería requerir modificar la forma en que el controlador recibe una solicitud HTTP.
+
+---
+
+### 10.2 Open/Closed Principle — OCP
+
+El principio abierto/cerrado se utiliza para favorecer la extensión del comportamiento sin modificar innecesariamente los componentes que contienen las reglas principales del negocio.
+
+Esta característica se evidencia especialmente en las integraciones externas y en el acceso a datos.
+
+Por ejemplo, `IServicioMapasAdapter` desacopla al componente de monitoreo de una implementación específica del proveedor cartográfico. Mientras una nueva implementación mantenga el contrato esperado por la aplicación, el proveedor podría sustituirse sin trasladar dicha modificación hacia las reglas del dominio.
+
+De manera similar, los repositorios encapsulan la interacción con PostgreSQL/PostGIS, evitando que las entidades y casos de uso dependan directamente de particularidades tecnológicas de la persistencia.
+
+Sin embargo, la existencia de interfaces no demuestra por sí sola el cumplimiento del principio. El aislamiento deberá comprobarse mediante el impacto real de los cambios, especialmente a través del escenario **QS-06 — Mantenibilidad y aislamiento de cambios**.
+
+---
+
+### 10.3 Liskov Substitution Principle — LSP
+
+Las implementaciones concretas utilizadas por los casos de uso deben conservar las condiciones y comportamientos establecidos por sus contratos.
+
+Esto significa que la sustitución de una implementación no debería alterar las garantías asumidas por sus consumidores.
+
+Por ejemplo, una implementación alternativa de `IServicioMapasAdapter` deberá conservar las condiciones de resiliencia definidas para la integración externa. De manera equivalente, una implementación diferente de un repositorio deberá mantener las reglas de consistencia establecidas para las entidades que administra.
+
+Este principio resulta particularmente importante en puntos donde la arquitectura permite sustituir infraestructura sin modificar el núcleo de la aplicación.
+
+Su cumplimiento deberá verificarse principalmente mediante pruebas de contrato e integración cuando existan múltiples implementaciones intercambiables.
+
+---
+
+### 10.4 Interface Segregation Principle — ISP
+
+El diseño favorece interfaces orientadas a capacidades específicas en lugar de contratos generales que obliguen a los consumidores a depender de operaciones que no requieren.
+
+Esta separación se observa en contratos como:
+
+- `IIncidenciaRepository`;
+- `IAutorizadorIncidencias`;
+- `INotificadorIncidencias`;
+- `IUnidadTrabajo`;
+- `IRecepcionUbicacionCasoUso`;
+- `IRepositorioUbicacion`;
+- `IServicioMapasAdapter`.
+
+Cada uno representa una responsabilidad concreta dentro de su contexto.
+
+Este enfoque disminuye el acoplamiento entre componentes y facilita que los casos de uso dependan únicamente de los servicios necesarios para ejecutar su responsabilidad.
+
+---
+
+### 10.5 Dependency Inversion Principle — DIP
+
+El principio de inversión de dependencias constituye uno de los mecanismos más relevantes para mantener separada la lógica del negocio de las tecnologías externas.
+
+Las capas de aplicación y dominio dependen de contratos y abstracciones, mientras que los componentes de infraestructura implementan dichos contratos. La infraestructura se adapta a las necesidades definidas por las capas internas y no obliga al núcleo del sistema a conocer directamente las tecnologías utilizadas para persistencia o integración.
+
+![Dependency Inversion Principle — DIP](../diagramas/dip.svg)
+
+**Figura 14. Aplicación del principio de inversión de dependencias en el API Backend.**
+
+La dirección mostrada en la Figura 14 representa una regla fundamental del diseño: las tecnologías de infraestructura implementan los contratos requeridos por las capas internas, evitando que el dominio dependa directamente de decisiones tecnológicas.
+
+Por esta razón, las reglas centrales del sistema no necesitan conocer detalles específicos de PostgreSQL, PostGIS, proveedores cartográficos o servicios de notificación.
+
+Esta decisión favorece la sustitución de componentes tecnológicos, facilita el uso de dobles de prueba y contribuye directamente al aislamiento de cambios requerido por **QS-06**.
+
+---
+
+### 10.6 Técnicas Habilitadoras
+
+Los principios anteriores se complementan mediante técnicas utilizadas a lo largo del diseño para materializar las decisiones arquitectónicas.
+
+#### Inyección de dependencias
+
+Los casos de uso reciben repositorios, autorizadores y adaptadores mediante contratos, evitando construir dependencias concretas directamente dentro de la lógica de aplicación.
+
+Esto permite que las implementaciones de infraestructura puedan sustituirse sin alterar necesariamente el componente que consume el contrato.
+
+#### Repositorios
+
+Los repositorios encapsulan las operaciones de persistencia y reducen el acoplamiento directo entre el dominio y PostgreSQL/PostGIS.
+
+Su función no consiste únicamente en centralizar consultas, sino en proteger las capas internas de detalles específicos relacionados con almacenamiento, consultas SQL o mecanismos particulares de acceso a datos.
+
+#### Adaptadores de integración
+
+Las integraciones con servicios externos se encapsulan mediante adaptadores específicos.
+
+Esta técnica permite aislar las particularidades de servicios como mapas y notificaciones y concentrar en un único punto aspectos como:
+
+- construcción de solicitudes;
+- interpretación de respuestas;
+- manejo de errores;
+- timeouts;
+- reintentos permitidos;
+- Circuit Breaker.
+
+La utilización de adaptadores mantiene congruencia directa con **ADR-003 — Políticas de resiliencia para servicios externos**.
+
+#### Procesamiento asíncrono
+
+El procesamiento asíncrono permite desacoplar temporalmente determinadas operaciones.
+
+En el componente de Monitoreo Geoespacial, la recepción de una actualización se encuentra conceptualmente separada de actividades posteriores como su procesamiento, persistencia histórica, actualización de la proyección y enriquecimiento mediante servicios externos.
+
+Este mecanismo contribuye principalmente a QS-01 y QS-02, al evitar que las actividades posteriores bloqueen innecesariamente otros procesos de la plataforma.
+
+#### Configuración externalizada
+
+Parámetros como cadenas de conexión, endpoints de servicios externos, timeouts y umbrales de resiliencia se mantienen fuera del artefacto de aplicación.
+
+La Vista de Despliegue establece el uso de variables de entorno o servicios de configuración para evitar reconstruir el sistema cuando estos parámetros cambien entre ambientes.
+
+#### Observabilidad
+
+La observabilidad complementa el diseño permitiendo medir el comportamiento real de los mecanismos utilizados.
+
+La arquitectura contempla métricas, logs estructurados y health checks sobre elementos como:
+
+- tiempo de respuesta;
+- tasa de errores;
+- disponibilidad;
+- estado de integraciones externas;
+- estado de circuit breakers;
+- comportamiento de PostgreSQL/PostGIS.
+
+Estas capacidades proporcionan la evidencia necesaria para evaluar los escenarios de calidad y orientar posteriormente la evolución arquitectónica.
+
+---
+
+### 10.7 Trade-off asociado a los principios de diseño
+
+La aplicación de SRP, ISP y DIP incrementa la cantidad de interfaces, clases, DTOs, adaptadores y componentes que conforman el código.
+
+Una implementación con menor cantidad de abstracciones podría resultar inicialmente más sencilla, pero también incrementaría el acoplamiento entre reglas de negocio, persistencia e integraciones externas.
+
+El diseño acepta una mayor complejidad estructural cuando esta representa una frontera o responsabilidad real.
+
+El objetivo no consiste en maximizar la cantidad de interfaces o capas, sino en mantener las dependencias explícitas y controladas. Una abstracción que no represente una necesidad concreta puede resultar tan perjudicial para la mantenibilidad como una dependencia directa innecesaria.
 
 ---
 
 ## 11. Calidad y Trazabilidad
 
+La evaluación de la arquitectura debe realizarse tomando como referencia los escenarios de calidad definidos previamente.
+
+La incorporación de una tecnología, patrón o mecanismo arquitectónico representa una **respuesta de diseño** a un atributo de calidad, pero no constituye por sí misma evidencia de que el escenario haya sido satisfecho.
+
+Por ejemplo, la incorporación de un Circuit Breaker contribuye a la tolerancia a fallos, pero el cumplimiento de QS-05 solamente puede comprobarse midiendo los tiempos de detección, degradación y recuperación establecidos en el escenario.
+
+Por esta razón, la calidad se analiza desde tres perspectivas complementarias:
+
+1. los mecanismos utilizados para responder a los escenarios QS;
+2. los trade-offs producidos entre atributos de calidad;
+3. las métricas que permiten verificar el comportamiento del diseño y de la plataforma.
+
+---
+
 ### 11.1 Validación de Escenarios de Calidad
 
-- **QS-01 (Rendimiento Monitoreo):** Validado. Al delegar la escritura en base de datos al _Worker_ asíncrono, la API puede recibir la coordenada y responder en menos de 30ms, logrando que el dashboard se actualice dentro de la ventana de los 15 a 30 segundos.
-- **QS-03 (Seguridad):** Validado en el Componente 1. Se implementó `IAutorizadorIncidencias` a nivel de Caso de Uso (no solo en la UI), asegurando que peticiones no autorizadas desde herramientas como Postman sean rechazadas y auditadas (Criterio CD-05).
-- **QS-05 (Tolerancia a fallos):** Validado mediante la implementación explícita del patrón _Circuit Breaker_ en el adaptador del Servicio de Mapas y el límite de timeout de 5 segundos.
+Los seis escenarios definidos en la sección 4 establecen criterios verificables que deberán utilizarse para evaluar el comportamiento de la plataforma.
 
-### 11.2 Análisis de Trade-offs y Métricas de Calidad
+| Escenario                                           | Respuesta arquitectónica                                                                                                | Criterio de validación                                                                                                     | Mecanismo de verificación                                                                                                   |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **QS-01 — Rendimiento en el monitoreo geoespacial** | Procesamiento asíncrono, separación entre evento recibido y proyección operativa, índices y almacenamiento geoespacial. | ≥95% de actualizaciones válidas reflejadas en ≤30 s; ≥99% en ≤45 s; ninguna actualización confirmada debe perderse.        | Comparación de marcas de tiempo entre recepción y disponibilidad en el dashboard; conteo de eventos recibidos y procesados. |
+| **QS-02 — Disponibilidad del dashboard operativo**  | Múltiples instancias del API Backend, balanceador de carga, health checks y mecanismos de disponibilidad de PostgreSQL. | Disponibilidad mensual ≥99% durante horario operativo; recuperación de una falla interna recuperable ≤5 min.               | Monitoreo sintético sobre Web/API y registro de los tiempos de detección y recuperación.                                    |
+| **QS-03 — Seguridad, rechazo y auditoría**          | OpenID Connect, OAuth 2.0, autorización por roles y políticas en Backend y auditoría de accesos.                        | 100% de operaciones restringidas sometidas a autenticación/autorización; 401/403 ≤2 s; auditoría consultable ≤5 s.         | Pruebas automatizadas con diferentes roles, ausencia de sesión, tokens inválidos y tokens expirados.                        |
+| **QS-04 — Trazabilidad de incidencias**             | Persistencia transaccional, Unit of Work, identificadores únicos y auditoría.                                           | ≥99% de incidencias válidas confirmadas y consultables ≤5 s; 100% con información obligatoria.                             | Pruebas de integración y comprobación posterior de los datos persistidos.                                                   |
+| **QS-05 — Interoperabilidad y tolerancia a fallos** | Timeout, Circuit Breaker, reintentos controlados, última ubicación válida y degradación funcional.                      | Falla detectada y comunicada ≤10 s después del timeout; recuperación ≤60 s después del restablecimiento del servicio.      | Simulación de errores HTTP, respuestas lentas e interrupciones temporales.                                                  |
+| **QS-06 — Mantenibilidad y aislamiento de cambios** | Monolito modular, interfaces, repositorios, adaptadores y pruebas automatizadas.                                        | Modificar una regla de reportes debe afectar como máximo dos componentes y no requerir cambios en monitoreo o incidencias. | Ejercicio controlado de modificación, análisis de archivos afectados y ejecución de pruebas de regresión.                   |
 
-- **Métrica de Acoplamiento:** Para asegurar la modificabilidad (QA-05), se midió el acoplamiento eferente (Ce) de los módulos de la lógica de negocio. Al depender de interfaces genéricas y no de Entity Framework Core ni de PostGIS, el dominio tiene un **Ce cercano a 0**.
-- **Métrica de Cohesión:** Las clases de los Casos de Uso se diseñaron buscando una alta cohesión (LCOM4 = 1), asegurando que cada clase utilice la mayoría de sus métodos y dependencias inyectadas para cumplir su única responsabilidad.
-- **Trade-off validado:** Alta Mantenibilidad vs. Complejidad Inicial. Separar las proyecciones analíticas del flujo transaccional añade la necesidad de sincronizar datos internamente, pero asegura que un reporte analítico pesado de la Jefatura nunca bloqueará la transacción de inserción de una coordenada del camión.
+Los escenarios anteriores convierten conceptos como rendimiento, disponibilidad, seguridad o mantenibilidad en condiciones que pueden ser medidas y evaluadas.
+
+La existencia de los mecanismos arquitectónicos indicados representa el diseño propuesto para atender cada escenario. La conformidad deberá comprobarse mediante las formas de verificación establecidas.
+
+#### Consideración específica sobre QS-01
+
+El tiempo requerido para aceptar una solicitud HTTP no representa la misma métrica que el tiempo requerido para reflejar una ubicación en el dashboard.
+
+QS-01 debe evaluarse considerando el recorrido completo de una actualización geoespacial:
+
+![Consideración específica sobre QS-01](../diagramas/escenario-qs-01.svg)
+
+**Figura 15. Recorrido utilizado para la medición del escenario QS-01.**
+
+La medición deberá considerar la diferencia entre el momento de recepción de la actualización y el momento en que dicha información se encuentra disponible para ser reflejada por el dashboard.
+
+Por lo tanto, una respuesta rápida del endpoint constituye solamente una parte del recorrido y no permite afirmar, de manera aislada, que el escenario de rendimiento haya sido satisfecho.
+
+Asimismo, deberá verificarse independientemente la condición establecida por QS-01 de que ninguna actualización confirmada como recibida pueda perderse.
+
+#### Consideración específica sobre QS-02
+
+La Vista de Despliegue fortalece la respuesta arquitectónica asociada con disponibilidad mediante múltiples instancias del API Backend, balanceo de carga y health checks.
+
+Una instancia que presente fallos repetidos puede retirarse temporalmente de la rotación, permitiendo que otras instancias continúen atendiendo solicitudes.
+
+Sin embargo, el cumplimiento del **99% de disponibilidad mensual** definido por QS-02 deberá calcularse mediante mediciones reales durante el período evaluado. La existencia de redundancia constituye el mecanismo arquitectónico diseñado para alcanzar dicho objetivo, pero no representa por sí sola evidencia de cumplimiento.
+
+#### Consideración específica sobre QS-03
+
+ADR-004 establece que la Aplicación Web puede adaptar visualmente las opciones disponibles según el rol, pero la decisión definitiva de autorización permanece en el API Backend.
+
+Esto evita depender únicamente de controles de interfaz que podrían omitirse realizando llamadas directamente contra el API.
+
+Las pruebas deberán considerar, entre otros escenarios:
+
+- solicitudes sin autenticación;
+- tokens inválidos;
+- tokens expirados;
+- usuarios autenticados sin permisos;
+- operaciones realizadas directamente contra el endpoint.
+
+También deberá comprobarse la creación y posterior disponibilidad del registro de auditoría asociado con los rechazos.
+
+---
+
+### 11.2 Análisis de Trade-offs entre Atributos de Calidad
+
+Las decisiones arquitectónicas adoptadas no maximizan simultáneamente todos los atributos de calidad. Cada mecanismo que favorece una característica puede introducir costos o restricciones sobre otras.
+
+El análisis de estos trade-offs permite justificar por qué determinados compromisos son aceptables para el contexto operativo de la Municipalidad.
+
+#### Rendimiento frente a trazabilidad
+
+La plataforma debe conservar información histórica, incidencias, eventos operativos y registros de auditoría.
+
+Esta necesidad incrementa las operaciones de persistencia y el volumen de almacenamiento, lo cual puede afectar el rendimiento.
+
+Reducir la información registrada podría disminuir este costo, pero comprometería **QA-05 — Trazabilidad** y las restricciones REST-02 y REST-04.
+
+La arquitectura prioriza la trazabilidad y mitiga su impacto mediante:
+
+- índices;
+- particionamiento;
+- procesamiento asíncrono;
+- proyecciones de consulta;
+- monitoreo de consultas lentas.
+
+---
+
+#### Disponibilidad frente a seguridad
+
+La utilización del Servicio de Identidad Municipal centraliza la autenticación y evita almacenar credenciales institucionales dentro de la plataforma.
+
+Sin embargo, introduce una dependencia externa que puede afectar nuevos accesos cuando el servicio no se encuentra disponible.
+
+ADR-004 acepta esta dependencia porque mantener credenciales locales incrementaría significativamente la responsabilidad de seguridad de la plataforma.
+
+Como mecanismos de mitigación se contemplan la validación de tokens en el API Backend y la posibilidad de mantener disponibles las claves públicas necesarias para verificar tokens vigentes.
+
+---
+
+#### Disponibilidad frente a frescura de la información
+
+Cuando un servicio externo de mapas o geolocalización presenta una interrupción, existen dos alternativas principales:
+
+- eliminar la información hasta obtener una nueva actualización;
+- mantener la última información válida indicando explícitamente su antigüedad.
+
+La arquitectura selecciona la segunda alternativa.
+
+Esto mejora la continuidad operativa del dashboard, aunque implica que determinados datos puedan encontrarse temporalmente desactualizados.
+
+Para reducir el riesgo de interpretación incorrecta, QS-05 establece que la última ubicación debe mostrarse junto con su fecha, hora e indicación de desactualización.
+
+---
+
+#### Mantenibilidad frente a simplicidad estructural
+
+La separación en casos de uso, repositorios, interfaces y adaptadores incrementa la cantidad de elementos internos de la solución.
+
+La alternativa sería concentrar responsabilidades y utilizar dependencias directas, reduciendo el número de clases pero aumentando el acoplamiento.
+
+Se prioriza **QA-02 — Mantenibilidad**, aceptando una mayor complejidad estructural cuando las abstracciones representan responsabilidades reales.
+
+---
+
+#### Escalabilidad frente a simplicidad operacional
+
+La utilización de microservicios permitiría escalar determinadas capacidades de forma independiente.
+
+Sin embargo, también introduciría:
+
+- comunicación distribuida;
+- coordinación entre procesos;
+- mayor complejidad de observabilidad;
+- despliegues independientes;
+- nuevos mecanismos de consistencia;
+- mayor esfuerzo de operación.
+
+Dado que la necesidad actual no justifica estos costos, la plataforma utiliza un monolito modular y contempla inicialmente escalamiento horizontal del API Backend.
+
+La separación en microservicios se conserva como alternativa evolutiva y no como destino obligatorio.
+
+---
+
+#### Persistencia unificada frente a aislamiento analítico
+
+PostgreSQL/PostGIS concentra actualmente información transaccional, geoespacial, histórica y de auditoría.
+
+Esta decisión simplifica la consistencia y administración, pero genera una posible competencia entre consultas operativas y cargas analíticas.
+
+ADR-002 reconoce esta tensión y contempla como medidas de mitigación:
+
+- índices convencionales y geoespaciales;
+- particionamiento a medida que crezca el volumen;
+- consultas optimizadas;
+- monitoreo de consultas lentas;
+- proyecciones específicas para lectura.
+
+Si la competencia por recursos se vuelve significativa, la separación física del procesamiento analítico podrá evaluarse como una evolución posterior.
+
+---
+
+### 11.3 Métricas de Calidad del Diseño
+
+Las métricas utilizadas para evaluar la arquitectura se dividen en dos categorías: **operativas** y **estructurales**.
+
+Las métricas operativas corresponden directamente a los escenarios QS y permiten evaluar el comportamiento observable del sistema.
+
+| Métrica                                                    | Objetivo                           |
+| ---------------------------------------------------------- | ---------------------------------- |
+| Latencia recepción GPS hasta disponibilidad para dashboard | P95 ≤30 s y P99 ≤45 s              |
+| Pérdida de actualizaciones confirmadas                     | 0                                  |
+| Disponibilidad mensual del dashboard                       | ≥99% durante horario operativo     |
+| Recuperación ante falla interna recuperable                | ≤5 min                             |
+| Respuesta a acceso no autorizado                           | ≤2 s                               |
+| Disponibilidad del evento de auditoría de rechazo          | ≤5 s                               |
+| Incidencias válidas confirmadas y consultables             | ≥99% en ≤5 s                       |
+| Completitud de incidencias confirmadas                     | 100%                               |
+| Detección y comunicación de falla externa                  | ≤10 s después del timeout          |
+| Recuperación de integración externa                        | ≤60 s después del restablecimiento |
+| Pruebas de regresión de módulos no afectados por QS-06     | 100% satisfactorias                |
+
+Estas métricas permiten relacionar los atributos abstractos de calidad con comportamientos concretos y observables.
+
+#### Acoplamiento eferente — Ce
+
+El acoplamiento eferente puede utilizarse para identificar módulos o componentes que dependen de una cantidad elevada de elementos externos.
+
+En el diseño propuesto se busca disminuir dichas dependencias mediante interfaces, repositorios y adaptadores.
+
+No obstante, no se establece un valor numérico de Ce como resultado mientras no exista evidencia generada mediante una herramienta de análisis estático aplicada sobre la implementación.
+
+El valor deberá interpretarse además dentro del contexto del componente: un número reducido de dependencias no garantiza por sí mismo una arquitectura correcta.
+
+#### Cohesión — LCOM4
+
+LCOM4 puede utilizarse como indicador complementario para detectar clases que agrupan conjuntos de métodos con poca relación entre sí.
+
+El objetivo consiste en identificar posibles violaciones de SRP y componentes que podrían estar concentrando múltiples responsabilidades.
+
+Al igual que con Ce, su valor deberá obtenerse mediante medición real del código y no asumirse únicamente a partir del diseño.
+
+#### Violaciones de fronteras modulares
+
+Una métrica especialmente relevante para el monolito modular será la cantidad de dependencias que atraviesen las fronteras establecidas sin utilizar contratos públicos.
+
+El criterio deseado es:
+
+**0 violaciones deliberadas de las reglas de frontera definidas entre módulos.**
+
+Esto incluye evitar accesos directos a estructuras internas de otro módulo cuando existe una interfaz o contrato definido para esa interacción.
+
+#### Impacto de cambio
+
+QS-06 proporciona una métrica directamente relacionada con mantenibilidad.
+
+Un cambio localizado sobre una regla de reportes deberá mantenerse dentro del módulo correspondiente y afectar como máximo los componentes establecidos por el escenario.
+
+Esta medición resulta especialmente valiosa porque evalúa la mantenibilidad a partir de un cambio real y no exclusivamente mediante métricas estáticas.
+
+---
+
+### 11.4 Calidad y Operación
+
+Los escenarios de calidad solamente pueden gestionarse de manera efectiva si el comportamiento de la plataforma puede observarse durante su operación.
+
+La Vista de Despliegue incorpora mecanismos de monitoreo y observabilidad sobre el API Backend y sus dependencias, incluyendo tiempos de respuesta, tasa de errores, logs estructurados y estado de circuit breakers.
+
+La relación entre los escenarios definidos y la evidencia operacional puede representarse de la siguiente manera:
+
+![Vista de concurrencia](../diagramas/escenarios-calidad.svg)
+
+**Figura 16. Ciclo de validación y retroalimentación de los atributos de calidad.**
+
+Este ciclo evita que los atributos de calidad permanezcan únicamente como declaraciones documentales.
+
+Las decisiones arquitectónicas generan mecanismos concretos; dichos mecanismos producen información observable y esa evidencia permite determinar posteriormente si los criterios establecidos por los escenarios de calidad están siendo satisfechos.
+
+Además, los resultados obtenidos pueden retroalimentar las decisiones existentes. Por ejemplo, si las métricas del procesamiento geoespacial muestran un crecimiento sostenido de eventos pendientes, dicha evidencia podría justificar posteriormente una revisión del mecanismo de procesamiento asíncrono.
+
+#### Monitoreo del API Backend
+
+Se deberán observar como mínimo:
+
+- tiempos de respuesta;
+- tasa de solicitudes;
+- códigos de error;
+- disponibilidad de instancias;
+- estado de health checks;
+- utilización de recursos;
+- fallos de dependencias externas.
+
+Los health checks permiten que el balanceador retire temporalmente una instancia que no se encuentre en condiciones de atender solicitudes.
+
+La disponibilidad real deberá medirse a nivel del servicio ofrecido al usuario y no únicamente mediante el estado individual de las instancias.
+
+---
+
+#### Monitoreo geoespacial
+
+El procesamiento de ubicaciones deberá proporcionar métricas que permitan reconstruir el recorrido de las actualizaciones y detectar posibles acumulaciones de trabajo.
+
+Entre los indicadores relevantes se encuentran:
+
+- cantidad de actualizaciones recibidas;
+- cantidad de actualizaciones procesadas;
+- eventos pendientes;
+- errores de procesamiento;
+- antigüedad de la última ubicación válida;
+- tiempo entre recepción y disponibilidad para consulta;
+- diferencia entre eventos confirmados y eventos efectivamente procesados.
+
+Estas métricas proporcionan la información necesaria para verificar QS-01 y determinar si la capacidad de procesamiento disponible resulta suficiente.
+
+También permiten identificar situaciones en las que una actualización haya sido recibida pero su procesamiento posterior se encuentre retrasado.
+
+---
+
+#### PostgreSQL/PostGIS
+
+La base de datos constituye un componente crítico debido a que concentra persistencia operativa, geoespacial, histórica y de auditoría.
+
+La operación deberá observar al menos:
+
+- utilización de CPU;
+- consumo de memoria;
+- IOPS;
+- conexiones activas;
+- crecimiento del almacenamiento;
+- consultas lentas;
+- duración de consultas geoespaciales;
+- duración de consultas analíticas;
+- utilización de índices;
+- comportamiento de las particiones.
+
+Estas métricas permitirán anticipar problemas de contención entre operaciones transaccionales y consultas analíticas antes de que comprometan QS-01 o QS-04.
+
+---
+
+#### Integraciones externas
+
+El estado de las integraciones debe ser observable mediante:
+
+- tiempo de respuesta;
+- cantidad de timeouts;
+- cantidad de reintentos;
+- estado de cada Circuit Breaker;
+- errores por proveedor;
+- tiempo requerido para recuperar la comunicación.
+
+ADR-003 establece como diseño un timeout máximo de cinco segundos, hasta dos reintentos para operaciones idempotentes y apertura del circuito después de cinco fallos consecutivos.
+
+La telemetría permitirá comprobar posteriormente si estos valores resultan adecuados y ajustarlos de acuerdo con evidencia obtenida durante las pruebas y la operación.
+
+---
+
+#### Seguridad y auditoría
+
+La plataforma deberá permitir observar:
+
+- accesos rechazados;
+- cambios de roles y permisos;
+- operaciones administrativas relevantes;
+- modificaciones sobre rutas e incidencias;
+- fallos de autenticación;
+- patrones anómalos relacionados con accesos.
+
+Los registros deberán mantener la información necesaria para identificar:
+
+- fecha y hora;
+- usuario o identificador disponible;
+- recurso;
+- acción;
+- origen;
+- resultado.
+
+La disponibilidad y consulta de estos eventos constituye además una parte de la verificación de QS-03.
+
+---
+
+#### Recuperación y respaldo
+
+La Vista de Despliegue contempla mecanismos de réplica y respaldo para PostgreSQL/PostGIS.
+
+Sin embargo, la existencia de un respaldo no demuestra por sí sola que el sistema pueda recuperarse.
+
+Por esta razón, la operación deberá contemplar verificaciones periódicas de restauración que permitan comprobar que los mecanismos definidos son utilizables cuando ocurra una falla real.
+
+De esta manera, la calidad operacional cierra la relación entre diseño, implementación y evidencia, permitiendo que las decisiones arquitectónicas puedan revisarse a partir del comportamiento observado del sistema.
 
 ---
 
 ## 12. Secciones Específicas según el Tipo de Sistema
 
-### 12.1 Diseño del API Backend como Monolito Modular (H14-014)
+Esta sección complementa las decisiones arquitectónicas generales mediante aspectos específicos derivados del tipo de solución desarrollada. En particular, se profundiza en la organización interna del API Backend, la estrategia utilizada para soportar las consultas frecuentes del dashboard operativo y la incorporación de capacidades analíticas basadas en Inteligencia Artificial Generativa.
 
-Para evitar la complejidad de la orquestación de microservicios, el sistema se construyó como un **Monolito Modular**. Internamente, el código fuente está separado en módulos lógicos rígidos: `ModuloRutas`, `ModuloIncidencias`, `ModuloMonitoreo` y `ModuloIdentidad`.
+Estas decisiones mantienen la arquitectura actual como un **monolito modular**, evitando introducir distribución física innecesaria, pero preservando fronteras que permitan una evolución progresiva cuando los requerimientos del negocio o los escenarios de calidad lo justifiquen.
 
-- **Regla de frontera:** Un módulo no puede hacer `JOIN` directo a las tablas de base de datos de otro módulo.
-- **Comunicación inter-módulos:** Se realiza mediante llamadas a interfaces públicas locales (ej. `IIncidenciaServicioInterno`) o mediante un bus de eventos en memoria (Domain Events) tipo _MediatR_. Esto permitirá que, si en un futuro se requiere escalar el módulo de Monitoreo por separado, su extracción hacia un Microservicio puro sea un esfuerzo de bajo impacto.
+---
 
-### 12.2 Proyecciones del Dashboard Operativo (H14-015)
+### 12.1 Diseño del API Backend como Monolito Modular — H14-014
 
-El Dashboard Operativo es el módulo más consultado del sistema. Para evitar saturar las tablas relacionales de PostgreSQL:
+La plataforma adopta un **monolito modular** para el API Backend. Esta decisión permite mantener las capacidades principales dentro de una misma unidad de despliegue, conservando simultáneamente fronteras lógicas explícitas entre las diferentes responsabilidades del negocio.
 
-- Se implementó un modelo inspirado en **CQRS (Command and Query Responsibility Segregation)** a nivel lógico.
-- El _Worker_ de monitoreo realiza actualizaciones sobre una vista materializada (Proyección) optimizada para la lectura, que contiene datos pre-calculados (Unidad, Placa, Lat, Lon, Estado y Última Actualización).
-- El Dashboard simplemente realiza un `SELECT` plano sobre esta proyección, eliminando la necesidad de hacer `JOINs` complejos en tiempo de ejecución.
+Entre las principales capacidades identificadas se encuentran:
 
-### 12.4 Sistemas con Inteligencia Artificial Generativa o Agentes (H14-016)
+- planificación y asignación de rutas;
+- gestión de incidencias;
+- monitoreo geoespacial;
+- generación de reportes y análisis;
+- seguridad, autorización y auditoría.
 
-Para potenciar la capacidad de análisis (Requerimiento RF-04 para Jefaturas y Planificación), se integra un **Agente Analítico basado en RAG (Retrieval-Augmented Generation)**.
+El objetivo consiste en aprovechar la simplicidad operacional y las capacidades transaccionales de un monolito sin construir una estructura interna fuertemente acoplada.
 
-- **El Problema:** Las jefaturas necesitan encontrar patrones de incidencias (ej. zonas donde los bloqueos de vías son sistemáticos los días martes), lo cual es difícil de ver en reportes tabulares estándar.
-- **La Solución:** Un LLM que asiste con el análisis de la información histórica.
-- **Arquitectura del Agente RAG:**
-  1. **Ingesta y Embeddings:** Semanalmente, las incidencias cerradas se anonimizan, se convierten en texto descriptivo y se vectorizan (usando la extensión `pgvector` en PostgreSQL).
-  2. **Recuperación de Contexto (Retrieval):** Cuando el analista hace una pregunta (ej. "¿Cuáles son los mayores retos de recolección en el sector de Pavas?"), el sistema busca en PostGIS/pgvector las incidencias históricas más relevantes semánticamente.
-  3. **Generación (Guardrails):** Se orquesta un prompt inyectando ese contexto estricto. Se implementan _guardrails_ a nivel de API para obligar al LLM a responder _exclusivamente_ basándose en la data inyectada y no en conocimiento externo.
-  4. **Trazabilidad:** Toda respuesta generada por el agente incluye las referencias (IDs de las incidencias) para evitar alucinaciones y permitir validación humana (_Human-in-the-loop_).
+El enfoque resulta congruente con la arquitectura en capas seleccionada previamente: las capacidades se ejecutan dentro del mismo API Backend, pero sus responsabilidades internas permanecen separadas mediante casos de uso, contratos, repositorios y adaptadores.
+
+#### Reglas de frontera
+
+Cada módulo debe mantener claramente identificados:
+
+- sus casos de uso;
+- sus entidades y reglas de negocio;
+- sus contratos públicos;
+- sus repositorios;
+- la información de la cual es responsable.
+
+Como regla general, un módulo no debe acceder directamente a elementos internos de otro cuando exista un contrato definido para realizar dicha interacción.
+
+En particular, no se utiliza como mecanismo de integración entre módulos la ejecución directa de `JOIN` sobre tablas que pertenecen exclusivamente a otro contexto funcional.
+
+La finalidad de esta restricción es impedir que la existencia de una única base de datos física produzca acoplamiento lógico entre los módulos.
+
+#### Comunicación entre módulos
+
+Cuando dos capacidades necesitan colaborar, la interacción puede realizarse mediante dos mecanismos principales.
+
+**Interfaces internas explícitas**
+
+Se utilizan cuando la interacción es síncrona y el componente consumidor necesita una respuesta inmediata.
+
+Por ejemplo, un módulo podría consultar una capacidad expuesta por otro mediante una interfaz interna sin acceder directamente a sus estructuras de persistencia.
+
+**Eventos de dominio internos**
+
+Pueden utilizarse cuando una operación principal produce una consecuencia secundaria que no requiere formar parte de la misma interacción síncrona.
+
+Este mecanismo permite reducir el acoplamiento temporal entre determinados componentes.
+
+Una librería específica para implementar estos eventos constituye un detalle de implementación y no una dependencia arquitectónica obligatoria.
+
+#### Beneficios del monolito modular
+
+La decisión proporciona varios beneficios para la etapa actual de la plataforma:
+
+- una única unidad principal de despliegue;
+- menor complejidad operacional que una arquitectura de microservicios;
+- transacciones locales mediante PostgreSQL;
+- menor cantidad de comunicación distribuida;
+- posibilidad de aplicar escalamiento horizontal al API Backend;
+- fronteras internas que favorecen QA-02 — Mantenibilidad;
+- posibilidad de evaluar posteriormente la extracción de capacidades específicas.
+
+El monolito modular también contribuye a **QS-06 — Mantenibilidad y aislamiento de cambios**, dado que una modificación localizada debería permanecer dentro de los límites del módulo correspondiente.
+
+#### Trade-off
+
+La principal desventaja consiste en que todas las capacidades continúan compartiendo una misma unidad de despliegue.
+
+Por lo tanto, no es posible escalar o desplegar individualmente un módulo sin separar previamente dicha capacidad del monolito.
+
+Este compromiso se acepta porque la arquitectura actual no posee evidencia que justifique asumir desde el inicio los costos asociados con microservicios, tales como comunicación distribuida, consistencia entre procesos, observabilidad adicional y mayor complejidad operacional.
+
+La posibilidad de evolución permanece abierta, pero no constituye un objetivo obligatorio.
+
+---
+
+### 12.2 Proyecciones del Dashboard Operativo — H14-015
+
+El dashboard operativo presenta un patrón de acceso diferente al de las operaciones transaccionales.
+
+Mientras la plataforma recibe ubicaciones, registra incidencias y modifica el estado de las rutas, los supervisores necesitan consultar repetidamente una representación consolidada y actualizada de la operación.
+
+Reconstruir esta información ejecutando múltiples `JOIN`, agregaciones y cálculos geoespaciales sobre las estructuras transaccionales en cada actualización del dashboard podría incrementar innecesariamente el costo de las consultas y producir competencia por recursos con los procesos de escritura.
+
+Por esta razón, el diseño utiliza una separación lógica inspirada en **CQRS — Command and Query Responsibility Segregation**.
+
+La utilización de este enfoque no implica implementar dos aplicaciones o dos bases de datos independientes. La separación ocurre inicialmente dentro de la misma plataforma PostgreSQL/PostGIS.
+
+![Proyecciones del Dashboard Operativo — H14-015](../diagramas/dashboard-operativo.svg)
+
+**Figura 17. Separación lógica entre operaciones transaccionales y proyección de consulta del dashboard.**
+
+El modelo de escritura conserva la información transaccional e histórica necesaria para la operación y trazabilidad.
+
+De forma complementaria, el procesamiento de monitoreo mantiene una **proyección de lectura** preparada para responder eficientemente a las consultas frecuentes del dashboard.
+
+Esta proyección puede incluir información como:
+
+- identificador de la unidad;
+- placa;
+- ubicación actual disponible;
+- estado de la ruta;
+- fecha y hora de la última actualización;
+- indicador de información desactualizada cuando corresponda.
+
+El dashboard consulta esta representación evitando reconstruir constantemente el estado operativo mediante consultas complejas sobre la información histórica.
+
+#### Diferencia entre proyección operativa y vista materializada
+
+La proyección utilizada para representar la última ubicación de las unidades no debe confundirse necesariamente con una vista materializada de PostgreSQL.
+
+La **proyección operativa** corresponde a información derivada que puede ser actualizada por los procesos del sistema a medida que ocurren nuevos eventos.
+
+Las **vistas materializadas**, contempladas también como alternativa dentro de ADR-002, resultan más apropiadas para consultas analíticas o agregaciones de mayor costo que puedan actualizarse mediante procesos programados.
+
+Esta distinción permite utilizar diferentes estrategias de lectura según el tipo de información requerida.
+
+#### Beneficios
+
+La separación lógica de escritura y lectura permite:
+
+- reducir el costo de las consultas frecuentes del dashboard;
+- disminuir la necesidad de ejecutar `JOIN` complejos durante cada actualización;
+- optimizar índices según los patrones de lectura;
+- desacoplar parcialmente las necesidades operativas de las consultas históricas;
+- facilitar una futura separación física si las métricas demuestran que resulta necesaria.
+
+#### Trade-off
+
+La utilización de una proyección introduce información derivada que debe permanecer sincronizada con los eventos que la originan.
+
+Por esta razón, deberá observarse el tiempo transcurrido entre la recepción de una actualización y la disponibilidad de la información correspondiente en la proyección.
+
+Esta medición forma parte directa de **QS-01 — Rendimiento en el monitoreo geoespacial**.
+
+---
+
+### 12.3 Sistemas con Inteligencia Artificial Generativa o Agentes — H14-016
+
+Como capacidad analítica complementaria se propone incorporar un **Agente Analítico basado en RAG — Retrieval-Augmented Generation**, orientado a apoyar a las jefaturas y al personal de planificación durante el análisis de información histórica.
+
+Esta capacidad se relaciona principalmente con **RF-04 — Generar reportes e indicadores para apoyar la toma de decisiones**.
+
+El agente no sustituye los procesos operativos ni participa en la toma automática de decisiones sobre rutas, vehículos, cuadrillas o incidencias.
+
+Su función consiste en proporcionar un mecanismo adicional para explorar información histórica mediante lenguaje natural.
+
+#### Problema analítico
+
+Los reportes estructurados permiten responder preguntas previamente conocidas mediante indicadores, filtros y agregaciones.
+
+Sin embargo, determinadas consultas pueden requerir explorar múltiples registros históricos para encontrar eventos relacionados, patrones recurrentes o situaciones similares.
+
+Por ejemplo:
+
+> ¿Qué tipos de incidencias se han presentado con mayor recurrencia en determinadas zonas y qué registros históricos respaldan esa observación?
+
+Un mecanismo RAG permite recuperar información relacionada con la consulta antes de solicitar al modelo generativo que construya una respuesta.
+
+#### Arquitectura propuesta
+
+El flujo conceptual del agente se organiza en cuatro etapas principales:
+
+![Arquitectura propuesta](../diagramas/agente-analitico-basado-rag.svg)
+
+**Figura 18. Flujo conceptual del Agente Analítico basado en RAG.**
+
+#### 1. Preparación de información
+
+Las incidencias cerradas utilizadas para fines analíticos se preparan antes de ser incorporadas al índice vectorial.
+
+Cuando corresponda, la información deberá anonimizarse o transformarse para evitar incorporar datos que no sean necesarios para la finalidad analítica.
+
+#### 2. Generación de embeddings
+
+Los registros preparados se transforman en representaciones vectoriales.
+
+Estas representaciones pueden almacenarse mediante la extensión `pgvector` dentro de PostgreSQL.
+
+La plataforma mantiene así diferentes capacidades dentro del mismo ecosistema tecnológico:
+
+- PostgreSQL para información relacional;
+- PostGIS para información geoespacial;
+- `pgvector` para búsqueda basada en similitud semántica.
+
+Cada extensión mantiene una responsabilidad diferente.
+
+#### 3. Recuperación de contexto
+
+Cuando un analista formula una pregunta, el sistema recupera los registros históricos considerados más relevantes para dicha consulta.
+
+El conjunto recuperado constituye el contexto que será utilizado posteriormente durante la generación.
+
+Cuando resulte necesario, las capacidades semánticas y geoespaciales pueden combinarse para restringir la recuperación según criterios de ubicación.
+
+#### 4. Generación y trazabilidad
+
+La pregunta y el contexto recuperado son enviados al modelo generativo.
+
+El API deberá incorporar controles que limiten el contexto suministrado, definan instrucciones explícitas y permitan conservar trazabilidad sobre la información utilizada.
+
+Las respuestas generadas deberán incluir referencias o identificadores de las incidencias utilizadas como evidencia.
+
+Esto permite que el usuario consulte posteriormente las fuentes y realice una validación humana del resultado.
+
+#### Human-in-the-loop
+
+Las respuestas generadas por el modelo constituyen **asistencia analítica** y no decisiones institucionales automáticas.
+
+El usuario continúa siendo responsable de interpretar los resultados y verificar los registros utilizados como evidencia.
+
+El modelo no deberá ejecutar automáticamente acciones como:
+
+- modificar una ruta;
+- reasignar vehículos;
+- cambiar el estado de una incidencia;
+- modificar usuarios o permisos;
+- alterar información operacional.
+
+#### Aislamiento del núcleo operativo
+
+La capacidad RAG deberá permanecer fuera del camino crítico de operación.
+
+Una indisponibilidad del modelo generativo, del proceso de embeddings o de las consultas vectoriales no deberá impedir:
+
+- recibir ubicaciones GPS;
+- consultar el dashboard operativo;
+- registrar incidencias;
+- planificar rutas;
+- utilizar los mecanismos tradicionales de reportes.
+
+![Aislamiento del núcleo operativo](../diagramas/aislamiento-capacidad-analitica.svg)
+
+**Figura 19. Aislamiento de la capacidad analítica RAG respecto al núcleo operacional.**
+
+Esta separación preserva los atributos de disponibilidad de la plataforma y evita introducir la dependencia de un modelo generativo dentro de procesos operativos esenciales.
+
+#### Evolución de la capacidad analítica
+
+La utilización inicial de PostgreSQL y `pgvector` mantiene coherencia con ADR-002 y evita incorporar una plataforma vectorial independiente sin una necesidad demostrada.
+
+Si posteriormente el volumen de embeddings o las consultas analíticas generan competencia significativa con la operación transaccional, podrá evaluarse la separación de dicha carga.
+
+La decisión deberá sustentarse en las métricas operativas definidas en la sección 11 y formalizarse mediante un ADR cuando represente un cambio arquitectónico significativo.
 
 ---
 
 ## 13. Tendencias y Evolución del Diseño
 
+La arquitectura se plantea como una solución evolutiva.
+
+Esto significa que las tecnologías futuras no se incorporarán únicamente por constituir tendencias de la industria. Su adopción deberá responder a un problema concreto, una necesidad institucional o evidencia obtenida mediante los escenarios y métricas de calidad.
+
+---
+
 ### 13.1 Tendencias Arquitectónicas
 
-- **Edge Computing en Unidades:** A futuro, parte de la lógica de validación de coordenadas se podrá trasladar a dispositivos embebidos (_Edge_) dentro de los camiones recolectores. Esto reducirá la carga de validación del API Central y ahorrará ancho de banda.
-- **Bases de Datos Vectoriales:** La utilización de PostgreSQL no solo para datos relacionales y geoespaciales (PostGIS), sino para datos vectoriales (`pgvector`), alinea a la plataforma con la tendencia de "AI-ready databases", unificando el gobierno de datos en una sola herramienta.
+#### Edge Computing
+
+El procesamiento en el borde representa una posible evolución para determinadas funciones asociadas con las unidades recolectoras.
+
+En un escenario futuro, algunas operaciones simples podrían realizarse en dispositivos asociados con los vehículos antes de transmitir la información hacia la plataforma central.
+
+Entre las capacidades candidatas se encuentran:
+
+- validaciones básicas sobre las coordenadas;
+- filtrado de datos evidentemente inválidos;
+- almacenamiento temporal cuando exista pérdida de conectividad.
+
+Este enfoque podría reducir transmisiones innecesarias y mejorar el comportamiento ante conectividad intermitente.
+
+No obstante, también introduciría nuevas responsabilidades relacionadas con:
+
+- seguridad de dispositivos;
+- actualización de software;
+- sincronización;
+- monitoreo distribuido;
+- administración de infraestructura adicional.
+
+Por esta razón, Edge Computing se mantiene como una posibilidad de evolución y no como una responsabilidad de la arquitectura actual.
+
+---
+
+#### Capacidades vectoriales sobre PostgreSQL
+
+La incorporación propuesta de `pgvector` para el componente analítico RAG permite extender PostgreSQL con capacidades de búsqueda por similitud semántica.
+
+Esta decisión mantiene inicialmente una plataforma de datos unificada:
+
+- PostgreSQL para información relacional;
+- PostGIS para información geoespacial;
+- `pgvector` para representaciones vectoriales.
+
+La utilización conjunta de estas capacidades permitiría posteriormente realizar consultas que combinen información histórica, geográfica y semántica.
+
+Sin embargo, el procesamiento vectorial deberá mantenerse fuera del camino crítico de monitoreo e incidencias.
+
+Si las cargas analíticas comienzan a competir significativamente con las operaciones de la jornada, su separación deberá evaluarse de acuerdo con ADR-002.
+
+---
+
+#### Arquitecturas orientadas a eventos
+
+El procesamiento asíncrono utilizado actualmente en monitoreo constituye una base para evolucionar hacia mecanismos de mensajería más robustos cuando las necesidades operativas lo requieran.
+
+La adopción de mensajería persistente podría justificarse ante indicadores como:
+
+- crecimiento sostenido del volumen de ubicaciones;
+- acumulación frecuente de eventos pendientes;
+- necesidad de consumidores independientes;
+- requisitos superiores de durabilidad;
+- necesidad de desacoplar el ciclo de vida de los eventos del ciclo de vida de las instancias del API.
+
+La selección de una tecnología concreta deberá realizarse mediante un ADR específico cuando exista evidencia suficiente para justificarla.
+
+No se establece en esta etapa una tecnología obligatoria de mensajería.
+
+---
+
+#### Observabilidad como capacidad arquitectónica
+
+El crecimiento del sistema incrementará la importancia de disponer de métricas, logs estructurados, trazas y health checks.
+
+La observabilidad no se considera solamente una herramienta operacional. También constituye un mecanismo para orientar la evolución arquitectónica.
+
+Las decisiones relacionadas con:
+
+- escalamiento;
+- optimización de PostgreSQL;
+- ajuste de políticas de resiliencia;
+- incorporación de mensajería;
+- separación de cargas analíticas;
+- extracción de módulos;
+
+deberán basarse preferiblemente en evidencia obtenida mediante estas métricas y no únicamente en estimaciones.
+
+---
 
 ### 13.2 Evolución del Diseño
 
-Si el cantón de San José escala la operación sumando cantones aledaños (multitenancy):
+La evolución de la arquitectura se plantea de forma incremental y condicionada por evidencia.
 
-1. El canal de eventos en memoria actual (Canal/Buffer) evolucionará a un _Message Broker_ externo (ej. Apache Kafka o RabbitMQ).
-2. El Monolito Modular permitirá la "rotura natural" (_strangler fig pattern_): El módulo de monitoreo geoespacial será el primero en extraerse a un clúster de Kubernetes como un microservicio real, ya que sus fronteras lógicas y contratos ya están delimitados desde esta versión.
+#### Etapa 1 — Arquitectura actual
+
+La plataforma mantiene como línea base:
+
+- Aplicación Web independiente basada en React.
+- API Backend ASP.NET Core.
+- Monolito modular.
+- PostgreSQL/PostGIS como persistencia principal.
+- Procesamiento asíncrono interno.
+- Integraciones externas mediante adaptadores.
+- Escalamiento horizontal del API Backend.
+- Balanceo de carga y health checks.
+- Mecanismos de observabilidad.
+
+Esta estructura deberá conservarse mientras continúe satisfaciendo los escenarios de calidad definidos.
+
+La utilización de un monolito modular permite además conservar límites internos que podrían facilitar futuras modificaciones sin introducir actualmente la complejidad operacional de una arquitectura distribuida.
+
+---
+
+#### Etapa 2 — Optimización dentro de la arquitectura actual
+
+Antes de distribuir la solución en nuevos servicios se priorizarán mecanismos compatibles con la arquitectura existente.
+
+Entre las primeras alternativas se encuentran:
+
+- incorporación de instancias adicionales del API;
+- optimización de consultas;
+- creación o ajuste de índices;
+- particionamiento de información histórica;
+- optimización de proyecciones;
+- ajuste de políticas de resiliencia;
+- revisión de recursos asignados a PostgreSQL/PostGIS.
+
+Esta etapa permite aprovechar la capacidad del monolito modular antes de asumir el costo operacional de una arquitectura distribuida.
+
+La necesidad de evolucionar deberá determinarse mediante evidencia proporcionada por las métricas definidas en la sección 11.
+
+---
+
+#### Etapa 3 — Mensajería persistente
+
+Si las métricas demuestran que el procesamiento interno deja de satisfacer las necesidades de volumen, concurrencia o durabilidad, el mecanismo de eventos podrá evolucionar hacia un **Message Broker persistente**.
+
+La utilización de mensajería externa permitiría:
+
+- desacoplar la recepción del procesamiento;
+- conservar eventos independientemente de una instancia particular del API;
+- permitir múltiples consumidores;
+- absorber picos de carga;
+- facilitar procesamiento especializado.
+
+En esta etapa no se define de manera obligatoria Apache Kafka, RabbitMQ u otra tecnología.
+
+La selección deberá formalizarse posteriormente mediante un ADR que considere:
+
+- garantías de entrega requeridas;
+- volumen de eventos;
+- patrones de consumo;
+- capacidades del Departamento de TI;
+- complejidad operacional;
+- costos de infraestructura y mantenimiento.
+
+---
+
+#### Etapa 4 — Extracción progresiva de capacidades
+
+Si uno de los módulos comienza a requerir escalamiento, disponibilidad o despliegue independiente, podrá evaluarse su separación del monolito.
+
+El módulo de Monitoreo Geoespacial constituye un posible candidato debido a que posee:
+
+- un flujo de entrada claramente identificado;
+- procesamiento asíncrono;
+- contratos específicos;
+- persistencia y proyección geoespacial;
+- integraciones externas particulares.
+
+Sin embargo, su extracción no se considera un objetivo obligatorio.
+
+Antes de realizarla deberá comprobarse que los beneficios obtenidos superan los costos derivados de:
+
+- comunicación distribuida;
+- consistencia entre servicios;
+- observabilidad adicional;
+- despliegues independientes;
+- operación de nueva infraestructura.
+
+La estrategia de extracción deberá ser progresiva, manteniendo en lo posible los contratos existentes mientras se trasladan las responsabilidades fuera del monolito.
+
+---
+
+#### Etapa 5 — Separación del procesamiento analítico
+
+Si los reportes históricos, análisis geoespacial avanzado o capacidades asociadas con RAG comienzan a competir de forma significativa con la operación transaccional, podrá evaluarse una separación física de dichas cargas.
+
+Esta evolución puede contemplar alternativas como:
+
+- réplicas orientadas a lectura;
+- almacenamiento analítico independiente;
+- procesos de consolidación;
+- infraestructura separada para procesamiento vectorial.
+
+La decisión deberá sustentarse en métricas relacionadas con:
+
+- consultas lentas;
+- consumo de CPU;
+- IOPS;
+- bloqueos o contención;
+- afectación sobre los tiempos de QS-01 y QS-04.
+
+La separación deberá conservar los contratos que actualmente evitan que la lógica del negocio dependa directamente de una tecnología particular de persistencia.
+
+---
+
+#### Evolución hacia múltiples ámbitos operativos
+
+La ampliación futura de la plataforma hacia otros ámbitos geográficos o institucionales requerirá un análisis específico.
+
+La expansión territorial no debe interpretarse automáticamente como un requisito de **multitenancy**.
+
+Si en el futuro múltiples entidades debieran utilizar la misma plataforma manteniendo aislamiento entre sus datos y configuraciones, entonces sí sería necesario evaluar explícitamente:
+
+- aislamiento de información;
+- seguridad entre tenants;
+- configuración independiente;
+- gobierno de datos;
+- escalamiento;
+- responsabilidades administrativas.
+
+Esta decisión deberá surgir de un nuevo driver de negocio y no únicamente del crecimiento técnico de la solución.
+
+---
+
+En síntesis, la evolución de la plataforma seguirá un enfoque de **crecimiento basado en evidencia**.
+
+El objetivo no consiste en migrar obligatoriamente hacia microservicios, Kubernetes, mensajería distribuida, Edge Computing o nuevas plataformas de datos.
+
+La arquitectura deberá conservar la capacidad de adoptar estas alternativas cuando los escenarios de calidad, las métricas operativas o nuevos requerimientos del negocio demuestren que la arquitectura actual ya no resulta suficiente.
 
 ---
 

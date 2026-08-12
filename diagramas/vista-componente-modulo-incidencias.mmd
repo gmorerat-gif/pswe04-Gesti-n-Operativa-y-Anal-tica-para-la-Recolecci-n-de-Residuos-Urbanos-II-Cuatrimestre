@@ -1,0 +1,15 @@
+flowchart LR
+    subgraph API[API Backend - Módulo de Incidencias]
+        Ctrl("Incidencias Controller\n[ASP.NET Core Controller]\nExpone endpoints REST")
+        Auth("Autorizador\n[Componente de Seguridad]\nValida roles y políticas")
+        CU("Registrar Incidencia (Caso Uso)\n[Orquestador de Dominio]\nEjecuta la lógica de negocio")
+        Repo("Incidencia Repository\n[Acceso a Datos]\nAbstrae persistencia")
+        Notif("Adaptador Notificaciones\n[Cliente HTTP]\nIntegra alertas externas")
+    end
+    SPA[Aplicación Web] -->|JSON/HTTPS| Ctrl
+    Ctrl --> Auth
+    Ctrl --> CU
+    CU --> Repo
+    CU --> Notif
+    Repo --> DB[(PostgreSQL)]
+    Notif --> Ext[Servicio Notificaciones]

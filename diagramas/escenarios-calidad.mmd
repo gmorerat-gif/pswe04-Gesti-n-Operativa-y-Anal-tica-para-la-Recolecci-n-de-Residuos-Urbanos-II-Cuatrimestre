@@ -1,0 +1,8 @@
+flowchart LR
+    QS["Escenario de<br/>Calidad"] --> DEC["Decisión<br/>Arquitectónica"]
+    DEC --> IMP["Mecanismo de<br/>Implementación"]
+    IMP --> OBS["Observabilidad<br/>Métricas / Logs / Health Checks"]
+    OBS --> EVI["Evidencia<br/>Operacional"]
+    EVI --> EVA["Evaluación del<br/>Escenario"]
+
+    EVA -. "Retroalimentación" .-> DEC

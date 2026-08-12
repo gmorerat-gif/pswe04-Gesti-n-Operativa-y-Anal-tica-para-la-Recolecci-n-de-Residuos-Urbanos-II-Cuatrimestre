@@ -1,0 +1,13 @@
+---
+config:
+  state:
+    useMaxWidth: false
+---
+stateDiagram-v2
+    direction LR
+    [*] --> Registrada
+    Registrada --> EnRevision
+    EnRevision --> EnAtencion
+    EnRevision --> Cerrada
+    EnAtencion --> Resuelta
+    Resuelta --> Cerrada
