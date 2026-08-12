@@ -40,9 +40,9 @@ JUAN MAURICIO LEANDRO JIMENEZ
 | Hito                              | Documento                           | Estado      | 
 | --------------------------------- | -------------------------------------- | ----------- | 
 | S03 – [Propuesta](./docs/propuesta.md) | Definición del proyecto y alcance |  Aprobado |
-| S07 – [Avance 1](./docs/avance1.md) | Contexto, drivers y vista de contexto |  En revisión |
-| S11 – [Avance 2](./docs/avance2.md) | Documento pendiente de entrega |  En revisión |
-| S14 – Entrega final | Documento pendiente de entrega |  Pendiente |
+| S07 – [Avance 1](./docs/avance1.md) | Contexto, drivers y vista de contexto |  Aprobado |
+| S11 – [Avance 2](./docs/avance2.md) | Vista de contenedores C4, estilo arquitectónico justificado con trade-offs, mínimo 3 ADRs y primer componente con diseño detallado. |  Aprobado |
+| S14 – [Entrega Final](./docs/entregafinal.md) | Documento pendiente de entrega |  En revisión |
 
 ## Estructura del repositorio
 

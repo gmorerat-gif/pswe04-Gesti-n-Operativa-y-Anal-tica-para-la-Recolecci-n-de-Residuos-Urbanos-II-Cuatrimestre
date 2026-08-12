@@ -18,14 +18,16 @@ Operario->>Web: Registra incidencia
 
 Web->>API: Envía incidencia
 
-API->>BD: Almacena incidencia
+alt Usuario autorizado
+    API->>BD: Almacena incidencia
+    BD-->>API: Confirmación
 
-BD-->>API: Confirmación
+    API->>Notify: Envía notificación
+    Notify-->>API: Confirmación
 
-API->>Notify: Envía notificación
-
-Notify-->>API: Confirmación
-
-API-->>Web: Incidencia registrada
-
-Web-->>Operario: Confirmación
+    API-->>Web: Incidencia registrada
+    Web-->>Operario: Confirmación
+else Usuario no autorizado
+    API-->>Web: Acceso rechazado
+    Web-->>Operario: Operación no autorizada
+end
