@@ -59,6 +59,10 @@
    - 6.3 [Análisis de trade-offs](#63-análisis-de-trade-offs)
 
 7. [Registro de decisiones — ADRs](#7-registro-de-decisiones--adrs)
+   - ADR-001 [Actualización periódica y procesamiento asíncrono del monitoreo geoespacial](#adr-001--actualización-periódica-y-procesamiento-asíncrono-del-monitoreo-geoespacial)
+   - ADR-002 [Persistencia unificada con PostgreSQL y PostGIS y separación lógica de datos](#adr-002--persistencia-unificada-con-postgresql-y-postgis-y-separación-lógica-de-datos)
+   - ADR-003 [Políticas de resiliencia para servicios externos](#adr-003--políticas-de-resiliencia-para-servicios-externos)
+   - ADR-004 [Autenticación centralizada, autorización por roles y auditoría de accesos](#adr-004--autenticación-centralizada-autorización-por-roles-y-auditoría-de-accesos)
 
 8. [Diseño detallado](#8-diseño-detallado)
    - 8.1 [Diseño Detallado: Gestión de Incidencias Operativas](#81-diseño-detallado-de-componentes)
@@ -66,14 +70,33 @@
    - 8.3 [Diseño Detallado: Componente de Planificación de Rutas](#83-diseño-detallado-componente-de-planificación-de-rutas)
 
 9. [Patrones de Diseño Aplicados](#9-patrones-de-diseño-aplicados)
+   - 9.1 [Patrón 1: Unit of Work (Unidad de Trabajo)](#91-patrón-1-unit-of-work-unidad-de-trabajo)
+   - 9.2 [Patrón 2: Circuit Breaker (Cortacircuitos)](#92-patrón-2-circuit-breaker-cortacircuitos)
+   - 9.3 [Patrón 3: Asynchronous Competing Consumers (Consumidores Asíncronos)](#93-patrón-3-asynchronous-competing-consumers-consumidores-asíncronos)
 
 10. [Principios y Técnicas Habilitadoras](#10-principios-y-técnicas-habilitadoras)
+    - 10.1 [Single Responsibility Principle — SRP](#101-single-responsibility-principle--srp)
+    - 10.2 [Open/Closed Principle — OCP](#102-openclosed-principle--ocp)
+    - 10.3 [Liskov Substitution Principle — LSP](#103-liskov-substitution-principle--lsp)
+    - 10.4 [Interface Segregation Principle — ISP](#104-interface-segregation-principle--isp)
+    - 10.5 [Dependency Inversion Principle — DIP](#105-dependency-inversion-principle--dip)
+    - 10.6 [Técnicas Habilitadoras](#106-técnicas-habilitadoras)
+    - 10.7 [Trade-off asociado a los principios de diseño](#107-trade-off-asociado-a-los-principios-de-diseño)
 
 11. [Calidad y Trazabilidad](#11-calidad-y-trazabilidad)
+    - 11.1 [Validación de Escenarios de Calidad](#111-validación-de-escenarios-de-calidad)
+    - 11.2 [Análisis de Trade-offs entre Atributos de Calidad](#112-análisis-de-trade-offs-entre-atributos-de-calidad)
+    - 11.3 [Métricas de Calidad del Diseño](#113-métricas-de-calidad-del-diseño)
+    - 11.4 [Calidad y Operación](#114-calidad-y-operación)
 
 12. [Secciones Específicas según el Tipo de Sistema](#12-secciones-específicas-según-el-tipo-de-sistema)
+    - 12.1 [Diseño del API Backend como Monolito Modular — H14-014](#121-diseño-del-api-backend-como-monolito-modular--h14-014)
+    - 12.2 [Proyecciones del Dashboard Operativo — H14-015](#122-proyecciones-del-dashboard-operativo--h14-015)
+    - 12.3 [Sistemas con Inteligencia Artificial Generativa o Agentes — H14-016](#123-sistemas-con-inteligencia-artificial-generativa-o-agentes--h14-016)
 
 13. [Tendencias y Evolución del Diseño](#13-tendencias-y-evolución-del-diseño)
+    - 13.1 [Tendencias Arquitectónicas](#131-tendencias-arquitectónicas)
+    - 13.2 [Evolución del Diseño](#132-evolución-del-diseño)
 
 14. [Glosario](#14-glosario)
 
