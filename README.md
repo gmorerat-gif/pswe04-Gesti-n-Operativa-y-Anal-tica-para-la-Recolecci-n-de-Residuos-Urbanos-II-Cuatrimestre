@@ -42,7 +42,7 @@ JUAN MAURICIO LEANDRO JIMENEZ
 | S03 – [Propuesta](./docs/propuesta.md)        | Definición del proyecto y alcance                                                                                                       | Aprobado |
 | S07 – [Avance 1](./docs/avance1.md)           | Contexto, drivers y vista de contexto                                                                                                   | Aprobado |
 | S11 – [Avance 2](./docs/avance2.md)           | Vista de contenedores C4, estilo arquitectónico justificado con trade-offs, mínimo 3 ADRs y primer componente con diseño detallado.     | Aprobado |
-| S14 – [Entrega Final](./docs/entregafinal.md) | Desarrollo Vistas de contenedores C4, Diseño detallado de componentes, Patrones aplicados, Análisis de calidad y Sección de tendencias. | Aprobado |
+| S14 – [Entrega Final](./docs/entregafinal.md) | Desarrollo Vistas de contenedores C4, Diseño detallado de componentes, Patrones aplicados, Análisis de calidad y Sección de tendencias. | En revisión |
 
 ## Estructura del repositorio
 

@@ -11,7 +11,7 @@
 | Docente                       | JUAN MAURICIO LEANDRO JIMENEZ                                                                                                                                         |
 | Cuatrimestre                  | 2026 — 2                                                                                                                                                              |
 | Versión del documento         | 0.4 — Entrega final                                                                                                                                                   |
-| Fecha de última actualización | 2026-08-122                                                                                                                                                           |
+| Fecha de última actualización | 2026-08-18                                                                                                                                                           |
 
 ---
 
@@ -52,7 +52,8 @@
    - 5.3 [Vista de comportamiento](#53-vista-de-comportamiento)
    - 5.4 [Vista de Componentes (C4 Nivel 3)](#54-vista-de-componentes-c4-nivel-3)
    - 5.5 [Vista de Concurrencia](#55-vista-de-concurrencia)
-   - 5.6 [Evolución del diseño](#56-evolución-del-diseño)
+   - 5.6 [Vista de Despliegue](#56-vista-de-despliegue)
+   - 5.7 [Evolución del diseño](#57-evolución-del-diseño)
 
 6. [Estilo arquitectónico](#6-estilo-arquitectónico)
    - 6.1 [Estilo arquitectónico adoptado](#61-estilo-arquitectónico-adoptado)
@@ -66,7 +67,7 @@
    - ADR-004 [Autenticación centralizada, autorización por roles y auditoría de accesos](#adr-004--autenticación-centralizada-autorización-por-roles-y-auditoría-de-accesos)
 
 8. [Diseño detallado](#8-diseño-detallado)
-   - 8.1 [Diseño Detallado: Gestión de Incidencias Operativas](#81-diseño-detallado-de-componentes)
+   - 8.1 [Diseño Detallado: Gestión de Incidencias Operativas](#81-diseño-detallado-gestión-de-incidencias-operativas)
    - 8.2 [Diseño Detallado: Componente de Monitoreo Geoespacial](#82-diseño-detallado-componente-de-monitoreo-geoespacial)
    - 8.3 [Diseño Detallado: Componente de Planificación de Rutas](#83-diseño-detallado-componente-de-planificación-de-rutas)
 
@@ -115,7 +116,7 @@ Actualmente, parte de la información necesaria para gestionar la operación se 
 
 Para atender esta necesidad se propone una Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos. El sistema estará orientado a centralizar la información operativa relacionada con rutas, vehículos, cuadrillas e incidencias, permitiendo mejorar la supervisión de las operaciones y facilitar el acceso a información relevante para la toma de decisiones. La propuesta surge de la necesidad de contar con una visión integrada de la operación, que permita relacionar información actualmente dispersa y transformarla en insumos útiles para la supervisión, el control y la planificación del servicio. De esta forma, la Municipalidad dispondrá de mejores herramientas para comprender el comportamiento de la operación, identificar oportunidades de mejora y dar seguimiento al desempeño del servicio a lo largo del tiempo.
 
-Desde la perspectiva arquitectónica, el principal desafío consiste en diseñar una plataforma capaz de integrar información proveniente de múltiples actores y servicios externos, proporcionando monitoreo oportuno de la operación, trazabilidad de las incidencias y capacidades de análisis histórico, manteniendo atributos de calidad como disponibilidad, rendimiento, seguridad y modificabilidad.
+Desde la perspectiva arquitectónica, el principal desafío consiste en diseñar una plataforma capaz de integrar información proveniente de múltiples actores y servicios externos, proporcionando monitoreo oportuno de la operación, trazabilidad de las incidencias y capacidades de análisis histórico, manteniendo atributos de calidad como disponibilidad, mantenibilidad, seguridad, escalabilidad y trazabilidad.
 
 ### 1.2 Contexto del negocio o dominio
 
@@ -382,16 +383,16 @@ La siguiente matriz relaciona los problemas arquitectónicos identificados, los 
 
 | Problema arquitectónico                                            | Drivers relacionados       | Escenarios relacionados | Decisión esperada para Avance 2                                                                                                                                                                     |
 | ------------------------------------------------------------------ | -------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Monitoreo geoespacial casi en tiempo real de unidades recolectoras | RF-01, QA-02               | QS-01, QS-05            | Definir el mecanismo de captura, procesamiento y visualización de ubicaciones: actualización periódica, procesamiento asincrónico, almacenamiento temporal y actualización del dashboard operativo. |
-| Falla o latencia de servicios externos de mapas y geolocalización  | RF-01, QA-01, QA-02        | QS-01, QS-05            | Definir una estrategia de resiliencia ante fallos externos: uso de última ubicación conocida, alertas al supervisor, timeouts, reintentos controlados y degradación funcional.                      |
-| Separación entre operación diaria y análisis histórico             | RF-03, QA-04, QA-05        | QS-02, QS-04, QS-06     | Definir si la arquitectura separará el dashboard operativo de los reportes analíticos mediante módulos, bases de datos, vistas materializadas o procesos de consolidación.                          |
-| Trazabilidad de incidencias y eventos operativos                   | RF-02, QA-04               | QS-04                   | Definir cómo se registrarán eventos auditables: creación de incidencias, cambios de estado, usuario responsable, fecha, hora, ubicación y acciones realizadas.                                      |
-| Control de acceso por roles                                        | RF-04, QA-03               | QS-03                   | Definir el mecanismo de autenticación y autorización, incluyendo integración con un sistema de identidad municipal y políticas de acceso por rol.                                                   |
-| Disponibilidad del dashboard operativo durante la jornada          | RF-01, QA-01, QA-02        | QS-02, QS-05            | Definir una estructura que permita mantener disponible la consulta operativa aun cuando algunos servicios externos fallen parcialmente.                                                             |
-| Evolución y mantenibilidad de módulos                              | RF-02, RF-03, RF-05, QA-05 | QS-06                   | Definir fronteras internas entre planificación de rutas, monitoreo, incidencias, administración de recursos, seguridad y analítica.                                                                 |
-| Persistencia de datos operativos e históricos                      | RF-03, QA-04               | QS-04, QS-06            | Definir la estrategia de almacenamiento para datos transaccionales, datos geoespaciales, eventos auditables y datos históricos usados en reportes.                                                  |
+| Monitoreo geoespacial casi en tiempo real de unidades recolectoras | RF-03, QA-01               | QS-01, QS-05            | Definir el mecanismo de captura, procesamiento y visualización de ubicaciones: actualización periódica, procesamiento asincrónico, almacenamiento temporal y actualización del dashboard operativo. |
+| Falla o latencia de servicios externos de mapas y geolocalización  | RF-03, QA-01, QA-04        | QS-01, QS-05            | Definir una estrategia de resiliencia ante fallos externos: uso de última ubicación conocida, alertas al supervisor, timeouts, reintentos controlados y degradación funcional.                      |
+| Separación entre operación diaria y análisis histórico             | RF-03, RF-04, QA-02, QA-04 | QS-02, QS-04, QS-06     | Definir si la arquitectura separará el dashboard operativo de los reportes analíticos mediante módulos, bases de datos, vistas materializadas o procesos de consolidación.                          |
+| Trazabilidad de incidencias y eventos operativos                   | RF-02, QA-05               | QS-04                   | Definir cómo se registrarán eventos auditables: creación de incidencias, cambios de estado, usuario responsable, fecha, hora, ubicación y acciones realizadas.                                      |
+| Control de acceso por roles                                        | RF-05, QA-03, QA-05        | QS-03                   | Definir el mecanismo de autenticación y autorización, incluyendo integración con un sistema de identidad municipal y políticas de acceso por rol.                                                   |
+| Disponibilidad del dashboard operativo durante la jornada          | RF-03, QA-01               | QS-02, QS-05            | Definir una estructura que permita mantener disponible la consulta operativa aun cuando algunos servicios externos fallen parcialmente.                                                             |
+| Evolución y mantenibilidad de módulos                              | RF-01, RF-02, RF-03, RF-05, QA-02 | QS-06             | Definir fronteras internas entre planificación de rutas, monitoreo, incidencias, administración de recursos, seguridad y analítica.                                                                 |
+| Persistencia de datos operativos e históricos                      | RF-03, RF-04, QA-05        | QS-04, QS-06             | Definir la estrategia de almacenamiento para datos transaccionales, datos geoespaciales, eventos auditables y datos históricos usados en reportes.                                                  |
 
-A partir de esta trazabilidad, los ADRs del Avance 2 deberán derivarse directamente de los problemas identificados en este documento. De forma preliminar, se identifican las siguientes decisiones candidatas:
+A partir de esta trazabilidad, durante el Avance 2 estas necesidades se formalizaron mediante los ADRs seleccionados en la sección 4.2. La siguiente matriz muestra la relación resultante entre los drivers, escenarios de calidad y decisiones arquitectónicas adoptadas.
 
 ### 4.2 Trazabilidad de los escenarios hacia los ADRs seleccionados
 
@@ -399,10 +400,10 @@ A partir de los drivers, problemas arquitectónicos y escenarios de calidad iden
 
 | ADR     | Decisión arquitectónica                                                                               | Drivers relacionados                  | Escenarios relacionados |
 | ------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------- |
-| ADR-001 | Utilizar actualización periódica y procesamiento asíncrono para el monitoreo geoespacial              | RF-01, QA-01, QA-02                   | QS-01, QS-05            |
-| ADR-002 | Utilizar PostgreSQL y PostGIS con separación lógica entre datos operativos, históricos y de auditoría | RF-03, REST-02, REST-04, QA-04, QA-05 | QS-01, QS-04, QS-06     |
-| ADR-003 | Implementar políticas de resiliencia para las integraciones con servicios externos                    | RF-01, QA-01, QA-02                   | QS-02, QS-05            |
-| ADR-004 | Utilizar OpenID Connect, OAuth 2.0, autorización por roles y auditoría centralizada                   | RF-04, REST-01, QA-03, QA-04          | QS-03, QS-04            |
+| ADR-001 | Utilizar actualización periódica y procesamiento asíncrono para el monitoreo geoespacial              | RF-03, QA-01, QA-02                   | QS-01, QS-05            |
+| ADR-002 | Utilizar PostgreSQL y PostGIS con separación lógica entre datos operativos, históricos y de auditoría | RF-03, RF-04, QA-02, QA-05            | QS-01, QS-04, QS-06     |
+| ADR-003 | Implementar políticas de resiliencia para las integraciones con servicios externos                    | RF-03, QA-01, QA-04                   | QS-02, QS-05            |
+| ADR-004 | Utilizar OpenID Connect, OAuth 2.0, autorización por roles y auditoría centralizada                   | RF-05, QA-03, QA-05                   | QS-03, QS-04            |
 
 ---
 
@@ -472,9 +473,9 @@ La Vista de Comportamiento describe la interacción dinámica entre los principa
 
 Para este avance se documentan dos flujos principales que representan el problema arquitectónico identificado en el proyecto: el monitoreo de rutas en tiempo casi real y la gestión de incidencias operativas. Ambos escenarios permiten evidenciar la colaboración entre los contenedores definidos en la Vista de Estructura Interna y mantienen la trazabilidad con los drivers y escenarios de calidad establecidos en el Avance 1.
 
-#### 5.3.1 Monitoreo de rutas en tiempo casi real
+#### 5.3.1 Consulta y visualización del monitoreo de rutas en tiempo casi real
 
-La Figura 3 presenta la interacción entre los principales contenedores durante el proceso de monitoreo operativo de las rutas de recolección.
+La Figura 3 representa el flujo de consulta utilizado por el supervisor para visualizar el estado operativo de las rutas y complementar la representación geográfica. La recepción y procesamiento de las actualizaciones de ubicación se desarrolla con mayor detalle en el diseño del Componente de Monitoreo Geoespacial, sección 8.2, y en el ADR-001.
 
 ![Diagrama de secuencia del monitoreo de rutas](../diagramas/secuencia-monitoreo.svg)
 
@@ -508,7 +509,7 @@ La Figura 4 presenta la interacción entre los principales contenedores durante 
 
 **Escenario de excepción**
 
-Si el Servicio de Mapas no está disponible, el API Backend mantiene la información operativa disponible y utiliza la última ubicación válida registrada cuando esta exista, evitando que la falla del servicio externo impida consultar el estado de las rutas.
+Si el Servicio de Notificaciones no está disponible, la incidencia ya confirmada permanece almacenada y el resultado de la integración se registra como fallido. La falla de la notificación no revierte la incidencia ni afecta la información operativa previamente confirmada.
 
 **Escenarios de calidad relacionados:** QS-01, QS-02 y QS-05.
 
@@ -522,7 +523,7 @@ Si el usuario no cuenta con los permisos requeridos, el API Backend rechaza la s
 
 ### 5.4 Vista de Componentes (C4 Nivel 3)
 
-Para profundizar en la estructura del **API Backend** (Monolito Modular), se detallan los componentes internos de los dos subsistemas más críticos de la plataforma, evidenciando sus fronteras lógicas y responsabilidades.
+Para profundizar en la estructura del **API Backend** (Monolito Modular), se detallan los componentes internos de los subsistemas seleccionados para profundizar en la arquitectura del API Backend, evidenciando sus fronteras lógicas y responsabilidades.
 
 #### 5.4.1 Subsistema: Módulo de Gestión de Incidencias
 
@@ -556,11 +557,11 @@ Además, el monitoreo de rutas utiliza procesamiento asíncrono para separar la 
 
 #### 5.5.2 Modelo de concurrencia
 
-La Figura 5 muestra de forma simplificada los principales procesos que pueden ejecutarse de manera concurrente durante la operación de la plataforma.
+La Figura 7 muestra de forma simplificada los principales procesos que pueden ejecutarse de manera concurrente durante la operación de la plataforma.
 
 ![Vista de concurrencia](../diagramas/vista-concurrencia.svg)
 
-_Figura 5 — Modelo de concurrencia de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
+_Figura 7 — Modelo de concurrencia de la Plataforma de Gestión Operativa y Analítica para la Recolección de Residuos Urbanos._
 
 El modelo contempla principalmente los siguientes procesos:
 
@@ -596,15 +597,7 @@ La Vista de Concurrencia contribuye principalmente a los siguientes escenarios d
 - **QS-04 — Trazabilidad de incidencias operativas:** las operaciones transaccionales mantienen la consistencia entre la información registrada y su auditoría.
 - **QS-05 — Interoperabilidad y tolerancia a fallos:** la separación entre las operaciones internas y los servicios externos permite manejar fallos externos sin comprometer la información operativa ya registrada.
 
-### 5.6 Evolución del diseño
-
-La arquitectura del sistema ha evolucionado de forma iterativa y trazable durante las fases del proyecto:
-
-1. **Avance 1 (S07):** Se definió la Vista de Contexto, delimitando las fronteras del sistema, identificando a los actores y servicios externos, y estableciendo los Escenarios de Calidad que rigen el diseño.
-2. **Avance 2 (S11):** Se descompuso la solución en la Vista de Contenedores (Aplicación Web, API Backend, PostGIS), seleccionando el estilo de Arquitectura en Capas / Monolito Modular y documentando las decisiones clave (ADRs).
-3. **Entrega Final (S14):** Se profundizó al nivel de Componentes y Diseño Detallado, aplicando patrones tácticos (Unit of Work, Circuit Breaker) y principios SOLID para garantizar que el código interno cumpla con la mantenibilidad, rendimiento y auditabilidad exigidas.
-
-### 5.6 Vista de Despliegue
+### 5.6 Vista de despliegue.
 
 La Vista de Despliegue describe cómo se distribuyen físicamente los principales componentes de la plataforma de gestión operativa y analítica para la recolección de residuos urbanos. La propuesta separa la aplicación web, el API Backend y la Base de Datos PostgreSQL/PostGIS en nodos independientes, permitiendo aislar responsabilidades, facilitar el mantenimiento y controlar el acceso a los datos.
 
@@ -662,10 +655,19 @@ Esta distribución responde principalmente a los atributos de **seguridad, dispo
 | -------------------------------------------------- | ------------------------------------------- |
 | Múltiples instancias del API Backend + balanceador | QS-02 (disponibilidad del dashboard), QA-01 |
 | Réplica en espera de PostgreSQL                    | QS-02, REST-04                              |
-| Respaldo con recuperación a punto en el tiempo     | REST-02, REST-04, QA-04                     |
+| Respaldo con recuperación a punto en el tiempo     | REST-02, REST-04                   |
 | Particionamiento e índices                         | QS-01, QS-04, ADR-001, ADR-002              |
 | Aislamiento de red y cifrado                       | QA-03, QS-03, ADR-004                       |
 | Monitoreo y alertas                                | QA-01, QA-02, QS-02, QS-05                  |
+
+
+### 5.7 Evolución del diseño.
+
+La arquitectura del sistema ha evolucionado de forma iterativa y trazable durante las fases del proyecto:
+
+1. **Avance 1 (S07):** Se definió la Vista de Contexto, delimitando las fronteras del sistema, identificando a los actores y servicios externos, y estableciendo los Escenarios de Calidad que rigen el diseño.
+2. **Avance 2 (S11):** Se descompuso la solución en la Vista de Contenedores (Aplicación Web, API Backend, PostGIS), seleccionando el estilo de Arquitectura en Capas / Monolito Modular y documentando las decisiones clave (ADRs).
+3. **Entrega Final (S14):** Se profundizó al nivel de Componentes y Diseño Detallado, aplicando patrones tácticos (Unit of Work, Circuit Breaker y procesamiento asíncrono) y principios SOLID para fortalecer la mantenibilidad, seguridad, disponibilidad y trazabilidad de la solución.
 
 ---
 
@@ -844,9 +846,8 @@ Proporcionaría mayor escalabilidad y aislamiento, pero agregaría infraestructu
 
 #### Trazabilidad
 
-- RF-01 — Monitoreo de rutas y unidades.
+- RF-03 — Monitoreo de rutas y unidades.
 - QA-01 — Disponibilidad.
-- QA-02 — Rendimiento.
 - QS-01 — Rendimiento del monitoreo geoespacial.
 - QS-05 — Tolerancia a fallos externos.
 
@@ -917,9 +918,9 @@ Reduciría dependencias tecnológicas, pero obligaría a implementar o externali
 
 #### Trazabilidad
 
-- RF-03 — Generación de reportes e indicadores históricos.
-- QA-04 — Auditabilidad.
-- QA-05 — Modificabilidad.
+- RF-04 — Generación de reportes e indicadores históricos.
+- QA-02 — Mantenibilidad.
+- QA-05 — Trazabilidad.
 - REST-02 — Trazabilidad completa.
 - REST-04 — Conservación de información histórica.
 - QS-01 — Rendimiento geoespacial.
@@ -994,9 +995,8 @@ Proporcionaría mayor independencia, pero implicaría costos, infraestructura y 
 
 #### Trazabilidad
 
-- RF-01 — Monitoreo casi en tiempo real.
+- RF-03 — Monitoreo casi en tiempo real.
 - QA-01 — Disponibilidad.
-- QA-02 — Rendimiento.
 - QS-02 — Disponibilidad del dashboard.
 - QS-05 — Interoperabilidad y tolerancia a fallos.
 
@@ -1071,9 +1071,9 @@ Permitirían una implementación rápida, pero producirían duplicación, incons
 
 #### Trazabilidad
 
-- RF-04 — Administración de usuarios, roles y permisos.
+- RF-05 — Administración de usuarios, roles y permisos.
 - QA-03 — Seguridad.
-- QA-04 — Auditabilidad.
+- QA-05 — Trazabilidad.
 - REST-01 — Políticas institucionales de seguridad.
 - QS-03 — Seguridad, rechazo y auditoría de accesos.
 - QS-04 — Trazabilidad de incidencias.
@@ -1094,7 +1094,7 @@ Esta sección desarrolla el diseño interno del primer componente de la platafor
 
 El primer componente seleccionado para el diseño detallado es el **Componente de Gestión de Incidencias Operativas**, ubicado dentro del API Backend construido como monolito modular. Su propósito es registrar, consultar y dar seguimiento a eventos que afectan la ejecución normal de una ruta de recolección, manteniendo trazabilidad sobre el usuario responsable, la ruta asociada, la ubicación, el momento del registro y el estado de la incidencia.
 
-La selección se fundamenta en que el componente materializa directamente el requerimiento funcional **RF-02 — Gestionar incidencias operativas durante los recorridos** y participa en el cumplimiento de los atributos **QA-02 — Rendimiento**, **QA-03 — Seguridad**, **QA-04 — Auditabilidad** y **QA-05 — Modificabilidad**. Asimismo, permite evaluar de manera directa los escenarios **QS-03 — Seguridad, rechazo y auditoría de accesos no autorizados**, **QS-04 — Trazabilidad de incidencias operativas** y **QS-05 — Interoperabilidad y tolerancia a fallos con servicios externos**.
+La selección se fundamenta en que el componente materializa directamente el requerimiento funcional **RF-02 — Gestionar incidencias operativas durante los recorridos** y contribuye principalmente a los atributos **QA-02 — Mantenibilidad**, **QA-03 — Seguridad**, **QA-05 — Trazabilidad** y **QA-01 — Disponibilidad**. Asimismo, permite evaluar de manera directa los escenarios **QS-03 — Seguridad, rechazo y auditoría de accesos no autorizados**, **QS-04 — Trazabilidad de incidencias operativas** y **QS-05 — Interoperabilidad y tolerancia a fallos con servicios externos**.
 
 El diseño se alinea con las decisiones aceptadas:
 
@@ -1148,7 +1148,7 @@ La lógica de negocio depende de interfaces internas. Las implementaciones de Po
 
 ![Diagrama de clases de diseño](../diagramas/diagrama-clases-disenno.svg)
 
-**Figura 5. Diagrama de clases de diseño del componente de Gestión de Incidencias Operativas.**
+**Figura 8. Diagrama de clases de diseño del componente de Gestión de Incidencias Operativas.**
 
 ##### Justificación de las principales decisiones
 
@@ -1169,7 +1169,7 @@ El flujo principal representa el registro exitoso de una incidencia válida por 
 
 ![Secuencia del flujo principal](../diagramas/secuencia-flujo-principal.svg)
 
-**Figura 6. Diagrama de secuencia del flujo principal de registro de una incidencia.**
+**Figura 9. Diagrama de secuencia del flujo principal de registro de una incidencia.**
 
 ##### Resultado del flujo
 
@@ -1193,7 +1193,7 @@ El análisis de robustez identifica objetos de frontera, control y entidad y ver
 
 ![Análisis de robustez](../diagramas/analisis-robustez.svg)
 
-**Figura 7. Diagrama de robustez del registro de una incidencia operativa.**
+**Figura 10. Diagrama de robustez del registro de una incidencia operativa.**
 
 ### Componente 2 — Monitoreo Geoespacial
 
@@ -1205,7 +1205,7 @@ RF-03 (Monitorear el estado y ubicación de las unidades de recolección en tiem
 
 ![Diagrama de clases de diseño](../diagramas/diagrama-clases-diseno.svg)
 
-_Figura 9 — Diagrama de clases de diseño: Monitoreo Geoespacial_
+_Figura 11 — Diagrama de clases de diseño: Monitoreo Geoespacial_
 
 #### 8.2.2 Contratos de interfaz
 
@@ -1231,11 +1231,11 @@ _Figura 9 — Diagrama de clases de diseño: Monitoreo Geoespacial_
 
 ![Diagrama de secuencia](../diagramas/recepcion-procesamiento-asincrono.svg)
 
-_Figura 10 — Secuencia: recepción y procesamiento asíncrono de una ubicación GPS_
+_Figura 12 — Secuencia: recepción y procesamiento asíncrono de una ubicación GPS_
 
 ![Diagrama de secuencia](../diagramas/falla-servicio-mapas-durante-procesamiento.svg)
 
-_Figura 11 — Secuencia: falla del Servicio de Mapas durante el procesamiento (circuit breaker)_
+_Figura 13 — Secuencia: falla del Servicio de Mapas durante el procesamiento (circuit breaker)_
 
 ##### Objetos de frontera
 
@@ -1301,7 +1301,7 @@ _Figura 11 — Secuencia: falla del Servicio de Mapas durante el procesamiento (
 
 ![Transiciones permitidas](../diagramas/transiciones-permitidas.svg)
 
-**Figura 8. Vista de transiciones permitidas.**
+**Figura 14. Vista de transiciones permitidas.**
 
 No se permite regresar una incidencia cerrada a un estado anterior sin un proceso administrativo explícito y auditado.
 
@@ -1655,17 +1655,17 @@ public interface IUnidadTrabajo
 | Elemento del diseño                                        | Driver, escenario o decisión atendida |
 | ---------------------------------------------------------- | ------------------------------------- |
 | `RegistrarIncidenciaCasoUso`                               | RF-02, QA-05, QS-04                   |
-| `IAutorizadorIncidencias`                                  | RF-04, QA-03, REST-01, QS-03, ADR-004 |
-| Auditoría de creación y rechazos                           | QA-04, REST-02, QS-03, QS-04, ADR-004 |
-| PostgreSQL y PostGIS mediante repositorios                 | QA-04, QA-05, QS-04, ADR-002          |
-| Transacción de incidencia y auditoría                      | QA-04, REST-02, QS-04, ADR-002        |
+| `IAutorizadorIncidencias`                                  | RF-05, QA-03, REST-01, QS-03, ADR-004 |
+| Auditoría de creación y rechazos                           | QA-05, REST-02, QS-03, QS-04, ADR-004 |
+| PostgreSQL y PostGIS mediante repositorios                 | QA-05,  QS-04, ADR-002          |
+| Transacción de incidencia y auditoría                      | QA-05, REST-02, QS-04, ADR-002        |
 | Adaptador `INotificadorIncidencias`                        | QA-01, QA-05, QS-05, ADR-003          |
 | Timeout de cinco segundos                                  | QA-01, QA-02, QS-05, ADR-003          |
-| Ausencia de reintento automático en notificaciones         | QA-04, QS-05, ADR-003                 |
-| Clave de idempotencia                                      | QA-04, QS-04                          |
+| Ausencia de reintento automático en notificaciones         | QA-01, QS-05, ADR-003,QA-05                |
+| Clave de idempotencia                                      | QA-05, QS-04                          |
 | Separación entre dominio e infraestructura                 | QA-05, QS-06                          |
 | Respuesta `201` aun cuando falla la notificación posterior | QA-01, QS-04, QS-05                   |
-| Registro de fallos externos                                | QA-04, QS-05, ADR-003                 |
+| Registro de fallos externos                                | QA-01, QS-05, ADR-003, QA-05                 |
 
 ---
 
@@ -1677,7 +1677,7 @@ La llamada directa a notificaciones conserva concordancia con la Vista de Compor
 
 La autorización se aplica en el API Backend y no únicamente en la Aplicación Web. Esto garantiza que una invocación directa al endpoint siga protegida. Además, la auditoría de accesos rechazados y operaciones relevantes permite verificar posteriormente quién intentó realizar una acción, sobre qué recurso y con qué resultado.
 
-Finalmente, las interfaces internas reducen el acoplamiento entre el dominio, PostgreSQL, el proveedor de identidad y el proveedor de notificaciones. El componente puede evolucionar o sustituir adaptadores sin modificar las invariantes centrales de `Incidencia`, lo cual contribuye al cumplimiento de la modificabilidad establecida en QA-05 y QS-06.
+Finalmente, las interfaces internas reducen el acoplamiento entre el dominio, PostgreSQL, el proveedor de identidad y el proveedor de notificaciones. El componente puede evolucionar o sustituir adaptadores sin modificar las invariantes centrales de `Incidencia`, lo cual contribuye al cumplimiento de la mantenibilidad establecida en QA-02 y QS-06
 
 ---
 
@@ -1691,7 +1691,7 @@ El diseño permite registrar incidencias de manera trazable, impedir accesos no 
 
 #### 8.2.1 Componente seleccionado: Monitoreo Geoespacial
 
-El segundo componente detallado es el **Componente de Monitoreo Geoespacial**, responsable de recibir, validar, procesar de forma asíncrona y proyectar la ubicación en tiempo casi real de las unidades recolectoras. Este componente materializa el requerimiento **RF-03** y atiende los atributos de **Rendimiento (QA-02)** y **Disponibilidad (QA-01)**.
+El segundo componente detallado es el **Componente de Monitoreo Geoespacial**, responsable de recibir, validar, procesar de forma asíncrona y proyectar la ubicación en tiempo casi real de las unidades recolectoras. Este componente materializa el requerimiento **RF-03** y contribuye principalmente a **QA-01 — Disponibilidad**, además de responder al escenario **QS-01 — Rendimiento en el monitoreo geoespacial** y al escenario **QS-05 — Interoperabilidad y tolerancia a fallos con servicios externos**.
 
 Se alinea con las siguientes decisiones arquitectónicas:
 
@@ -1714,19 +1714,19 @@ Se alinea con las siguientes decisiones arquitectónicas:
 
 - Dibujar el mapa en la interfaz gráfica.
 - Gestionar las incidencias operativas.
-- Autenticar al dispositivo (eso se delega al API Gateway o middleware de seguridad).
+- Autenticar al dispositivo (eesta responsabilidad se delega al mecanismo de autenticación y autorización del API Backend).
 
 #### 8.2.3 Diagrama de clases de diseño
 
 ![Diagrama de clases de diseño](../diagramas/diagrama-clases-componente-monitoreo-geoespacial.svg)
 
-_Figura 9. Diagrama de clases del componente de Monitoreo Geoespacial._
+_Figura 15. Diagrama de clases del componente de Monitoreo Geoespacial._
 
 #### 8.2.4 Secuencia del flujo principal
 
 ![Secuencia del flujo principal](../diagramas/secuencia-recepcion-procesamiento-asincrono.svg)
 
-_Figura 10. Secuencia de recepción y procesamiento asíncrono._
+_Figura 16. Secuencia de recepción y procesamiento asíncrono._
 
 #### 8.2.5 Contrato de interfaz REST y Robustez
 
@@ -1762,13 +1762,13 @@ El tercer componente detallado aborda el núcleo logístico de la plataforma: la
 
 ![Diagrama de clases de diseño](../diagramas/diagrama-clases-planificacion-rutas.svg)
 
-_Figura 12. Diagrama de clases de Planificación de Rutas._
+_Figura 17. Diagrama de clases de Planificación de Rutas._
 
 #### 8.3.4 Secuencia del flujo principal
 
 ![Secuencia del flujo principal](../diagramas/flujo-asignacion-ruta.svg)
 
-_Figura 13. Flujo de asignación de ruta._
+_Figura 18. Flujo de asignación de ruta._
 
 #### 8.3.5 Contrato de interfaz REST y Robustez
 
@@ -1795,7 +1795,7 @@ La separación del `ValidadorDisponibilidad` como un servicio de dominio indepen
 
 ## 9. Patrones de Diseño Aplicados
 
-Para satisfacer los requerimientos de disponibilidad, mantenibilidad y resiliencia, se implementaron los siguientes patrones de diseño (Gamma et al., 1995):
+Para satisfacer los requerimientos de disponibilidad, mantenibilidad y resiliencia, se aplican los siguientes patrones de diseño. (Gamma et al., 1995):
 
 ### 9.1 Patrón 1: Unit of Work (Unidad de Trabajo)
 
@@ -1806,13 +1806,13 @@ Para satisfacer los requerimientos de disponibilidad, mantenibilidad y resilienc
 ### 9.2 Patrón 2: Circuit Breaker (Cortacircuitos)
 
 - **Problema específico:** El sistema depende del Servicio Externo de Mapas para geocodificar coordenadas (Componente 2). Si este servicio colapsa y experimenta _timeouts_, los hilos de procesamiento del API se quedarían bloqueados esperando respuestas, provocando una falla en cascada que tumbaría el dashboard operativo.
-- **Diagrama de aplicación:** Se evidencia en la Figura 10, donde `IServicioMapasAdapter` implementa este patrón internamente.
+- **Diagrama de aplicación:** Se evidencia en el flujo de procesamiento del Componente de Monitoreo Geoespacial, particularmente en el escenario de falla del Servicio de Mapas, donde `IServicioMapasAdapter` implementa este patrón internamente.
 - **Justificación:** Se eligió sobre un simple bloque `try-catch` con reintentos porque el Circuit Breaker detecta la falla continua y "abre" el circuito, fallando inmediatamente las siguientes peticiones durante un periodo de gracia. Esto permite que el sistema siga guardando las coordenadas en crudo sin saturar los recursos de red ni empeorar el estado del servicio de mapas.
 
 ### 9.3 Patrón 3: Asynchronous Competing Consumers (Consumidores Asíncronos)
 
 - **Problema específico:** La llegada concurrente de actualizaciones de GPS cada 15 segundos desde cientos de camiones saturaría los controladores REST si se procesaran e insertaran en la base de datos de manera síncrona.
-- **Diagrama de aplicación:** Se evidencia en la Figura 9, donde `IRecepcionUbicacionCasoUso` encola los mensajes y `ProcesadorUbicacionWorker` actúa como consumidor en segundo plano.
+- **Diagrama de aplicación:** Se evidencia en la secuencia de recepción y procesamiento asíncrono del Componente de Monitoreo Geoespacial, donde `IRecepcionUbicacionCasoUso` encola los mensajes y `ProcesadorUbicacionWorker` actúa como consumidor en segundo plano.
 - **Justificación:** Se prefirió este patrón de mensajería interna sobre el procesamiento síncrono para nivelar la carga (_load leveling_). El controlador responde inmediatamente con un código `202 Accepted`, liberando recursos HTTP, mientras los _Workers_ consumen la cola al ritmo que soporta la base de datos PostgreSQL.
 
 ---
@@ -1899,9 +1899,9 @@ Las capas de aplicación y dominio dependen de contratos y abstracciones, mientr
 
 ![Dependency Inversion Principle — DIP](../diagramas/dip.svg)
 
-**Figura 14. Aplicación del principio de inversión de dependencias en el API Backend.**
+**Figura 19. Aplicación del principio de inversión de dependencias en el API Backend.**
 
-La dirección mostrada en la Figura 14 representa una regla fundamental del diseño: las tecnologías de infraestructura implementan los contratos requeridos por las capas internas, evitando que el dominio dependa directamente de decisiones tecnológicas.
+La dirección mostrada en la Figura 19 representa una regla fundamental del diseño: las tecnologías de infraestructura implementan los contratos requeridos por las capas internas, evitando que el dominio dependa directamente de decisiones tecnológicas.
 
 Por esta razón, las reglas centrales del sistema no necesitan conocer detalles específicos de PostgreSQL, PostGIS, proveedores cartográficos o servicios de notificación.
 
@@ -2024,7 +2024,7 @@ QS-01 debe evaluarse considerando el recorrido completo de una actualización ge
 
 ![Consideración específica sobre QS-01](../diagramas/escenario-qs-01.svg)
 
-**Figura 15. Recorrido utilizado para la medición del escenario QS-01.**
+**Figura 20. Recorrido utilizado para la medición del escenario QS-01.**
 
 La medición deberá considerar la diferencia entre el momento de recepción de la actualización y el momento en que dicha información se encuentra disponible para ser reflejada por el dashboard.
 
@@ -2226,7 +2226,7 @@ La relación entre los escenarios definidos y la evidencia operacional puede rep
 
 ![Vista de concurrencia](../diagramas/escenarios-calidad.svg)
 
-**Figura 16. Ciclo de validación y retroalimentación de los atributos de calidad.**
+**Figura 21. Ciclo de validación y retroalimentación de los atributos de calidad.**
 
 Este ciclo evita que los atributos de calidad permanezcan únicamente como declaraciones documentales.
 
@@ -2444,7 +2444,7 @@ La utilización de este enfoque no implica implementar dos aplicaciones o dos ba
 
 ![Proyecciones del Dashboard Operativo — H14-015](../diagramas/dashboard-operativo.svg)
 
-**Figura 17. Separación lógica entre operaciones transaccionales y proyección de consulta del dashboard.**
+**Figura 22. Separación lógica entre operaciones transaccionales y proyección de consulta del dashboard.**
 
 El modelo de escritura conserva la información transaccional e histórica necesaria para la operación y trazabilidad.
 
@@ -2519,7 +2519,7 @@ El flujo conceptual del agente se organiza en cuatro etapas principales:
 
 ![Arquitectura propuesta](../diagramas/agente-analitico-basado-rag.svg)
 
-**Figura 18. Flujo conceptual del Agente Analítico basado en RAG.**
+**Figura 23. Flujo conceptual del Agente Analítico basado en RAG.**
 
 #### 1. Preparación de información
 
@@ -2587,7 +2587,7 @@ Una indisponibilidad del modelo generativo, del proceso de embeddings o de las c
 
 ![Aislamiento del núcleo operativo](../diagramas/aislamiento-capacidad-analitica.svg)
 
-**Figura 19. Aislamiento de la capacidad analítica RAG respecto al núcleo operacional.**
+**Figura 24. Aislamiento de la capacidad analítica RAG respecto al núcleo operacional.**
 
 Esta separación preserva los atributos de disponibilidad de la plataforma y evita introducir la dependencia de un modelo generativo dentro de procesos operativos esenciales.
 
