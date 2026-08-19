@@ -1,0 +1,37 @@
+---
+config:
+  state:
+    useMaxWidth: false
+---
+
+classDiagram
+    direction LR
+    
+    class PlanificacionController {
+        +AsignarRuta(dto: AsignacionDto) IActionResult
+    }
+    class IAsignarRutaCasoUso {
+        <<interface>>
+        +EjecutarAsync(cmd: AsignarRutaCmd) Task~Resultado~
+    }
+    class AsignarRutaCasoUso {
+        -IRutaRepository rutasRepo
+        -IValidadorDisponibilidad validador
+        +EjecutarAsync(cmd)
+    }
+    class ValidadorDisponibilidad {
+        -IVehiculoRepository vehiculosRepo
+        -ICuadrillaRepository cuadrillaRepo
+        +ValidarDisponibilidad(vehiculoId, fecha) bool
+    }
+    class AsignacionRuta {
+        +Guid RutaId
+        +Guid VehiculoId
+        +DateTime FechaOperacion
+        +ConfirmarAsignacion()
+    }
+
+    PlanificacionController ..> IAsignarRutaCasoUso
+    IAsignarRutaCasoUso <|-- AsignarRutaCasoUso
+    AsignarRutaCasoUso --> ValidadorDisponibilidad
+    AsignarRutaCasoUso --> AsignacionRuta

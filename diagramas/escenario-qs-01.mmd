@@ -1,0 +1,8 @@
+flowchart LR
+    GPS["Recepción de<br/>actualización GPS"] --> PROC["Procesamiento<br/>asíncrono"]
+    PROC --> PERSIST["Persistencia histórica<br/>y actualización<br/>de proyección"]
+    PERSIST --> QUERY["Información disponible<br/>para consulta"]
+    QUERY --> DASH["Dashboard<br/>operativo"]
+
+    T0["Marca de tiempo<br/>T₀"] -.-> GPS
+    DASH -.-> T1["Marca de tiempo<br/>T₁"]

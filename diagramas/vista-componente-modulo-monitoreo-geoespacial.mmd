@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph APIM[API Backend - Módulo de Monitoreo]
+        CtrlM("Monitoreo Controller\n[ASP.NET Core Controller]\nRecibe lat/lon")
+        CUM("Recepción (Caso Uso)\n[Encolador]\nValida y acepta el payload")
+        Cola(("Canal de Eventos\n[Buffer en Memoria]"))
+        Worker("Procesador Worker\n[Background Service]\nProcesa asíncronamente")
+        RepoM("Ubicación Repository\n[Acceso a Datos]\nGuarda histórico y proyección")
+        Mapas("Adaptador Mapas\n[Cliente HTTP + Circuit Breaker]")
+    end
+    GPS[Unidad GPS] -->|JSON/HTTPS| CtrlM
+    CtrlM --> CUM
+    CUM --> Cola
+    Cola --> Worker
+    Worker --> RepoM
+    Worker --> Mapas
+    RepoM --> DB[(PostGIS)]
+    Mapas --> Ext[Servicio de Mapas]

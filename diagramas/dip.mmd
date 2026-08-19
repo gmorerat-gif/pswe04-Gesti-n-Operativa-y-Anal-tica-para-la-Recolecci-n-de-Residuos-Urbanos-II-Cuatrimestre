@@ -1,0 +1,4 @@
+flowchart LR
+    INF["Infraestructura<br/>PostgreSQL / PostGIS<br/>Mapas / Notificaciones"] -->|implementa| CON["Contratos e Interfaces<br/>Repositorios / Adaptadores"]
+    CON -->|son utilizados por| APP["Aplicación<br/>Casos de Uso"]
+    APP -->|coordina| DOM["Dominio<br/>Entidades y Reglas de Negocio"]

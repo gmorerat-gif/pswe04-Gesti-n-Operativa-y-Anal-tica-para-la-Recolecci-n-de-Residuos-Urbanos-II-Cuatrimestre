@@ -1,0 +1,28 @@
+flowchart TB
+
+    U[Usuarios\nOperarios / Supervisores / Administradores]
+
+    subgraph APP[Infraestructura de Aplicación]
+        WEB[Servidor Web\nAplicación React\nHTTPS / 443]
+
+        API[Servidor de Aplicaciones\nAPI Backend ASP.NET Core\nMonolito Modular]
+    end
+
+    subgraph DATA[Infraestructura de Datos]
+        DB[(Servidor de Base de Datos\nPostgreSQL + PostGIS)]
+    end
+
+    ID[Servicio de Identidad\nOpenID Connect / OAuth 2.0]
+    MAP[Servicio de Mapas\nAPI REST]
+    GEO[Servicio de Geolocalización\nGPS / API REST]
+    NOTIF[Servicio de Notificaciones\nAPI REST]
+
+    U -->|HTTPS / 443| WEB
+    WEB -->|HTTPS / JSON| API
+
+    API -->|TCP/IP - PostgreSQL| DB
+
+    API -->|HTTPS| ID
+    API -->|HTTPS| MAP
+    GEO -->|HTTPS / JSON| API
+    API -->|HTTPS| NOTIF

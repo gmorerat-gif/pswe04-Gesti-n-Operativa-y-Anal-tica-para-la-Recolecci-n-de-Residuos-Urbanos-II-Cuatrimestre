@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant Worker as ProcesadorUbicacionWorker
+    participant Mapas as IServicioMapasAdapter
+    participant CB as Circuit Breaker
+    participant DB as PostGIS
+    participant Notif as INotificadorSupervisor
+
+    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
+    Mapas->>CB: Verificar estado del circuito
+    alt Circuito cerrado, servicio responde lento
+        CB->>Mapas: Ejecutar llamada externa
+        Mapas--xCB: Timeout (>5s)
+        CB->>CB: Registrar fallo consecutivo
+    else Circuito abierto (umbral de fallos superado)
+        CB-->>Mapas: Rechazar llamada inmediatamente
+    end
+    Mapas-->>Worker: null (referencia no disponible)
+    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion sin referencia)
+    DB-->>Worker: OK
+    Worker->>Worker: Evaluar tiempo desde última actualización
+    alt Unidad sin reportes supera umbral
+        Worker->>Notif: NotificarUnidadSinReporteAsync(unidadId)
+        Notif-->>Worker: OK
+    end

@@ -1,0 +1,8 @@
+flowchart LR
+    CMD["Operaciones de Escritura<br/>GPS / Incidencias / Rutas"] --> DATA["Modelo Transaccional<br/>PostgreSQL / PostGIS"]
+
+    DATA --> PROC["Procesamiento /<br/>Actualización de Proyección"]
+
+    PROC --> PROJ["Proyección Operativa<br/>Última ubicación / Estado"]
+
+    DASH["Dashboard Operativo"] -->|Consulta optimizada| PROJ

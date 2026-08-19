@@ -1,0 +1,44 @@
+flowchart TB
+
+subgraph U["Unidades de Recolección"]
+    U1["Actualización periódica de ubicación"]
+end
+
+subgraph M["Monitoreo"]
+    M1["Recepción de ubicación"]
+    M2["Procesamiento asíncrono"]
+    M3["Actualización de última ubicación válida"]
+end
+
+subgraph O["Operación"]
+    O1["Supervisor consulta dashboard"]
+    O2["Operario registra incidencia"]
+end
+
+subgraph API["API Backend"]
+    A1["Coordinación de operaciones"]
+end
+
+subgraph BD["Base de Datos del Sistema"]
+    B1["Información operativa"]
+    B2["Última ubicación válida"]
+    B3["Incidencias y auditoría"]
+end
+
+U1 --> M1
+M1 --> M2
+M2 --> M3
+M3 --> B2
+
+O1 --> A1
+A1 --> B1
+B1 --> A1
+A1 --> O1
+
+O2 --> A1
+A1 --> B3
+B3 --> A1
+A1 --> O2
+
+M2 --> A1
+A1 --> B1

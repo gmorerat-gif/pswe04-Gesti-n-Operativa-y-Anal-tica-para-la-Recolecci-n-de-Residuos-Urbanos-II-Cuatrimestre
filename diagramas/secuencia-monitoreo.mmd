@@ -17,8 +17,13 @@ BD-->>API: Datos de rutas
 
 API->>Mapas: Solicita información cartográfica
 
-Mapas-->>API: Información geográfica
-
-API-->>Web: Estado consolidado
+alt Servicio de Mapas disponible
+    Mapas-->>API: Información geográfica
+    API-->>Web: Estado consolidado
+else Servicio de Mapas no disponible
+    Mapas-->>API: Error de servicio
+    API->>API: Aplica política de resiliencia
+    API-->>Web: Estado operativo y última ubicación válida
+end
 
 Web-->>Supervisor: Visualiza monitoreo

@@ -1,0 +1,12 @@
+flowchart LR
+    CORE["Núcleo Operativo"]
+
+    CORE --> GPS["Monitoreo<br/>Geoespacial"]
+    CORE --> INC["Gestión de<br/>Incidencias"]
+    CORE --> ROUTE["Planificación<br/>de Rutas"]
+    CORE --> REPORT["Reportes<br/>Convencionales"]
+
+    ANALYTICS["Capacidad Analítica<br/>RAG / pgvector / LLM"] -.->|Complementa| REPORT
+
+    FAIL["Falla del componente<br/>de IA"] -.-> ANALYTICS
+    FAIL -. "No debe afectar" .-> CORE

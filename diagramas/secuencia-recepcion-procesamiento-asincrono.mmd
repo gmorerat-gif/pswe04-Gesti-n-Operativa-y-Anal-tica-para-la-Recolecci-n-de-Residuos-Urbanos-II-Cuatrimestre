@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant GPS as Unidad GPS
+    participant API as MonitoreoController
+    participant CasoUso as RecepcionCasoUso
+    participant Cola as Cola En Memoria
+    participant Worker as ProcesadorWorker
+    participant Mapas as IServicioMapasAdapter
+    participant DB as PostGIS
+
+    GPS->>API: POST /api/v1/monitoreo/ubicaciones
+    API->>CasoUso: EncolarUbicacionAsync(data)
+    CasoUso->>Cola: EscribirEnCanal(data)
+    Cola-->>CasoUso: OK
+    CasoUso-->>API: Resultado (Encolado)
+    API-->>GPS: HTTP 202 Accepted
+
+    Note over Worker, DB: Procesamiento Asíncrono en Background
+    Cola->>Worker: LeerMensaje()
+    Worker->>Worker: ValidarCoordenadas()
+    Worker->>Mapas: ObtenerReferenciaGeografica()
+    Mapas-->>Worker: "Av. 2, San José" (Con Timeout)
+    Worker->>DB: Insertar UbicacionHistorica
+    Worker->>DB: Upsert UltimaUbicacion (Proyección)

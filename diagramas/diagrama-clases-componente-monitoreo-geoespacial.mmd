@@ -1,0 +1,33 @@
+classDiagram
+    class MonitoreoController {
+        +ReportarUbicacion(dto: UbicacionDto) IActionResult
+    }
+    class IRecepcionUbicacionCasoUso {
+        <<interface>>
+        +EncolarUbicacionAsync(cmd: ComandoUbicacion) Task~Resultado~
+    }
+    class RecepcionUbicacionCasoUso {
+        -IColaUbicaciones cola
+        +EncolarUbicacionAsync(cmd)
+    }
+    class ProcesadorUbicacionWorker {
+        -IRepositorioUbicacion repo
+        -IServicioMapasAdapter mapas
+        +ExecuteAsync(CancellationToken)
+    }
+    class UbicacionUnidad {
+        +Guid UnidadId
+        +double Latitud
+        +double Longitud
+        +DateTime MarcaDeTiempo
+        +ValidarCoordenadas()
+    }
+    class IServicioMapasAdapter {
+        <<interface>>
+        +ObtenerReferenciaGeografica(lat, lon) Task~string~
+    }
+
+    MonitoreoController ..> IRecepcionUbicacionCasoUso
+    IRecepcionUbicacionCasoUso <|-- RecepcionUbicacionCasoUso
+    ProcesadorUbicacionWorker --> UbicacionUnidad
+    ProcesadorUbicacionWorker ..> IServicioMapasAdapter

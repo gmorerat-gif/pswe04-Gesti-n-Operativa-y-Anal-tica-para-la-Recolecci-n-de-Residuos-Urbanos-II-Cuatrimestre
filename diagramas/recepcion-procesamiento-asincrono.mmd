@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant GPS as Unidad GPS
+    participant API as MonitoreoController
+    participant CU as RecepcionUbicacionCasoUso
+    participant Cola as IColaUbicaciones
+    participant Worker as ProcesadorUbicacionWorker
+    participant Mapas as IServicioMapasAdapter
+    participant DB as PostGIS
+
+    GPS->>API: POST /api/v1/monitoreo/ubicaciones
+    API->>API: Validar estructura del DTO
+    API->>CU: EncolarUbicacionAsync(cmd)
+    CU->>CU: ValidarCoordenadas()
+    CU->>Cola: EscribirAsync(evento)
+    Cola-->>CU: OK
+    CU-->>API: ResultadoRecepcion (Encolado)
+    API-->>GPS: HTTP 202 Accepted
+
+    Note over Worker, DB: Procesamiento asíncrono en background
+    Cola->>Worker: LeerAsync() -> evento
+    Worker->>DB: RegistrarHistoricoAsync(ubicacion)
+    Worker->>Mapas: ObtenerReferenciaGeograficaAsync(lat, lon)
+    Mapas-->>Worker: referencia geográfica
+    Worker->>DB: UpsertUltimaUbicacionAsync(proyeccion)
+    DB-->>Worker: OK
